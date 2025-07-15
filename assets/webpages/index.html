@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>reCAPTCHA v3</title>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfnSX4rAAAAAIBq67iEeXCdDEC1NCIZLxtUworK"></script>
+    <script>
+        function executeCaptcha() {
+          grecaptcha.ready(function () {
+            grecaptcha.execute('6LfnSX4rAAAAAIBq67iEeXCdDEC1NCIZLxtUworK', {action: 'submit'}).then(function (token) {
+              if (typeof CaptchaToken !== "undefined") {
+                CaptchaToken.postMessage(token);
+              } else {
+                console.error("CaptchaToken channel not available.");
+              }
+            });
+          });
+        }
+    </script>
+</head>
+<body style="background-color: #f0f0f0;">
+<h2>reCAPTCHA v3 Verification</h2>
+<button onclick="executeCaptcha()">Verify User</button>
+</body>
+</html>
