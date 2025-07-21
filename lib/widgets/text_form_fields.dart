@@ -9,66 +9,44 @@ Widget AppTextFormField({
   TextInputAction? textInputAction,
   TextCapitalization? textCapitalization,
   bool readOnly = false,
-  var maxLength,
+  int? maxLength,
   int? maxLines = 1,
   void Function()? onTap,
+  onChanged,
   function,
 }) {
   return Padding(
-    padding: const EdgeInsets.only(left: 10, right: 10),
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        readOnly: readOnly,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.all(Radius.circular(9)),
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.all(Radius.circular(9)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: const BorderRadius.all(Radius.circular(9)),
-          ),
-          disabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.all(Radius.circular(9)),
-          ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red),
-            borderRadius: BorderRadius.all(Radius.circular(6)),
-          ),
-          contentPadding: const EdgeInsets.only(left: 20, top: 12, right: 20),
-          // hintText: lable,
-          suffixIcon: suffix,
-          // suffix: suffix,
-          // hintStyle: TextStyle(
-          //   color: Colors.grey,
-          //   fontSize: getFontSize(Get.context!, -3),
-          //   fontWeight: FontWeight.normal,
-          //   fontFamily: "Montserrat",
-          // ),
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    child: TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(9)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(9),
+          borderSide: const BorderSide(color: Colors.grey),
         ),
-        textCapitalization:
-            textCapitalization != null
-                ? textCapitalization
-                : TextCapitalization.none,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction != null ? textInputAction : null,
-        onTap: onTap,
-        maxLines: maxLines,
-        maxLength: maxLength,
-        validator: function,
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 6,
+          horizontal: 20,
+        ), // 👈 Add vertical padding explicitly
+        suffixIcon: suffix,
       ),
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      onTap: onTap,
+      onChanged: onChanged,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      validator: function,
     ),
   );
 }

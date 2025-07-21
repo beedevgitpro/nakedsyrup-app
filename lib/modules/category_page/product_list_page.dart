@@ -27,9 +27,7 @@ class _ProductListPageState extends State<ProductListPage> {
   void initState() {
     // TODO: implement initState
     dashboardController.fetchDataForTab(widget.categories?.slug);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dashboardController.findCart();
-    });
+    dashboardController.findCart();
     super.initState();
   }
 
@@ -80,6 +78,7 @@ class _ProductListPageState extends State<ProductListPage> {
           },
         ),
         context,
+        actions: [dashboardController.cartUI()],
       ),
       body: LiquidPullToRefresh(
         key: dashboardController.productListRefreshIndicatorKey,

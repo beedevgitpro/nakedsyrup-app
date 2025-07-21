@@ -41,6 +41,9 @@ class Orders {
     String? orderDate,
     String? status,
     dynamic total,
+    dynamic subTotal,
+    dynamic discount,
+    dynamic gst,
     List<Items>? items,
   }) {
     _orderId = orderId;
@@ -49,6 +52,9 @@ class Orders {
     _orderDate = orderDate;
     _status = status;
     _total = total;
+    _subTotal = subTotal;
+    _discount = discount;
+    _gst = gst;
     _items = items;
   }
 
@@ -61,6 +67,9 @@ class Orders {
     _orderDate = json['order_date'];
     _status = json['status'];
     _total = json['total'];
+    _subTotal = json['subTotal'];
+    _discount = json['discount'];
+    _gst = json['gst'];
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
@@ -74,6 +83,9 @@ class Orders {
   String? _orderDate;
   String? _status;
   dynamic _total;
+  dynamic _subTotal;
+  dynamic _discount;
+  dynamic _gst;
   List<Items>? _items;
   Orders copyWith({
     dynamic orderId,
@@ -82,6 +94,9 @@ class Orders {
     String? orderDate,
     String? status,
     dynamic total,
+    dynamic gst,
+    dynamic discount,
+    dynamic subTotal,
     List<Items>? items,
   }) => Orders(
     orderId: orderId ?? _orderId,
@@ -90,6 +105,9 @@ class Orders {
     orderDate: orderDate ?? _orderDate,
     status: status ?? _status,
     total: total ?? _total,
+    gst: gst ?? _gst,
+    discount: discount ?? _discount,
+    subTotal: subTotal ?? _subTotal,
     items: items ?? _items,
   );
   dynamic get orderId => _orderId;
@@ -98,6 +116,9 @@ class Orders {
   String? get orderDate => _orderDate;
   String? get status => _status;
   dynamic get total => _total;
+  dynamic get gst => _gst;
+  dynamic get discount => _discount;
+  dynamic get subTotal => _subTotal;
   List<Items>? get items => _items;
 
   Map<String, dynamic> toJson() {
@@ -112,6 +133,9 @@ class Orders {
     map['order_date'] = _orderDate;
     map['status'] = _status;
     map['total'] = _total;
+    map['gst'] = _gst;
+    map['discount'] = _discount;
+    map['subTotal'] = _subTotal;
     if (_items != null) {
       map['items'] = _items?.map((v) => v.toJson()).toList();
     }

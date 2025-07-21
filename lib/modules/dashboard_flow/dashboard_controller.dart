@@ -7,22 +7,27 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/model/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Resources/AppColors.dart';
 import '../../model/category_model.dart';
 import '../../model/dashboard_list.dart';
 import '../../model/order_history_model.dart';
 import '../../model/product_model.dart';
 import '../../model/shipping_methods_model.dart';
 import '../../service.dart';
+import '../cart/cart_page.dart';
 import '../login_flow/login_page.dart';
-import '../order_history/order_history_page.dart';
+import 'dashboard.dart';
 
 class DashboardController extends GetxController {
   GlobalKey<ScaffoldState> scaffolKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> addressFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> shippingAddressFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> registerationForm = GlobalKey<FormState>();
   RxBool getData = false.obs;
   RxBool placeOrder = false.obs;
   RxBool getProduct = false.obs;
+  RxInt cartCount = 0.obs;
+  RxDouble recaptchaHeight = 100.0.obs;
   RxBool getCart = false.obs;
   RxBool isCaptchaVerified = false.obs;
   RxBool isVerifying = false.obs;
@@ -37,6 +42,7 @@ class DashboardController extends GetxController {
   RxBool isExpanded = false.obs;
   RxBool isOnline = false.obs;
   RxBool callRegisterApi = false.obs;
+  RxBool promoCodeFiled = false.obs;
   RxBool saveInvoice = false.obs;
   RxString isPayment = 'no'.obs;
   RxString name = ''.obs;
@@ -48,7 +54,7 @@ class DashboardController extends GetxController {
   RxString selectedStateDiff = ''.obs;
   RxString selectedNewsLetter = ''.obs;
   RxString shippingMethods = ''.obs;
-  RxString selectedPaymentMethods = ''.obs;
+  RxString selectedPaymentMethods = 'cod'.obs;
   RxBool enableRegistration = false.obs;
   RxBool enableCheckOut = false.obs;
   Rx<Variations> selectedVariations = Variations().obs;
@@ -119,9 +125,7 @@ class DashboardController extends GetxController {
     });
     getName();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      findCategory();
       orderHistory();
-      findCart();
     });
 
     return completer.future.then<void>((_) {
@@ -154,7 +158,7 @@ class DashboardController extends GetxController {
 
   Future<void> cartRefresh() {
     final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       completer.complete();
     });
     findCart();
@@ -235,6 +239,12 @@ class DashboardController extends GetxController {
 
   placeOrderApi() async {
     placeOrder.value = true;
+    // print(
+    //   "addressFormKey validation : ${addressFormKey.currentState?.validate()}",
+    // );
+    // print(
+    //   "addressFormKey validation : ${shippingAddressFormKey.currentState?.validate()}",
+    // );
     Map<String, dynamic> mapp = {};
     if (differentAddress.value) {
       mapp = {
@@ -300,7 +310,58 @@ class DashboardController extends GetxController {
           colorText: Colors.red,
           backgroundColor: Colors.white,
         );
-        Get.to(OrderHistoryPage());
+        showDialog<void>(
+          context: Get.context!,
+          barrierDismissible: false,
+          // user must tap button!
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text(
+                    "Thank you for your order!",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  content: const SizedBox(
+                    width: double.maxFinite,
+                    child: Text(
+                      "Your order has been successfully placed. We’ll notify you once it’s on the way.",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll<Color>(
+                          AppColors.nakedSyrup,
+                        ),
+                        padding: WidgetStateProperty.all(
+                          const EdgeInsets.all(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Close",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                      onPressed: () async {
+                        Get.offAll(const DashboardPage());
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+        // Get.to(OrderHistoryPage());
         placeOrder.value = false;
       } else {
         placeOrder.value = false;
@@ -325,38 +386,96 @@ class DashboardController extends GetxController {
   registration() async {
     callRegisterApi.value = true;
     Map<String, dynamic> mapp = {};
-    mapp = {
-      "first_name": firstNameController.text,
-      "last_name": lastNameController.text,
-      "company": companyNameController.text,
-      "address_1": streetAddressController.text,
-      "address_2": streetAddress2Controller.text,
-      "city": townController.text,
-      "state": selectedState.value,
-      "postcode": postCodeController.text,
-      "country": selectedCountry.value,
-      "email": emailController.text,
-      "phone": phoneController.text,
-      "username": userNameController.text,
-      "password": passwordController.text,
-    };
+    if (registerationForm.currentState?.validate() == true) {
+      mapp = {
+        "first_name": firstNameController.text,
+        "last_name": lastNameController.text,
+        "company": companyNameController.text,
+        "address_1": streetAddressController.text,
+        "address_2": streetAddress2Controller.text,
+        "city": townController.text,
+        "state": selectedState.value,
+        "postcode": postCodeController.text,
+        "country": selectedCountry.value,
+        "email": emailController.text,
+        "phone": phoneController.text,
+        "username": userNameController.text,
+        "password": passwordController.text,
+      };
 
-    var shipping = await ApiClass().customerCreate(mapp);
-    print("registration complete : ${shipping}");
-    if (shipping != null) {
-      if (shipping['success'] == true) {
-        Get.snackbar(
-          shipping['message'],
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
-        Get.to(LoginPage());
-        callRegisterApi.value = false;
+      var shipping = await ApiClass().customerCreate(mapp);
+      if (shipping != null) {
+        if (shipping['success'] == true) {
+          Get.snackbar(shipping['message'], '', backgroundColor: Colors.white);
+          callRegisterApi.value = false;
+          showDialog<void>(
+            context: Get.context!,
+            barrierDismissible: false,
+            // user must tap button!
+            builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return AlertDialog(
+                    title: Text(
+                      "Thank you for registration!",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    content: const SizedBox(
+                      width: double.maxFinite,
+                      child: Text(
+                        "Our team will get back to you within 48 hours.",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll<Color>(
+                            AppColors.nakedSyrup,
+                          ),
+                          padding: WidgetStateProperty.all(
+                            const EdgeInsets.all(8),
+                          ),
+                        ),
+                        child: const Text(
+                          "Close",
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                        onPressed: () async {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          Get.back();
+                          prefs.clear();
+                          Get.offAll(LoginPage());
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        } else {
+          callRegisterApi.value = false;
+          Get.snackbar(
+            shipping['message'],
+            '',
+            colorText: Colors.red,
+            backgroundColor: Colors.white,
+          );
+        }
       } else {
         callRegisterApi.value = false;
         Get.snackbar(
-          shipping['message'],
+          "registration error",
           '',
           colorText: Colors.red,
           backgroundColor: Colors.white,
@@ -365,7 +484,7 @@ class DashboardController extends GetxController {
     } else {
       callRegisterApi.value = false;
       Get.snackbar(
-        "registration error",
+        "Please fill all mandatory fields",
         '',
         colorText: Colors.red,
         backgroundColor: Colors.white,
@@ -414,7 +533,45 @@ class DashboardController extends GetxController {
     name.value = prefs.getString('name') ?? "";
   }
 
-  Future viewedProduct() async {
+  Widget cartUI() {
+    return Obx(
+      () => Stack(
+        children: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart_outlined, size: 30),
+            onPressed: () {
+              Get.to(CartPage()); // Navigate to cart page
+            },
+          ),
+          if (cartCount.value > 0)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                constraints: BoxConstraints(minWidth: 20, minHeight: 20),
+                child: Center(
+                  child: Text(
+                    '${cartCount.value}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  viewedProduct() async {
     getData.value = true;
     var dashboard = await ApiClass().mostViewedProduct();
     print("dashboard : $dashboard");
@@ -424,16 +581,18 @@ class DashboardController extends GetxController {
     getData.value = false;
   }
 
-  Future findCart() async {
+  findCart() async {
     getCart.value = true;
     var cart = await ApiClass().getCart();
     if (cart != null) {
       cartModel.value = CartModel.fromJson(cart);
+      cartCount.value = cartModel.value.cartItems?.length ?? 0;
     }
+
     getCart.value = false;
   }
 
-  Future getCountryList() async {
+  getCountryList() async {
     getCheckOut.value = true;
     var respose = await ApiClass().getCountry();
     if (respose != null) {
@@ -447,7 +606,7 @@ class DashboardController extends GetxController {
     getCheckOut.value = false;
   }
 
-  Future getStateList(code, isDiff) async {
+  getStateList(code, isDiff) async {
     getCheckOut.value = true;
     var respose = await ApiClass().getState(code);
 
@@ -478,10 +637,14 @@ class DashboardController extends GetxController {
     getCheckOut.value = false;
   }
 
-  Future getBillingDetails() async {
+  getBillingDetails() async {
     getCheckOut.value = true;
     var responce = await ApiClass().getBillingDetails();
     if (responce != null) {
+      getStateList(responce['billing_details']['country'] ?? "", null);
+
+      selectedCountry.value = responce['billing_details']['country'] ?? "";
+      selectedCountryDiff.value = responce['billing_details']['country'] ?? "";
       firstNameController.text =
           responce['billing_details']['first_name'] ?? "";
       firstNameDiffController.text =
@@ -507,18 +670,16 @@ class DashboardController extends GetxController {
           responce['billing_details']['postcode'] ?? "";
       phoneController.text = responce['billing_details']['phone'] ?? "";
       emailController.text = responce['billing_details']['email'] ?? "";
-      selectedCountry.value = responce['billing_details']['country'] ?? "";
-      selectedCountryDiff.value = responce['billing_details']['country'] ?? "";
+
       selectedState.value = responce['billing_details']['state'] ?? "";
       selectedStateDiff.value = responce['billing_details']['state'] ?? "";
-      getStateList(responce['billing_details']['country'] ?? "", null);
       getShippingMethods();
     }
     differentAddress.value = false;
     getCheckOut.value = false;
   }
 
-  Future orderHistory() async {
+  orderHistory() async {
     getHistory.value = true;
     var history = await ApiClass().getOrderHistory();
     if (history != null) {

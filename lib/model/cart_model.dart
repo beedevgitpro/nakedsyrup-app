@@ -2,17 +2,29 @@ class CartModel {
   CartModel({
     bool? success,
     List<CartItems>? cartItems,
-    dynamic cartTotal,
+    int? cartCount,
+    int? cartTotal,
+    dynamic cartTotalFormatted,
+    dynamic discountTotal,
+    dynamic discountTotalFormatted,
     dynamic gstTotal,
-    dynamic grantTotal,
-    dynamic cartCount,
+    dynamic gstTotalFormatted,
+    dynamic grandTotal,
+    dynamic grandTotalFormatted,
+    List<Coupons>? coupons,
   }) {
     _success = success;
     _cartItems = cartItems;
-    _cartTotal = cartTotal;
-    _gstTotal = gstTotal;
-    _grantTotal = grantTotal;
     _cartCount = cartCount;
+    _cartTotal = cartTotal;
+    _cartTotalFormatted = cartTotalFormatted;
+    _discountTotal = discountTotal;
+    _discountTotalFormatted = discountTotalFormatted;
+    _gstTotal = gstTotal;
+    _gstTotalFormatted = gstTotalFormatted;
+    _grandTotal = grandTotal;
+    _grandTotalFormatted = grandTotalFormatted;
+    _coupons = coupons;
   }
 
   CartModel.fromJson(dynamic json) {
@@ -23,130 +35,253 @@ class CartModel {
         _cartItems?.add(CartItems.fromJson(v));
       });
     }
-    _cartTotal = json['cart_total'];
     _cartCount = json['cart_count'];
+    _cartTotal = json['cart_total'];
+    _cartTotalFormatted = json['cart_total_formatted'];
+    _discountTotal = json['discount_total'];
+    _discountTotalFormatted = json['discount_total_formatted'];
     _gstTotal = json['gst_total'];
-    _grantTotal = json['grand_total'];
+    _gstTotalFormatted = json['gst_total_formatted'];
+    _grandTotal = json['grand_total'];
+    _grandTotalFormatted = json['grand_total_formatted'];
+    if (json['coupons'] != null) {
+      _coupons = [];
+      json['coupons'].forEach((v) {
+        _coupons?.add(Coupons.fromJson(v));
+      });
+    }
   }
   bool? _success;
   List<CartItems>? _cartItems;
-  dynamic _cartTotal;
-  dynamic _cartCount;
+  int? _cartCount;
+  int? _cartTotal;
+  dynamic _cartTotalFormatted;
+  dynamic _discountTotal;
+  dynamic _discountTotalFormatted;
   dynamic _gstTotal;
-  dynamic _grantTotal;
+  dynamic _gstTotalFormatted;
+  dynamic _grandTotal;
+  dynamic _grandTotalFormatted;
+  List<Coupons>? _coupons;
   CartModel copyWith({
     bool? success,
     List<CartItems>? cartItems,
-    dynamic cartTotal,
+    int? cartCount,
+    int? cartTotal,
+    dynamic cartTotalFormatted,
+    dynamic discountTotal,
+    dynamic discountTotalFormatted,
     dynamic gstTotal,
-    dynamic grantTotal,
-    dynamic cartCount,
+    dynamic gstTotalFormatted,
+    dynamic grandTotal,
+    dynamic grandTotalFormatted,
+    List<Coupons>? coupons,
   }) => CartModel(
     success: success ?? _success,
     cartItems: cartItems ?? _cartItems,
-    cartTotal: cartTotal ?? _cartTotal,
-    gstTotal: gstTotal ?? _gstTotal,
-    grantTotal: grantTotal ?? _grantTotal,
     cartCount: cartCount ?? _cartCount,
+    cartTotal: cartTotal ?? _cartTotal,
+    cartTotalFormatted: cartTotalFormatted ?? _cartTotalFormatted,
+    discountTotal: discountTotal ?? _discountTotal,
+    discountTotalFormatted: discountTotalFormatted ?? _discountTotalFormatted,
+    gstTotal: gstTotal ?? _gstTotal,
+    gstTotalFormatted: gstTotalFormatted ?? _gstTotalFormatted,
+    grandTotal: grandTotal ?? _grandTotal,
+    grandTotalFormatted: grandTotalFormatted ?? _grandTotalFormatted,
+    coupons: coupons ?? _coupons,
   );
   bool? get success => _success;
   List<CartItems>? get cartItems => _cartItems;
-  dynamic get cartTotal => _cartTotal;
-  dynamic get cartCount => _cartCount;
+  int? get cartCount => _cartCount;
+  int? get cartTotal => _cartTotal;
+  dynamic get cartTotalFormatted => _cartTotalFormatted;
+  dynamic get discountTotal => _discountTotal;
+  dynamic get discountTotalFormatted => _discountTotalFormatted;
   dynamic get gstTotal => _gstTotal;
-  dynamic get grantTotal => _grantTotal;
-
+  dynamic get gstTotalFormatted => _gstTotalFormatted;
+  dynamic get grandTotal => _grandTotal;
+  dynamic get grandTotalFormatted => _grandTotalFormatted;
+  List<Coupons>? get coupons => _coupons;
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['success'] = _success;
     if (_cartItems != null) {
       map['cart_items'] = _cartItems?.map((v) => v.toJson()).toList();
     }
-    map['cart_total'] = _cartTotal;
-    map['gst_total'] = _gstTotal;
-    map['grand_total'] = _grantTotal;
     map['cart_count'] = _cartCount;
+    map['cart_total'] = _cartTotal;
+    map['cart_total_formatted'] = _cartTotalFormatted;
+    map['discount_total'] = _discountTotal;
+    map['discount_total_formatted'] = _discountTotalFormatted;
+    map['gst_total'] = _gstTotal;
+    map['gst_total_formatted'] = _gstTotalFormatted;
+    map['grand_total'] = _grandTotal;
+    map['grand_total_formatted'] = _grandTotalFormatted;
+    if (_coupons != null) {
+      map['coupons'] = _coupons?.map((v) => v.toJson()).toList();
+    }
+    return map;
+  }
+}
+
+class Coupons {
+  Coupons({
+    dynamic code,
+    dynamic type,
+    int? amount,
+    dynamic calculatedDiscount,
+  }) {
+    _code = code;
+    _type = type;
+    _amount = amount;
+    _calculatedDiscount = calculatedDiscount;
+  }
+
+  Coupons.fromJson(dynamic json) {
+    _code = json['code'];
+    _type = json['type'];
+    _amount = json['amount'];
+    _calculatedDiscount = json['calculated_discount'];
+  }
+  dynamic _code;
+  dynamic _type;
+  int? _amount;
+  dynamic _calculatedDiscount;
+  Coupons copyWith({
+    dynamic code,
+    dynamic type,
+    int? amount,
+    dynamic calculatedDiscount,
+  }) => Coupons(
+    code: code ?? _code,
+    type: type ?? _type,
+    amount: amount ?? _amount,
+    calculatedDiscount: calculatedDiscount ?? _calculatedDiscount,
+  );
+  dynamic get code => _code;
+  dynamic get type => _type;
+  int? get amount => _amount;
+  dynamic get calculatedDiscount => _calculatedDiscount;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['code'] = _code;
+    map['type'] = _type;
+    map['amount'] = _amount;
+    map['calculated_discount'] = _calculatedDiscount;
     return map;
   }
 }
 
 class CartItems {
   CartItems({
-    dynamic productId,
+    dynamic cartItemKey,
+    int? productId,
+    int? variationId,
     dynamic productName,
-    dynamic quantity,
-    dynamic price,
-    dynamic subtotal,
-    dynamic total,
+    int? quantity,
+    int? regularPrice,
+    dynamic salePrice,
+    int? currentPrice,
+    dynamic currentPriceFormatted,
+    int? lineSubtotal,
+    dynamic lineSubtotalFormatted,
     dynamic productImage,
-    dynamic variationId,
   }) {
+    _cartItemKey = cartItemKey;
     _productId = productId;
+    _variationId = variationId;
     _productName = productName;
     _quantity = quantity;
-    _price = price;
-    _subtotal = subtotal;
-    _total = total;
+    _regularPrice = regularPrice;
+    _salePrice = salePrice;
+    _currentPrice = currentPrice;
+    _currentPriceFormatted = currentPriceFormatted;
+    _lineSubtotal = lineSubtotal;
+    _lineSubtotalFormatted = lineSubtotalFormatted;
     _productImage = productImage;
-    _variationId = variationId;
   }
 
   CartItems.fromJson(dynamic json) {
+    _cartItemKey = json['cart_item_key'];
     _productId = json['product_id'];
+    _variationId = json['variation_id'];
     _productName = json['product_name'];
     _quantity = json['quantity'];
-    _price = json['price'];
-    _subtotal = json['subtotal'];
-    _total = json['total'];
+    _regularPrice = json['regular_price'];
+    _salePrice = json['sale_price'];
+    _currentPrice = json['current_price'];
+    _currentPriceFormatted = json['current_price_formatted'];
+    _lineSubtotal = json['line_subtotal'];
+    _lineSubtotalFormatted = json['line_subtotal_formatted'];
     _productImage = json['product_image'];
-    _variationId = json['variation_id'];
   }
-  dynamic _productId;
+  dynamic _cartItemKey;
+  int? _productId;
+  int? _variationId;
   dynamic _productName;
-  dynamic _quantity;
-  dynamic _price;
-  dynamic _subtotal;
-  dynamic _total;
+  int? _quantity;
+  int? _regularPrice;
+  dynamic _salePrice;
+  int? _currentPrice;
+  dynamic _currentPriceFormatted;
+  int? _lineSubtotal;
+  dynamic _lineSubtotalFormatted;
   dynamic _productImage;
-  dynamic _variationId;
   CartItems copyWith({
-    dynamic productId,
+    dynamic cartItemKey,
+    int? productId,
+    int? variationId,
     dynamic productName,
-    dynamic quantity,
-    dynamic price,
-    dynamic subtotal,
-    dynamic total,
+    int? quantity,
+    int? regularPrice,
+    dynamic salePrice,
+    int? currentPrice,
+    dynamic currentPriceFormatted,
+    int? lineSubtotal,
+    dynamic lineSubtotalFormatted,
     dynamic productImage,
-    dynamic variationId,
   }) => CartItems(
+    cartItemKey: cartItemKey ?? _cartItemKey,
     productId: productId ?? _productId,
+    variationId: variationId ?? _variationId,
     productName: productName ?? _productName,
     quantity: quantity ?? _quantity,
-    price: price ?? _price,
-    subtotal: subtotal ?? _subtotal,
-    total: total ?? _total,
+    regularPrice: regularPrice ?? _regularPrice,
+    salePrice: salePrice ?? _salePrice,
+    currentPrice: currentPrice ?? _currentPrice,
+    currentPriceFormatted: currentPriceFormatted ?? _currentPriceFormatted,
+    lineSubtotal: lineSubtotal ?? _lineSubtotal,
+    lineSubtotalFormatted: lineSubtotalFormatted ?? _lineSubtotalFormatted,
     productImage: productImage ?? _productImage,
-    variationId: variationId ?? _variationId,
   );
-  dynamic get productId => _productId;
+  dynamic get cartItemKey => _cartItemKey;
+  int? get productId => _productId;
+  int? get variationId => _variationId;
   dynamic get productName => _productName;
-  dynamic get quantity => _quantity;
-  dynamic get price => _price;
-  dynamic get subtotal => _subtotal;
-  dynamic get total => _total;
+  int? get quantity => _quantity;
+  int? get regularPrice => _regularPrice;
+  dynamic get salePrice => _salePrice;
+  int? get currentPrice => _currentPrice;
+  dynamic get currentPriceFormatted => _currentPriceFormatted;
+  int? get lineSubtotal => _lineSubtotal;
+  dynamic get lineSubtotalFormatted => _lineSubtotalFormatted;
   dynamic get productImage => _productImage;
-  dynamic get variationId => _variationId;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['cart_item_key'] = _cartItemKey;
     map['product_id'] = _productId;
+    map['variation_id'] = _variationId;
     map['product_name'] = _productName;
     map['quantity'] = _quantity;
-    map['price'] = _price;
-    map['subtotal'] = _subtotal;
-    map['total'] = _total;
+    map['regular_price'] = _regularPrice;
+    map['sale_price'] = _salePrice;
+    map['current_price'] = _currentPrice;
+    map['current_price_formatted'] = _currentPriceFormatted;
+    map['line_subtotal'] = _lineSubtotal;
+    map['line_subtotal_formatted'] = _lineSubtotalFormatted;
     map['product_image'] = _productImage;
-    map['variation_id'] = _variationId;
     return map;
   }
 }

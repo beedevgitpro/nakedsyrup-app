@@ -9,7 +9,6 @@ import '../../Resources/AppColors.dart';
 import '../../model/order_history_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
-import '../cart/cart_page.dart';
 import '../category_page/product_list_page.dart';
 import '../order_history/order_detail_page.dart';
 import 'dashboard_controller.dart';
@@ -24,7 +23,6 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     with SingleTickerProviderStateMixin {
   DashboardController dashboardController = Get.put(DashboardController());
-
   final newVersion = NewVersionPlus(
     iOSId: 'nakedsyrups.com.au',
     androidId: 'nakedsyrups.com.au',
@@ -34,7 +32,6 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void initState() {
     dashboardController.getName();
-    dashboardController.viewedProduct();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dashboardController.findCategory();
       dashboardController.orderHistory();
@@ -83,17 +80,7 @@ class _DashboardPageState extends State<DashboardPage>
             },
           ),
           context,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Get.to(CartPage());
-              },
-            ),
-          ],
+          actions: [dashboardController.cartUI()],
         ),
         drawer: NakedSyrupsDrawer(),
         body: LiquidPullToRefresh(
@@ -162,7 +149,7 @@ class _DashboardPageState extends State<DashboardPage>
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
-                          mainAxisSpacing: 0,
+                          mainAxisSpacing: 10,
                           childAspectRatio: 0.95,
                         ),
                         physics: ScrollPhysics(),
@@ -180,64 +167,83 @@ class _DashboardPageState extends State<DashboardPage>
                                 ),
                               );
                             },
-                            child:
-                                dashboardController
-                                            .categoryModel
-                                            .value
-                                            .categories?[j]
-                                            .image
-                                            ?.isNotEmpty ==
-                                        true
-                                    ? Image.network(
-                                      dashboardController
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+
+                              child:
+                                  dashboardController
                                               .categoryModel
                                               .value
                                               .categories?[j]
-                                              .image ??
-                                          "",
-                                      fit: BoxFit.cover,
-                                    )
-                                    : dashboardController
-                                            .categoryModel
-                                            .value
-                                            .categories?[j]
-                                            .name
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains('flavourings') ==
-                                        true
-                                    ? Image.asset("assets/images/flovoring.png")
-                                    : dashboardController
-                                            .categoryModel
-                                            .value
-                                            .categories?[j]
-                                            .name
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains('powders') ==
-                                        true
-                                    ? Image.asset("assets/images/powders.png")
-                                    : dashboardController
-                                            .categoryModel
-                                            .value
-                                            .categories?[j]
-                                            .name
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains('merch') ==
-                                        true
-                                    ? Image.asset("assets/images/merch.png")
-                                    : dashboardController
-                                            .categoryModel
-                                            .value
-                                            .categories?[j]
-                                            .name
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains('toppings') ==
-                                        true
-                                    ? Image.asset("assets/images/topping.png")
-                                    : Image.asset("assets/images/Logo.png"),
+                                              .image
+                                              ?.isNotEmpty ==
+                                          true
+                                      ? Image.network(
+                                        dashboardController
+                                                .categoryModel
+                                                .value
+                                                .categories?[j]
+                                                .image ??
+                                            "",
+                                        fit: BoxFit.cover,
+                                      )
+                                      : dashboardController
+                                              .categoryModel
+                                              .value
+                                              .categories?[j]
+                                              .name
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains('flavourings') ==
+                                          true
+                                      ? Image.asset(
+                                        "assets/images/flovoring.jpg",
+                                        fit: BoxFit.cover,
+                                      )
+                                      : dashboardController
+                                              .categoryModel
+                                              .value
+                                              .categories?[j]
+                                              .name
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains('powders') ==
+                                          true
+                                      ? Image.asset(
+                                        "assets/images/powders.jpg",
+                                        fit: BoxFit.cover,
+                                      )
+                                      : dashboardController
+                                              .categoryModel
+                                              .value
+                                              .categories?[j]
+                                              .name
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains('merch') ==
+                                          true
+                                      ? Image.asset(
+                                        "assets/images/merch.jpg",
+                                        fit: BoxFit.cover,
+                                      )
+                                      : dashboardController
+                                              .categoryModel
+                                              .value
+                                              .categories?[j]
+                                              .name
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains('toppings') ==
+                                          true
+                                      ? Image.asset(
+                                        "assets/images/topping.jpg",
+                                        fit: BoxFit.cover,
+                                      )
+                                      : Image.asset(
+                                        "assets/images/Logo.jpg",
+                                        fit: BoxFit.cover,
+                                      ),
+                            ),
                           );
                         },
                       ),
@@ -295,9 +301,9 @@ class _DashboardPageState extends State<DashboardPage>
                           Text(
                             'Recent Orders',
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                               decoration: TextDecoration.underline,
-                              fontSize: 18,
+                              fontSize: getFontSize(context, 2),
                               fontFamily: 'Euclid Circular B',
                             ),
                           ),
@@ -326,7 +332,12 @@ class _DashboardPageState extends State<DashboardPage>
                                     // left: 15,
                                     // right: 15,
                                   ),
-                                  child: ListView.builder(
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, ii) {
+                                      return Divider(
+                                        color: AppColors.lightColor,
+                                      );
+                                    },
                                     shrinkWrap: true,
                                     itemCount:
                                         dashboardController
@@ -349,6 +360,9 @@ class _DashboardPageState extends State<DashboardPage>
                                       String convertedDate = DateFormat(
                                         "dd MMM yyyy, hh:mm a",
                                       ).format(DateTime.parse(date));
+                                      List<String> parts = convertedDate.split(
+                                        RegExp(r'[\s,:]+'),
+                                      );
 
                                       if (j < 5) {
                                         return InkWell(
@@ -364,110 +378,372 @@ class _DashboardPageState extends State<DashboardPage>
                                               ),
                                             );
                                           },
-                                          child: Card(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(
-                                                8.0,
-                                              ),
-                                              child: Column(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: SizedBox(
+                                              width:
+                                                  Get.width >= 600
+                                                      ? Get.width * 0.6
+                                                      : Get.width,
+                                              child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  dashboardController
-                                                          .orderHistoryModel
-                                                          .value
-                                                          .orders![j]
-                                                          .items!
-                                                          .isNotEmpty
-                                                      ? SizedBox(
-                                                        height: 70,
-                                                        child: ListView.separated(
-                                                          itemCount:
-                                                              dashboardController
-                                                                  .orderHistoryModel
-                                                                  .value
-                                                                  .orders?[j]
-                                                                  .items
-                                                                  ?.length ??
-                                                              0,
-                                                          separatorBuilder: (
-                                                            context,
-                                                            i,
-                                                          ) {
-                                                            return SizedBox(
-                                                              width: 10,
-                                                            );
-                                                          },
-                                                          physics:
-                                                              ScrollPhysics(),
-                                                          shrinkWrap: true,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemBuilder: (
-                                                            context,
-                                                            x,
-                                                          ) {
-                                                            if (dashboardController
-                                                                    .orderHistoryModel
-                                                                    .value
-                                                                    .orders?[j]
-                                                                    .items?[x]
-                                                                    .image
-                                                                    .toString()
-                                                                    .isNotEmpty ==
-                                                                true) {
-                                                              return Image.network(
-                                                                dashboardController
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              text:
+                                                                  "Order Id: ",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color:
+                                                                    Colors
+                                                                        .black87,
+                                                                fontSize:
+                                                                    getFontSize(
+                                                                      context,
+                                                                      -2,
+                                                                    ),
+                                                              ),
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      " #${dashboardController.orderHistoryModel.value.orders?[j].orderId}",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              text: "Date: ",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color:
+                                                                    Colors
+                                                                        .black87,
+                                                                fontSize:
+                                                                    getFontSize(
+                                                                      context,
+                                                                      -2,
+                                                                    ),
+                                                              ),
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[0]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[1]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[2]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[3]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[4]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                                TextSpan(
+                                                                  text:
+                                                                      " ${parts[5]} ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              text: "Amount: ",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color:
+                                                                    Colors
+                                                                        .black87,
+                                                                fontSize:
+                                                                    getFontSize(
+                                                                      context,
+                                                                      -2,
+                                                                    ),
+                                                              ),
+                                                              children: [
+                                                                TextSpan(
+                                                                  text:
+                                                                      " \$${double.parse(dashboardController.orderHistoryModel.value.orders?[j].total.toString() ?? "0").toStringAsFixed(2)}",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color:
+                                                                        AppColors
+                                                                            .nakedSyrup,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      dashboardController
+                                                              .orderHistoryModel
+                                                              .value
+                                                              .orders![j]
+                                                              .items!
+                                                              .isNotEmpty
+                                                          ? SizedBox(
+                                                            height: 70,
+                                                            child: ListView.separated(
+                                                              itemCount:
+                                                                  dashboardController
+                                                                      .orderHistoryModel
+                                                                      .value
+                                                                      .orders?[j]
+                                                                      .items
+                                                                      ?.length ??
+                                                                  0,
+                                                              separatorBuilder: (
+                                                                context,
+                                                                i,
+                                                              ) {
+                                                                return SizedBox(
+                                                                  width: 10,
+                                                                );
+                                                              },
+                                                              physics:
+                                                                  ScrollPhysics(),
+                                                              shrinkWrap: true,
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              itemBuilder: (
+                                                                context,
+                                                                x,
+                                                              ) {
+                                                                if (dashboardController
                                                                         .orderHistoryModel
                                                                         .value
                                                                         .orders?[j]
                                                                         .items?[x]
                                                                         .image
-                                                                        .toString() ??
-                                                                    "",
-                                                              );
-                                                            } else {
-                                                              return const SizedBox();
-                                                            }
-                                                          },
-                                                        ),
-                                                      )
-                                                      : const SizedBox(),
-                                                  Text(
-                                                    "Order Id:  ${dashboardController.orderHistoryModel.value.orders?[j].orderId}",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Order  ${dashboardController.orderHistoryModel.value.orders?[j].status}",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        "Placed on at $convertedDate",
-                                                      ),
-                                                      Text(
-                                                        "\$${double.parse(dashboardController.orderHistoryModel.value.orders?[j].total.toString() ?? "0").toStringAsFixed(2)}",
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              AppColors
-                                                                  .nakedSyrup,
-                                                        ),
-                                                      ),
+                                                                        .toString()
+                                                                        .isNotEmpty ==
+                                                                    true) {
+                                                                  return Image.network(
+                                                                    dashboardController
+                                                                            .orderHistoryModel
+                                                                            .value
+                                                                            .orders?[j]
+                                                                            .items?[x]
+                                                                            .image
+                                                                            .toString() ??
+                                                                        "",
+                                                                  );
+                                                                } else {
+                                                                  return const SizedBox();
+                                                                }
+                                                              },
+                                                            ),
+                                                          )
+                                                          : const SizedBox(),
                                                     ],
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          dashboardController
+                                                                      .orderHistoryModel
+                                                                      .value
+                                                                      .orders?[j]
+                                                                      .status
+                                                                      .toString() ==
+                                                                  "cancelled"
+                                                              ? Colors.red
+                                                              : dashboardController
+                                                                      .orderHistoryModel
+                                                                      .value
+                                                                      .orders?[j]
+                                                                      .status
+                                                                      .toString() ==
+                                                                  "completed"
+                                                              ? Color(
+                                                                0XFF008000,
+                                                              )
+                                                              : Color(
+                                                                0XFFFFBF00,
+                                                              ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            9,
+                                                          ),
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              left: 10,
+                                                              right: 10,
+                                                              top: 5,
+                                                              bottom: 5,
+                                                            ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                              dashboardController
+                                                                          .orderHistoryModel
+                                                                          .value
+                                                                          .orders?[j]
+                                                                          .status
+                                                                          .toString() ==
+                                                                      "cancelled"
+                                                                  ? Icons
+                                                                      .cancel_outlined
+                                                                  : dashboardController
+                                                                          .orderHistoryModel
+                                                                          .value
+                                                                          .orders?[j]
+                                                                          .status
+                                                                          .toString() ==
+                                                                      "completed"
+                                                                  ? Icons
+                                                                      .check_circle_outline
+                                                                  : Icons
+                                                                      .incomplete_circle_rounded,
+                                                              size: getFontSize(
+                                                                context,
+                                                                -0,
+                                                              ),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -15,
+                                                                  ),
+                                                            ),
+                                                            Text(
+                                                              dashboardController
+                                                                      .orderHistoryModel
+                                                                      .value
+                                                                      .orders?[j]
+                                                                      .status
+                                                                      .toString() ??
+                                                                  "",
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors
+                                                                        .white,
+                                                                fontSize:
+                                                                    getFontSize(
+                                                                      context,
+                                                                      -5,
+                                                                    ),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontFamily:
+                                                                    "Open Sans",
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),

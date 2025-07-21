@@ -501,7 +501,7 @@
     },
     {
       "name": "webview_flutter_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.7.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.8.0",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     },
@@ -519,9 +519,9 @@
     },
     {
       "name": "webview_flutter_wkwebview",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.22.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.22.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.6"
     },
     {
       "name": "win32",
@@ -557,6 +557,6 @@
   "generator": "pub",
   "generatorVersion": "3.8.1",
   "flutterRoot": "file:///Users/jalpa/flutter",
-  "flutterVersion": "3.32.6",
+  "flutterVersion": "3.32.7",
   "pubCache": "file:///Users/jalpa/.pub-cache"
 }

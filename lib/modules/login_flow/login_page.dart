@@ -235,7 +235,9 @@ class LoginPage extends StatelessWidget {
                                               recognizer:
                                                   TapGestureRecognizer()
                                                     ..onTap = () {
-                                                      Get.to(RegisterPage());
+                                                      Get.offAll(
+                                                        RegisterPage(),
+                                                      );
                                                     },
                                             ),
                                           ],

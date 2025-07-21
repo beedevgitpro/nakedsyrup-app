@@ -26,6 +26,7 @@ class _ProductPageState extends State<ProductPage> {
     // TODO: implement initState
     dashboardController.selectedVariance.value = "";
     dashboardController.selectedVariations.value = Variations();
+    dashboardController.findCart();
     dashboardController.currentIndex = 0;
     allImages.add(widget.products.image ?? "");
     allImages.addAll(widget.products.gallery ?? []);
@@ -47,9 +48,6 @@ class _ProductPageState extends State<ProductPage> {
       price =
           "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dashboardController.findCart();
-    });
     super.initState();
   }
 
@@ -89,6 +87,7 @@ class _ProductPageState extends State<ProductPage> {
           },
         ),
         context,
+        actions: [dashboardController.cartUI()],
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),

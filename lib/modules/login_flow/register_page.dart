@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     // TODO: implement initState
     dashboardController.getCountryList();
+    dashboardController.enableRegistration.value = false;
     controler =
         WebViewControllerPlus()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -34,7 +35,6 @@ class _RegisterPageState extends State<RegisterPage> {
             'Captcha',
             onMessageReceived: (message) async {
               final token = message.message;
-              print('reCAPTCHA token received: $token');
               var verify = await ApiClass().verifyCaptchaToken(token);
               if (verify != null) {
                 if (verify['success'] == true) {
@@ -43,19 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
               }
             },
           )
-          // ..addJavaScriptChannel(
-          //   'CaptchaClicked',
-          //   onMessageReceived: (message) async {
-          //     dashboardController.isVerifying.value = true;
-          //     var respose = await ApiClass().verifyCaptcha(message.message);
-          //     Future.delayed(const Duration(seconds: 2), () {
-          //       if (!dashboardController.isCaptchaVerified.value) {
-          //         dashboardController.isImageChallengeLikelyVisible.value =
-          //             true;
-          //       }
-          //     });
-          //   },
-          // )
           ..loadRequest(
             Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
           );
@@ -65,16 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
-        'Register',
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        context,
-      ),
+      appBar: AppBarWidget('Register', const SizedBox(), context),
       body: Obx(
         () =>
             dashboardController.getCheckOut.value
@@ -108,7 +86,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller:
                                     dashboardController.firstNameController,
                                 lable: 'First Name',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "First name is required!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -118,7 +101,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller:
                                     dashboardController.lastNameController,
                                 lable: 'Last Name',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Last name is required!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -129,10 +117,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                 keyboardType: TextInputType.number,
                                 maxLength: 10,
                                 lable: 'Phone',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Phone number is required!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 10),
+                                padding: const EdgeInsets.only(top: 0),
                                 child: textLabel(
                                   'Company Name',
                                   context,
@@ -186,16 +179,20 @@ class _RegisterPageState extends State<RegisterPage> {
                                         })
                                         .toList(),
                                 function: (value) {
-                                  if (value != null) {
-                                    dashboardController.selectedCountry.value =
-                                        value;
-                                    dashboardController.selectedState.value =
-                                        "";
-                                    dashboardController.getStateList(
-                                      value,
-                                      false,
-                                    );
+                                  if (value != null ||
+                                      value.trim().isNotEmpty) {
+                                    // dashboardController.selectedCountry.value =
+                                    //     value;
+                                    // dashboardController.selectedState.value =
+                                    //     "";
+                                    // dashboardController.getStateList(
+                                    //   value,
+                                    //   false,
+                                    // );
+                                  } else {
+                                    return "Please select country";
                                   }
+                                  return null;
                                 },
                               ),
 
@@ -211,7 +208,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller:
                                     dashboardController.streetAddressController,
                                 lable: 'Street address',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Add your address!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               AppTextFormField(
                                 controller:
@@ -227,7 +229,12 @@ class _RegisterPageState extends State<RegisterPage> {
                               AppTextFormField(
                                 controller: dashboardController.townController,
                                 lable: 'Town / City',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Add town or city name!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -270,7 +277,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     );
                                                   })
                                                   .toList(),
-                                          function: (value) {},
+                                          function: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return "State name is required!";
+                                            }
+                                            return null; // <-- must return null if valid
+                                          },
                                         ),
                               ),
                               Padding(
@@ -286,7 +299,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                     dashboardController.postCodeController,
                                 keyboardType: TextInputType.number,
                                 lable: 'Postcode / ZIP',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Please add postcode!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -297,7 +315,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                     dashboardController.userNameController,
 
                                 lable: 'User Name',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "user name is required!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -309,9 +332,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               AppTextFormField(
                                 controller: dashboardController.emailController,
-
+                                keyboardType: TextInputType.emailAddress,
                                 lable: 'Email address',
-                                function: (value) {},
+                                function: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "email address is required!";
+                                  }
+                                  return null; // <-- must return null if valid
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -326,7 +354,35 @@ class _RegisterPageState extends State<RegisterPage> {
                                   controller:
                                       dashboardController.passwordController,
                                   lable: 'Password',
-                                  function: (value) {},
+                                  function: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return "Password is required!";
+                                    }
+
+                                    if (value.length < 6) {
+                                      return "Password must be at least 6 characters.";
+                                    }
+                                    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                                      return "Password must contain at least one uppercase letter.";
+                                    }
+
+                                    if (!RegExp(r'[a-z]').hasMatch(value)) {
+                                      return "Password must contain at least one lowercase letter.";
+                                    }
+
+                                    if (!RegExp(r'\d').hasMatch(value)) {
+                                      return "Password must contain at least one number.";
+                                    }
+
+                                    if (!RegExp(
+                                      r'[!@#\$&*~%^()\-_=+{}[\]|;:"<>,.?/]',
+                                    ).hasMatch(value)) {
+                                      return "Password must contain at least one special character.";
+                                    }
+
+                                    return null;
+                                  },
+
                                   suffix: InkWell(
                                     onTap: () {
                                       dashboardController
@@ -352,20 +408,23 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     Obx(() {
-                      double height;
+                      final screenWidth = MediaQuery.of(context).size.width;
+                      final screenHeight = MediaQuery.of(context).size.height;
 
-                      if (dashboardController.enableRegistration.value) {
-                        height = Get.width >= 600 ? 200 : 30;
-                      } else {
-                        height = Get.width >= 600 ? 500 : 200;
-                      }
+                      double width =
+                          screenWidth >= 600
+                              ? (screenWidth / 2) - 50
+                              : screenWidth - 50;
+                      double height =
+                          dashboardController.enableRegistration.value
+                              ? screenHeight *
+                                  0.1 // 20% of screen height
+                              : screenHeight * 0.24; // 50% of screen height
+
                       return Center(
                         child: SizedBox(
                           height: height,
-                          width:
-                              Get.width >= 600
-                                  ? (Get.width / 2) - 50
-                                  : Get.width - 50,
+                          width: width,
                           child: WebViewWidget(controller: controler),
                         ),
                       );
@@ -457,7 +516,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   recognizer:
                                       TapGestureRecognizer()
                                         ..onTap = () {
-                                          Get.to(LoginPage());
+                                          Get.offAll(LoginPage());
                                         },
                                 ),
                               ],

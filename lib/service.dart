@@ -30,6 +30,10 @@ class ApiClass {
           await prefs.setString("token", decodedResponse['token']);
           await prefs.setString("name", decodedResponse['user']['name']);
           await prefs.setInt("user_id", decodedResponse['user']['id']);
+          await prefs.setString(
+            "pay_by_account",
+            decodedResponse['user']['pay_by_account'],
+          );
         }
         return decodedResponse;
       } else {
@@ -410,6 +414,138 @@ class ApiClass {
       );
 
       print("DioError:e");
+    } on Exception catch (e) {
+      print("Error : $e");
+      getT.Get.snackbar(
+        "Technical Error",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
+  FutureOr<dynamic> applyCoupon(coupon) async {
+    try {
+      String url = '${AppStrings.baseUrl}apply-coupon';
+      print("Add to cart URL::$url");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? "";
+      FormData formData = FormData.fromMap({'coupon_code': coupon});
+      print("checkout URL:: $coupon::");
+      final response = await Dio().post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            'Authorization': 'Bearer ${prefs.getString('token')}',
+          },
+        ),
+      );
+      print("checkout : ${response}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var decodedResponse = response.data;
+        print("checkout api responce : $decodedResponse");
+        return decodedResponse;
+      } else {
+        getT.Get.snackbar(
+          "Technical Error",
+          "",
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } on TimeoutException catch (_) {
+      getT.Get.snackbar(
+        "No Internet Connection",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on SocketException catch (e) {
+      print(e);
+      getT.Get.snackbar(
+        "SocketException",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on DioException catch (e) {
+      getT.Get.snackbar(
+        "Technical Error $e",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+
+      print("DioError:e $e");
+    } on Exception catch (e) {
+      print("Error : $e");
+      getT.Get.snackbar(
+        "Technical Error",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
+  FutureOr<dynamic> removeCoupon(coupon) async {
+    try {
+      String url = '${AppStrings.baseUrl}remove-coupon';
+      print("Add to cart URL::$url");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? "";
+      FormData formData = FormData.fromMap({'coupon_code': coupon});
+      print("checkout URL:: $coupon::");
+      final response = await Dio().post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            'Authorization': 'Bearer ${prefs.getString('token')}',
+          },
+        ),
+      );
+      print("checkout : ${response}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var decodedResponse = response.data;
+        print("checkout api responce : $decodedResponse");
+        return decodedResponse;
+      } else {
+        getT.Get.snackbar(
+          "Technical Error",
+          "",
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } on TimeoutException catch (_) {
+      getT.Get.snackbar(
+        "No Internet Connection",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on SocketException catch (e) {
+      print(e);
+      getT.Get.snackbar(
+        "SocketException",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on DioException catch (e) {
+      getT.Get.snackbar(
+        "Technical Error $e",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+
+      print("DioError:e $e");
     } on Exception catch (e) {
       print("Error : $e");
       getT.Get.snackbar(

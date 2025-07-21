@@ -21,11 +21,11 @@ class CheckOutPage extends StatefulWidget {
 class _CheckOutPageState extends State<CheckOutPage> {
   DashboardController dashboardController = Get.put(DashboardController());
   late WebViewControllerPlus controler;
-
   @override
   void initState() {
     // TODO: implement initState
     dashboardController.differentAddress.value = false;
+    dashboardController.enableCheckOut.value = false;
     controler =
         WebViewControllerPlus()
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -42,23 +42,34 @@ class _CheckOutPageState extends State<CheckOutPage> {
               }
             },
           )
-          // ..addJavaScriptChannel(
-          //   'CaptchaClicked',
-          //   onMessageReceived: (message) async {
-          //     dashboardController.isVerifying.value = true;
-          //     var respose = await ApiClass().verifyCaptcha(message.message);
-          //     Future.delayed(const Duration(seconds: 2), () {
-          //       if (!dashboardController.isCaptchaVerified.value) {
-          //         dashboardController.isImageChallengeLikelyVisible.value =
-          //             true;
-          //       }
-          //     });
-          //   },
-          // )
+          ..addJavaScriptChannel(
+            'Resize',
+            onMessageReceived: (message) {
+              print("is collapse :::: ${message.message}");
+              if (message.message == "expand") {
+                Future.delayed(Duration(milliseconds: 10), () {
+                  dashboardController.recaptchaHeight.value = 400;
+                  setState(() {});
+                }); // expanded
+              } else if (message.message == "collapse") {
+                dashboardController.recaptchaHeight.value = 0;
+                Future.delayed(Duration(milliseconds: 10), () {
+                  dashboardController.recaptchaHeight.value = 500;
+                  setState(() {});
+                });
+              }
+            },
+          )
           ..loadRequest(
             Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
+          )
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onPageFinished: (_) {
+                controler.runJavaScript('document.body.style.zoom="1";');
+              },
+            ),
           );
-    // loadHtmlFromAssets();
     super.initState();
   }
 
@@ -146,7 +157,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     dashboardController
                                                         .firstNameController,
                                                 lable: 'First Name',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "First name is required!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -163,7 +180,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     dashboardController
                                                         .lastNameController,
                                                 lable: 'Last Name',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "Last name is required!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -235,7 +258,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           );
                                                         })
                                                         .toList(),
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value != null ||
+                                                      value.trim().isNotEmpty) {
+                                                    // dashboardController.selectedCountry.value =
+                                                    //     value;
+                                                    // dashboardController.selectedState.value =
+                                                    //     "";
+                                                    // dashboardController.getStateList(
+                                                    //   value,
+                                                    //   false,
+                                                    // );
+                                                  } else {
+                                                    return "Please select country";
+                                                  }
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -252,7 +290,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     dashboardController
                                                         .streetAddressController,
                                                 lable: 'Street address',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "Add your address!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               AppTextFormField(
                                                 controller:
@@ -276,7 +320,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     dashboardController
                                                         .townController,
                                                 lable: 'Town / City',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "Add town or city name!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -341,7 +391,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                     );
                                                                   })
                                                                   .toList(),
-                                                          function: (value) {},
+                                                          function: (value) {
+                                                            if (value == null ||
+                                                                value
+                                                                    .trim()
+                                                                    .isEmpty) {
+                                                              return "State name is required!";
+                                                            }
+                                                            return null; // <-- must return null if valid
+                                                          },
                                                         ),
                                               ),
                                               Padding(
@@ -361,7 +419,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 keyboardType:
                                                     TextInputType.number,
                                                 lable: 'Postcode / ZIP',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "Please add postcode!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -380,7 +444,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 keyboardType:
                                                     TextInputType.number,
                                                 lable: 'Phone',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "Phone number is required!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -398,7 +468,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         .emailController,
 
                                                 lable: 'Email address',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  if (value == null ||
+                                                      value.trim().isEmpty) {
+                                                    return "email address is required!";
+                                                  }
+                                                  return null; // <-- must return null if valid
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -534,271 +610,347 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               padding: const EdgeInsets.only(
                                                 bottom: 10,
                                               ),
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'First Name',
-                                                      context,
-                                                      true,
+                                              child: Form(
+                                                key:
+                                                    dashboardController
+                                                        .shippingAddressFormKey,
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'First Name',
+                                                        context,
+                                                        true,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  AppTextFormField(
-                                                    controller:
-                                                        dashboardController
-                                                            .firstNameDiffController,
-                                                    lable: 'First Name',
-                                                    function: (value) {},
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Last Name',
-                                                      context,
-                                                      true,
+                                                    AppTextFormField(
+                                                      controller:
+                                                          dashboardController
+                                                              .firstNameDiffController,
+                                                      lable: 'First Name',
+                                                      function: (value) {
+                                                        if (value == null ||
+                                                            value
+                                                                .trim()
+                                                                .isEmpty) {
+                                                          return "First name is required!";
+                                                        }
+                                                        return null; // <-- must return null if valid
+                                                      },
                                                     ),
-                                                  ),
-                                                  AppTextFormField(
-                                                    controller:
-                                                        dashboardController
-                                                            .lastNameDiffController,
-                                                    lable: 'Last Name',
-                                                    function: (value) {},
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Company Name',
-                                                      context,
-                                                      false,
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Last Name',
+                                                        context,
+                                                        true,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  AppTextFormField(
-                                                    controller:
-                                                        dashboardController
-                                                            .companyNameDiffController,
-                                                    lable: 'Company Name',
-                                                    function: (value) {},
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Country / Region',
-                                                      context,
-                                                      true,
+                                                    AppTextFormField(
+                                                      controller:
+                                                          dashboardController
+                                                              .lastNameDiffController,
+                                                      lable: 'Last Name',
+                                                      function: (value) {
+                                                        if (value == null ||
+                                                            value
+                                                                .trim()
+                                                                .isEmpty) {
+                                                          return "Last name is required!";
+                                                        }
+                                                        return null; // <-- must return null if valid
+                                                      },
                                                     ),
-                                                  ),
-                                                  AppDropDownField(
-                                                    lable: 'Country / Region',
-                                                    value:
-                                                        dashboardController
-                                                                .selectedCountryDiff
-                                                                .value
-                                                                .isNotEmpty
-                                                            ? dashboardController
-                                                                .selectedCountryDiff
-                                                                .value
-                                                            : null,
-                                                    itemList:
-                                                        dashboardController.countryMap.value.entries.map((
-                                                          entry,
-                                                        ) {
-                                                          return DropdownMenuItem<
-                                                            String
-                                                          >(
-                                                            onTap: () {
-                                                              dashboardController
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Company Name',
+                                                        context,
+                                                        false,
+                                                      ),
+                                                    ),
+                                                    AppTextFormField(
+                                                      controller:
+                                                          dashboardController
+                                                              .companyNameDiffController,
+                                                      lable: 'Company Name',
+                                                      function: (value) {},
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Country / Region',
+                                                        context,
+                                                        true,
+                                                      ),
+                                                    ),
+                                                    AppDropDownField(
+                                                      lable: 'Country / Region',
+                                                      value:
+                                                          dashboardController
                                                                   .selectedCountryDiff
-                                                                  .value = entry
-                                                                      .key;
-                                                              dashboardController
-                                                                  .selectedStateDiff
-                                                                  .value = "";
-                                                              dashboardController
-                                                                  .getStateList(
-                                                                    entry.key,
-                                                                    true,
-                                                                  );
-                                                            },
-                                                            value:
-                                                                entry
-                                                                    .key, // country code (e.g., "IN")
-                                                            child: Text(
-                                                              entry.value,
-                                                            ), // country name (e.g., "India")
-                                                          );
-                                                        }).toList(),
-                                                    function: (value) {},
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Street address',
-                                                      context,
-                                                      true,
-                                                    ),
-                                                  ),
-                                                  AppTextFormField(
-                                                    controller:
-                                                        dashboardController
-                                                            .streetAddressDiffController,
-                                                    lable: 'Street address',
-                                                    function: (value) {},
-                                                  ),
-                                                  AppTextFormField(
-                                                    controller:
-                                                        dashboardController
-                                                            .streetAddress2DiffController,
-                                                    lable: 'Street address',
-                                                    function: (value) {},
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Town / City',
-                                                      context,
-                                                      true,
-                                                    ),
-                                                  ),
-                                                  Focus(
-                                                    child: AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .townDiffController,
-                                                      lable: 'Town / City',
-                                                      function: (value) {},
-                                                    ),
-                                                    onFocusChange: (hasFocus) {
-                                                      if (hasFocus) {
-                                                        print(
-                                                          'Name GAINED focus',
-                                                        );
-                                                      } else {
-                                                        dashboardController
-                                                            .getShippingMethods();
-                                                      }
-                                                    },
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'State / County',
-                                                      context,
-                                                      true,
-                                                    ),
-                                                  ),
-                                                  Obx(
-                                                    () =>
-                                                        dashboardController
-                                                                .getCheckOut
-                                                                .value
-                                                            ? Center(
-                                                              child: SizedBox(
-                                                                width: 50,
-                                                                height: 50,
-                                                                child: CircularProgressIndicator(
-                                                                  color:
-                                                                      AppColors
-                                                                          .greenColor,
-                                                                ),
-                                                              ),
-                                                            )
-                                                            : AppDropDownField(
-                                                              lable:
-                                                                  'State / County',
-                                                              value:
-                                                                  dashboardController
-                                                                          .stateMapDiff
-                                                                          .value
-                                                                          .containsKey(
-                                                                            dashboardController.selectedStateDiff.value,
-                                                                          )
-                                                                      ? dashboardController
-                                                                          .selectedStateDiff
-                                                                          .value
-                                                                      : null,
-                                                              itemList:
-                                                                  dashboardController.stateMapDiff.value.entries.map((
-                                                                    entry,
-                                                                  ) {
-                                                                    return DropdownMenuItem<
-                                                                      String
-                                                                    >(
-                                                                      onTap: () {
-                                                                        dashboardController
-                                                                            .selectedStateDiff
-                                                                            .value = entry.key;
-                                                                        dashboardController
-                                                                            .getShippingMethods();
-                                                                      },
-                                                                      value:
-                                                                          entry
-                                                                              .key,
-                                                                      child: Text(
-                                                                        entry
-                                                                            .value,
-                                                                      ),
+                                                                  .value
+                                                                  .isNotEmpty
+                                                              ? dashboardController
+                                                                  .selectedCountryDiff
+                                                                  .value
+                                                              : null,
+                                                      itemList:
+                                                          dashboardController.countryMap.value.entries.map((
+                                                            entry,
+                                                          ) {
+                                                            return DropdownMenuItem<
+                                                              String
+                                                            >(
+                                                              onTap: () {
+                                                                dashboardController
+                                                                    .selectedCountryDiff
+                                                                    .value = entry
+                                                                        .key;
+                                                                dashboardController
+                                                                    .selectedStateDiff
+                                                                    .value = "";
+                                                                dashboardController
+                                                                    .getStateList(
+                                                                      entry.key,
+                                                                      true,
                                                                     );
-                                                                  }).toList(),
-                                                              function:
-                                                                  (value) {},
-                                                            ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          top: 10,
-                                                        ),
-                                                    child: textLabel(
-                                                      'Postcode / ZIP',
-                                                      context,
-                                                      true,
+                                                              },
+                                                              value:
+                                                                  entry
+                                                                      .key, // country code (e.g., "IN")
+                                                              child: Text(
+                                                                entry.value,
+                                                              ), // country name (e.g., "India")
+                                                            );
+                                                          }).toList(),
+                                                      function: (value) {
+                                                        if (value != null ||
+                                                            value
+                                                                .trim()
+                                                                .isNotEmpty) {
+                                                          // dashboardController.selectedCountry.value =
+                                                          //     value;
+                                                          // dashboardController.selectedState.value =
+                                                          //     "";
+                                                          // dashboardController.getStateList(
+                                                          //   value,
+                                                          //   false,
+                                                          // );
+                                                        } else {
+                                                          return "Please select country";
+                                                        }
+                                                        return null;
+                                                      },
                                                     ),
-                                                  ),
-                                                  Focus(
-                                                    child: AppTextFormField(
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Street address',
+                                                        context,
+                                                        true,
+                                                      ),
+                                                    ),
+                                                    AppTextFormField(
                                                       controller:
                                                           dashboardController
-                                                              .postCodeDiffController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      lable: 'Postcode / ZIP',
+                                                              .streetAddressDiffController,
+                                                      lable: 'Street address',
+                                                      function: (value) {
+                                                        if (value == null ||
+                                                            value
+                                                                .trim()
+                                                                .isEmpty) {
+                                                          return "Add your address!";
+                                                        }
+                                                        return null; // <-- must return null if valid
+                                                      },
+                                                    ),
+                                                    AppTextFormField(
+                                                      controller:
+                                                          dashboardController
+                                                              .streetAddress2DiffController,
+                                                      lable: 'Street address',
                                                       function: (value) {},
                                                     ),
-                                                    onFocusChange: (hasFocus) {
-                                                      if (hasFocus) {
-                                                        print(
-                                                          'Name GAINED focus',
-                                                        );
-                                                      } else {
-                                                        dashboardController
-                                                            .getShippingMethods();
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Town / City',
+                                                        context,
+                                                        true,
+                                                      ),
+                                                    ),
+                                                    Focus(
+                                                      child: AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .townDiffController,
+                                                        lable: 'Town / City',
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "Add town or city name!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
+                                                      ),
+                                                      onFocusChange: (
+                                                        hasFocus,
+                                                      ) {
+                                                        if (hasFocus) {
+                                                          print(
+                                                            'Name GAINED focus',
+                                                          );
+                                                        } else {
+                                                          dashboardController
+                                                              .getShippingMethods();
+                                                        }
+                                                      },
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'State / County',
+                                                        context,
+                                                        true,
+                                                      ),
+                                                    ),
+                                                    Obx(
+                                                      () =>
+                                                          dashboardController
+                                                                  .getCheckOut
+                                                                  .value
+                                                              ? Center(
+                                                                child: SizedBox(
+                                                                  width: 50,
+                                                                  height: 50,
+                                                                  child: CircularProgressIndicator(
+                                                                    color:
+                                                                        AppColors
+                                                                            .greenColor,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                              : AppDropDownField(
+                                                                lable:
+                                                                    'State / County',
+                                                                value:
+                                                                    dashboardController
+                                                                            .stateMapDiff
+                                                                            .value
+                                                                            .containsKey(
+                                                                              dashboardController.selectedStateDiff.value,
+                                                                            )
+                                                                        ? dashboardController
+                                                                            .selectedStateDiff
+                                                                            .value
+                                                                        : null,
+                                                                itemList:
+                                                                    dashboardController.stateMapDiff.value.entries.map((
+                                                                      entry,
+                                                                    ) {
+                                                                      return DropdownMenuItem<
+                                                                        String
+                                                                      >(
+                                                                        onTap: () {
+                                                                          dashboardController
+                                                                              .selectedStateDiff
+                                                                              .value = entry.key;
+                                                                          dashboardController
+                                                                              .getShippingMethods();
+                                                                        },
+                                                                        value:
+                                                                            entry.key,
+                                                                        child: Text(
+                                                                          entry
+                                                                              .value,
+                                                                        ),
+                                                                      );
+                                                                    }).toList(),
+                                                                function: (
+                                                                  value,
+                                                                ) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .trim()
+                                                                          .isEmpty) {
+                                                                    return "State name is required!";
+                                                                  }
+                                                                  return null; // <-- must return null if valid
+                                                                },
+                                                              ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            top: 10,
+                                                          ),
+                                                      child: textLabel(
+                                                        'Postcode / ZIP',
+                                                        context,
+                                                        true,
+                                                      ),
+                                                    ),
+                                                    Focus(
+                                                      child: AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .postCodeDiffController,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                        lable: 'Postcode / ZIP',
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "Please add postcode!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
+                                                      ),
+                                                      onFocusChange: (
+                                                        hasFocus,
+                                                      ) {
+                                                        if (hasFocus) {
+                                                          print(
+                                                            'Name GAINED focus',
+                                                          );
+                                                        } else {
+                                                          dashboardController
+                                                              .getShippingMethods();
+                                                        }
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -935,7 +1087,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                               "",
                                                         ),
                                                         subtitle: Text(
-                                                          "\$${dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw}",
+                                                          "\$${double.parse(dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw ?? "0.0").toStringAsFixed(2)}",
                                                           style: TextStyle(
                                                             fontSize: 18,
                                                             fontWeight:
@@ -959,20 +1111,82 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                     }
                                   }),
                                   Obx(() {
-                                    double height;
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 10,
+                                        left: 8,
+                                        right: 8,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 10,
+                                            ),
+                                            child: Text(
+                                              'Payment Method',
+                                              style: TextStyle(
+                                                fontFamily: "Montserrat",
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  0,
+                                                ),
+                                                color: Colors.black87,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          Card(
+                                            color: Colors.white,
+                                            child: RadioListTile(
+                                              activeColor: AppColors.nakedSyrup,
+                                              value: 'cod',
+                                              groupValue:
+                                                  dashboardController
+                                                      .selectedPaymentMethods
+                                                      .value,
+                                              onChanged: (value) {
+                                                dashboardController
+                                                    .selectedPaymentMethods
+                                                    .value = value!;
+                                              },
+                                              title: Text("Pay by account"),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                  Obx(() {
+                                    final screenWidth =
+                                        MediaQuery.of(context).size.width;
+                                    final screenHeight =
+                                        MediaQuery.of(context).size.height;
 
-                                    if (dashboardController
-                                        .enableCheckOut
-                                        .value) {
-                                      height = 200;
-                                    } else {
-                                      height = 500; // Default
-                                    }
+                                    double width =
+                                        screenWidth >= 600
+                                            ? (screenWidth / 2) - 50
+                                            : screenWidth - 50;
+                                    double height =
+                                        dashboardController
+                                                .enableRegistration
+                                                .value
+                                            ? screenHeight *
+                                                0.1 // 20% of screen height
+                                            : screenWidth >= 600
+                                            ? screenHeight * 0.36
+                                            : screenHeight *
+                                                0.24; // 50% of screen height
 
                                     return Center(
                                       child: SizedBox(
-                                        height: height,
-                                        width: (Get.width / 2) - 80,
+                                        height:
+                                            dashboardController
+                                                .recaptchaHeight
+                                                .value,
+                                        width: width,
                                         child: WebViewWidget(
                                           controller: controler,
                                         ),
@@ -1036,7 +1250,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           ],
                         )
                         : Column(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Form(
                               key: dashboardController.addressFormKey,
@@ -1080,7 +1293,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   dashboardController
                                                       .firstNameController,
                                               lable: 'First Name',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "First name is required!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1097,7 +1316,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   dashboardController
                                                       .lastNameController,
                                               lable: 'Last Name',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "Last name is required!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1169,7 +1394,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         );
                                                       })
                                                       .toList(),
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value != null ||
+                                                    value.trim().isNotEmpty) {
+                                                  // dashboardController.selectedCountry.value =
+                                                  //     value;
+                                                  // dashboardController.selectedState.value =
+                                                  //     "";
+                                                  // dashboardController.getStateList(
+                                                  //   value,
+                                                  //   false,
+                                                  // );
+                                                } else {
+                                                  return "Please select country";
+                                                }
+                                                return null;
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1186,7 +1426,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   dashboardController
                                                       .streetAddressController,
                                               lable: 'Street address',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "Add your address!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             AppTextFormField(
                                               controller:
@@ -1210,7 +1456,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   dashboardController
                                                       .townController,
                                               lable: 'Town / City',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "Add town or city name!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1274,7 +1526,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                   );
                                                                 })
                                                                 .toList(),
-                                                        function: (value) {},
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "State name is required!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
                                                       ),
                                             ),
                                             Padding(
@@ -1294,7 +1554,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               keyboardType:
                                                   TextInputType.number,
                                               lable: 'Postcode / ZIP',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "Please add postcode!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1313,7 +1579,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               keyboardType:
                                                   TextInputType.number,
                                               lable: 'Phone',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "Phone number is required!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1331,7 +1603,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       .emailController,
 
                                               lable: 'Email address',
-                                              function: (value) {},
+                                              function: (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return "email address is required!";
+                                                }
+                                                return null; // <-- must return null if valid
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1458,275 +1736,347 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 padding: const EdgeInsets.only(
                                                   bottom: 10,
                                                 ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'First Name',
-                                                        context,
-                                                        true,
+                                                child: Form(
+                                                  key:
+                                                      dashboardController
+                                                          .shippingAddressFormKey,
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'First Name',
+                                                          context,
+                                                          true,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .firstNameDiffController,
-                                                      lable: 'First Name',
-                                                      function: (value) {},
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Last Name',
-                                                        context,
-                                                        true,
+                                                      AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .firstNameDiffController,
+                                                        lable: 'First Name',
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "First name is required!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
                                                       ),
-                                                    ),
-                                                    AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .lastNameDiffController,
-                                                      lable: 'Last Name',
-                                                      function: (value) {},
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Company Name',
-                                                        context,
-                                                        false,
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Last Name',
+                                                          context,
+                                                          true,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .companyNameDiffController,
-                                                      lable: 'Company Name',
-                                                      function: (value) {},
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Country / Region',
-                                                        context,
-                                                        true,
+                                                      AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .lastNameDiffController,
+                                                        lable: 'Last Name',
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "Last name is required!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
                                                       ),
-                                                    ),
-                                                    AppDropDownField(
-                                                      lable: 'Country / Region',
-                                                      value:
-                                                          dashboardController
-                                                                  .selectedCountryDiff
-                                                                  .value
-                                                                  .isNotEmpty
-                                                              ? dashboardController
-                                                                  .selectedCountryDiff
-                                                                  .value
-                                                              : null,
-                                                      itemList:
-                                                          dashboardController.countryMap.value.entries.map((
-                                                            entry,
-                                                          ) {
-                                                            return DropdownMenuItem<
-                                                              String
-                                                            >(
-                                                              onTap: () {
-                                                                dashboardController
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Company Name',
+                                                          context,
+                                                          false,
+                                                        ),
+                                                      ),
+                                                      AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .companyNameDiffController,
+                                                        lable: 'Company Name',
+                                                        function: (value) {},
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Country / Region',
+                                                          context,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                      AppDropDownField(
+                                                        lable:
+                                                            'Country / Region',
+                                                        value:
+                                                            dashboardController
                                                                     .selectedCountryDiff
-                                                                    .value = entry
-                                                                        .key;
-                                                                dashboardController
-                                                                    .selectedStateDiff
-                                                                    .value = "";
-                                                                dashboardController
-                                                                    .getStateList(
-                                                                      entry.key,
-                                                                      true,
-                                                                    );
-                                                              },
-                                                              value:
-                                                                  entry
-                                                                      .key, // country code (e.g., "IN")
-                                                              child: Text(
-                                                                entry.value,
-                                                              ), // country name (e.g., "India")
-                                                            );
-                                                          }).toList(),
-                                                      function: (value) {},
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Street address',
-                                                        context,
-                                                        true,
-                                                      ),
-                                                    ),
-                                                    AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .streetAddressDiffController,
-                                                      lable: 'Street address',
-                                                      function: (value) {},
-                                                    ),
-                                                    AppTextFormField(
-                                                      controller:
-                                                          dashboardController
-                                                              .streetAddress2DiffController,
-                                                      lable: 'Street address',
-                                                      function: (value) {},
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Town / City',
-                                                        context,
-                                                        true,
-                                                      ),
-                                                    ),
-                                                    Focus(
-                                                      child: AppTextFormField(
-                                                        controller:
-                                                            dashboardController
-                                                                .townDiffController,
-                                                        lable: 'Town / City',
-                                                        function: (value) {},
-                                                      ),
-                                                      onFocusChange: (
-                                                        hasFocus,
-                                                      ) {
-                                                        if (hasFocus) {
-                                                          print(
-                                                            'Name GAINED focus',
-                                                          );
-                                                        } else {
-                                                          dashboardController
-                                                              .getShippingMethods();
-                                                        }
-                                                      },
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'State / County',
-                                                        context,
-                                                        true,
-                                                      ),
-                                                    ),
-                                                    Obx(
-                                                      () =>
-                                                          dashboardController
-                                                                  .getCheckOut
-                                                                  .value
-                                                              ? Center(
-                                                                child: SizedBox(
-                                                                  width: 50,
-                                                                  height: 50,
-                                                                  child: CircularProgressIndicator(
-                                                                    color:
-                                                                        AppColors
-                                                                            .greenColor,
-                                                                  ),
-                                                                ),
-                                                              )
-                                                              : AppDropDownField(
-                                                                lable:
-                                                                    'State / County',
-                                                                value:
-                                                                    dashboardController
-                                                                            .stateMapDiff
-                                                                            .value
-                                                                            .containsKey(
-                                                                              dashboardController.selectedStateDiff.value,
-                                                                            )
-                                                                        ? dashboardController
-                                                                            .selectedStateDiff
-                                                                            .value
-                                                                        : null,
-                                                                itemList:
-                                                                    dashboardController.stateMapDiff.value.entries.map((
-                                                                      entry,
-                                                                    ) {
-                                                                      return DropdownMenuItem<
-                                                                        String
-                                                                      >(
-                                                                        onTap: () {
-                                                                          dashboardController
-                                                                              .selectedStateDiff
-                                                                              .value = entry.key;
-                                                                          dashboardController
-                                                                              .getShippingMethods();
-                                                                        },
-                                                                        value:
-                                                                            entry.key,
-                                                                        child: Text(
-                                                                          entry
-                                                                              .value,
-                                                                        ),
+                                                                    .value
+                                                                    .isNotEmpty
+                                                                ? dashboardController
+                                                                    .selectedCountryDiff
+                                                                    .value
+                                                                : null,
+                                                        itemList:
+                                                            dashboardController.countryMap.value.entries.map((
+                                                              entry,
+                                                            ) {
+                                                              return DropdownMenuItem<
+                                                                String
+                                                              >(
+                                                                onTap: () {
+                                                                  dashboardController
+                                                                      .selectedCountryDiff
+                                                                      .value = entry
+                                                                          .key;
+                                                                  dashboardController
+                                                                      .selectedStateDiff
+                                                                      .value = "";
+                                                                  dashboardController
+                                                                      .getStateList(
+                                                                        entry
+                                                                            .key,
+                                                                        true,
                                                                       );
-                                                                    }).toList(),
-                                                                function:
-                                                                    (value) {},
-                                                              ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                            top: 10,
-                                                          ),
-                                                      child: textLabel(
-                                                        'Postcode / ZIP',
-                                                        context,
-                                                        true,
+                                                                },
+                                                                value:
+                                                                    entry
+                                                                        .key, // country code (e.g., "IN")
+                                                                child: Text(
+                                                                  entry.value,
+                                                                ), // country name (e.g., "India")
+                                                              );
+                                                            }).toList(),
+                                                        function: (value) {
+                                                          if (value != null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isNotEmpty) {
+                                                            // dashboardController.selectedCountry.value =
+                                                            //     value;
+                                                            // dashboardController.selectedState.value =
+                                                            //     "";
+                                                            // dashboardController.getStateList(
+                                                            //   value,
+                                                            //   false,
+                                                            // );
+                                                          } else {
+                                                            return "Please select country";
+                                                          }
+                                                          return null;
+                                                        },
                                                       ),
-                                                    ),
-                                                    Focus(
-                                                      child: AppTextFormField(
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Street address',
+                                                          context,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                      AppTextFormField(
                                                         controller:
                                                             dashboardController
-                                                                .postCodeDiffController,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        lable: 'Postcode / ZIP',
+                                                                .streetAddressDiffController,
+                                                        lable: 'Street address',
+                                                        function: (value) {
+                                                          if (value == null ||
+                                                              value
+                                                                  .trim()
+                                                                  .isEmpty) {
+                                                            return "Add your address!";
+                                                          }
+                                                          return null; // <-- must return null if valid
+                                                        },
+                                                      ),
+                                                      AppTextFormField(
+                                                        controller:
+                                                            dashboardController
+                                                                .streetAddress2DiffController,
+                                                        lable: 'Street address',
                                                         function: (value) {},
                                                       ),
-                                                      onFocusChange: (
-                                                        hasFocus,
-                                                      ) {
-                                                        if (hasFocus) {
-                                                          print(
-                                                            'Name GAINED focus',
-                                                          );
-                                                        } else {
-                                                          dashboardController
-                                                              .getShippingMethods();
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Town / City',
+                                                          context,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                      Focus(
+                                                        child: AppTextFormField(
+                                                          controller:
+                                                              dashboardController
+                                                                  .townDiffController,
+                                                          lable: 'Town / City',
+                                                          function: (value) {
+                                                            if (value == null ||
+                                                                value
+                                                                    .trim()
+                                                                    .isEmpty) {
+                                                              return "Add town or city name!";
+                                                            }
+                                                            return null; // <-- must return null if valid
+                                                          },
+                                                        ),
+                                                        onFocusChange: (
+                                                          hasFocus,
+                                                        ) {
+                                                          if (hasFocus) {
+                                                            print(
+                                                              'Name GAINED focus',
+                                                            );
+                                                          } else {
+                                                            dashboardController
+                                                                .getShippingMethods();
+                                                          }
+                                                        },
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'State / County',
+                                                          context,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                      Obx(
+                                                        () =>
+                                                            dashboardController
+                                                                    .getCheckOut
+                                                                    .value
+                                                                ? Center(
+                                                                  child: SizedBox(
+                                                                    width: 50,
+                                                                    height: 50,
+                                                                    child: CircularProgressIndicator(
+                                                                      color:
+                                                                          AppColors
+                                                                              .greenColor,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                                : AppDropDownField(
+                                                                  lable:
+                                                                      'State / County',
+                                                                  value:
+                                                                      dashboardController
+                                                                              .stateMapDiff
+                                                                              .value
+                                                                              .containsKey(
+                                                                                dashboardController.selectedStateDiff.value,
+                                                                              )
+                                                                          ? dashboardController
+                                                                              .selectedStateDiff
+                                                                              .value
+                                                                          : null,
+                                                                  itemList:
+                                                                      dashboardController.stateMapDiff.value.entries.map((
+                                                                        entry,
+                                                                      ) {
+                                                                        return DropdownMenuItem<
+                                                                          String
+                                                                        >(
+                                                                          onTap: () {
+                                                                            dashboardController.selectedStateDiff.value =
+                                                                                entry.key;
+                                                                            dashboardController.getShippingMethods();
+                                                                          },
+                                                                          value:
+                                                                              entry.key,
+                                                                          child: Text(
+                                                                            entry.value,
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                  function: (
+                                                                    value,
+                                                                  ) {
+                                                                    if (value ==
+                                                                            null ||
+                                                                        value
+                                                                            .trim()
+                                                                            .isEmpty) {
+                                                                      return "State name is required!";
+                                                                    }
+                                                                    return null; // <-- must return null if valid
+                                                                  },
+                                                                ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              top: 10,
+                                                            ),
+                                                        child: textLabel(
+                                                          'Postcode / ZIP',
+                                                          context,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                      Focus(
+                                                        child: AppTextFormField(
+                                                          controller:
+                                                              dashboardController
+                                                                  .postCodeDiffController,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          lable:
+                                                              'Postcode / ZIP',
+                                                          function: (value) {
+                                                            if (value == null ||
+                                                                value
+                                                                    .trim()
+                                                                    .isEmpty) {
+                                                              return "Please add postcode!";
+                                                            }
+                                                            return null; // <-- must return null if valid
+                                                          },
+                                                        ),
+                                                        onFocusChange: (
+                                                          hasFocus,
+                                                        ) {
+                                                          if (hasFocus) {
+                                                            print(
+                                                              'Name GAINED focus',
+                                                            );
+                                                          } else {
+                                                            dashboardController
+                                                                .getShippingMethods();
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -1863,7 +2213,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         "",
                                                   ),
                                                   subtitle: Text(
-                                                    "\$${dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw}",
+                                                    "\$${double.parse(dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw ?? "0.0").toStringAsFixed(2)}",
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
@@ -1886,71 +2236,105 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               }
                             }),
                             Obx(() {
-                              if (dashboardController
-                                          .cartModel
-                                          .value
-                                          .cartItems
-                                          ?.isNotEmpty ==
-                                      true &&
-                                  (dashboardController
-                                      .selectedStateDiff
-                                      .value
-                                      .isNotEmpty)) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 0,
-                                    left: 8,
-                                    right: 8,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Card(
-                                        color: Colors.white,
-                                        child: RadioListTile(
-                                          activeColor: AppColors.nakedSyrup,
-                                          value: 'cod',
-                                          groupValue:
-                                              dashboardController
-                                                  .selectedPaymentMethods
-                                                  .value,
-                                          onChanged: (value) {
-                                            dashboardController
-                                                .selectedPaymentMethods
-                                                .value = value!;
-                                          },
-                                          title: Text("Pay by account"),
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  left: 8,
+                                  right: 8,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        'Payment Method',
+                                        style: TextStyle(
+                                          fontFamily: "Montserrat",
+                                          fontSize: getFontSize(context, 0),
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                return Center(child: SizedBox());
-                              }
+                                    ),
+                                    Card(
+                                      color: Colors.white,
+                                      child: RadioListTile(
+                                        activeColor: AppColors.nakedSyrup,
+                                        value: 'cod',
+                                        groupValue:
+                                            dashboardController
+                                                .selectedPaymentMethods
+                                                .value,
+                                        onChanged: (value) {
+                                          dashboardController
+                                              .selectedPaymentMethods
+                                              .value = value!;
+                                        },
+                                        title: Text("Pay by account"),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }),
                             Obx(() {
-                              double height;
-                              if (dashboardController.enableCheckOut.value) {
-                                height = Get.width >= 600 ? 200 : 30;
-                              } else {
-                                height = Get.width >= 600 ? 500 : 200;
-                              }
+                              final screenWidth =
+                                  MediaQuery.of(context).size.width;
+                              final screenHeight =
+                                  MediaQuery.of(context).size.height;
+
+                              double width =
+                                  screenWidth >= 600
+                                      ? (screenWidth / 2) - 50
+                                      : screenWidth - 50;
+                              double height =
+                                  dashboardController.enableRegistration.value
+                                      ? screenHeight *
+                                          0.1 // 20% of screen height
+                                      : screenWidth >= 600
+                                      ? screenHeight * 0.36
+                                      : screenHeight *
+                                          0.5; // 50% of screen height
+
                               return Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SizedBox(
-                                    height: height,
-                                    width:
-                                        Get.width >= 600
-                                            ? (Get.width / 2) - 50
-                                            : Get.width - 50,
-                                    child: WebViewWidget(controller: controler),
+                                child: SizedBox(
+                                  height:
+                                      dashboardController.recaptchaHeight.value,
+                                  width: width,
+                                  child: WebViewWidget(
+                                    key: ValueKey(
+                                      dashboardController.recaptchaHeight.value,
+                                    ),
+                                    controller: controler,
                                   ),
                                 ),
                               );
                             }),
+                            // Obx(() {
+                            //   double height;
+                            //   if (dashboardController.enableCheckOut.value) {
+                            //     height = Get.width >= 600 ? 200 : 50;
+                            //   } else {
+                            //     height = Get.width >= 600 ? 500 : 350;
+                            //   }
+                            //   return Center(
+                            //     child: Padding(
+                            //       padding: const EdgeInsets.all(8.0),
+                            //       child: SizedBox(
+                            //         height: height,
+                            //         // width: Get.width,
+                            //         child: Transform.scale(
+                            //           origin: Offset(-190, -180),
+                            //           scale: 2, // Adjust as needed
+                            //           child: WebViewWidget(
+                            //             controller: controler,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   );
+                            // }),
                             Obx(
                               () =>
                                   dashboardController.placeOrder.value

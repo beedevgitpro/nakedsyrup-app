@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/modules/cart/check_out_page.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
 import '../../Resources/AppColors.dart';
+import '../../service.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/mandtory_text_lables.dart';
@@ -22,10 +24,23 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       dashboardController.findCart();
+      dashboardController.getCountryList();
     });
-
+    if (dashboardController.cartModel.value.coupons?.isNotEmpty == true) {
+      if (dashboardController.cartModel.value.coupons?[0].code?.isNotEmpty ==
+          true) {
+        dashboardController.promoCodeController.text =
+            (dashboardController.cartModel.value.coupons?[0].code ?? "")
+                .toUpperCase();
+        dashboardController.promoCodeFiled.value = true;
+      } else {
+        dashboardController.promoCodeFiled.value = false;
+      }
+    } else {
+      dashboardController.promoCodeFiled.value = false;
+    }
     super.initState();
   }
 
@@ -151,7 +166,14 @@ class _CartPageState extends State<CartPage> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].subtotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                  dashboardController
+                                                              .cartModel
+                                                              .value
+                                                              .cartItems?[j]
+                                                              .regularPrice !=
+                                                          null
+                                                      ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].regularPrice.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                      : "0.0",
                                                   style: TextStyle(
                                                     color: AppColors.nakedSyrup,
                                                     fontFamily:
@@ -319,21 +341,141 @@ class _CartPageState extends State<CartPage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
-                          child: textLabel('Promo code', context, true),
+                          child: textLabel('Promo code', context, false),
                         ),
                         AppTextFormField(
                           textCapitalization: TextCapitalization.words,
                           controller: dashboardController.promoCodeController,
-                          lable: '',
+                          onChanged: (value) {
+                            if (value.toString().trim().isNotEmpty) {
+                              dashboardController.promoCodeFiled.value = true;
+                            } else {
+                              dashboardController.promoCodeFiled.value = false;
+                            }
+                          },
+                          lable: 'Enter Promo code',
                           function: (value) {},
-                          suffix:
-                              dashboardController
-                                      .promoCodeController
-                                      .text
-                                      .isNotEmpty
-                                  ? InkWell(
-                                    onTap: () {},
-                                    child: Icon(Icons.arrow_forward_ios),
+                        ),
+                        Obx(
+                          () =>
+                              dashboardController.promoCodeFiled.value
+                                  ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                            minimumSize: WidgetStatePropertyAll(
+                                              Size((Get.width / 2) - 30, 45),
+                                            ),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                  AppColors.nakedSyrup,
+                                                ),
+                                          ),
+                                          onPressed: () async {
+                                            dashboardController.getCart.value =
+                                                true;
+                                            var verify = await ApiClass()
+                                                .applyCoupon(
+                                                  dashboardController
+                                                      .promoCodeController
+                                                      .text,
+                                                );
+                                            dashboardController.getCart.value =
+                                                true;
+                                            if (verify != null) {
+                                              if (verify['success'] == true) {
+                                                dashboardController.findCart();
+                                              } else {
+                                                dashboardController
+                                                    .getCart
+                                                    .value = false;
+                                              }
+                                            } else {
+                                              dashboardController
+                                                  .getCart
+                                                  .value = false;
+                                            }
+                                          },
+                                          child: Text(
+                                            "Apply",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                            minimumSize: WidgetStatePropertyAll(
+                                              Size((Get.width / 2) - 30, 45),
+                                            ),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                  Colors.red,
+                                                ),
+                                          ),
+                                          onPressed: () async {
+                                            if (dashboardController
+                                                        .cartModel
+                                                        .value
+                                                        .discountTotal !=
+                                                    null &&
+                                                dashboardController
+                                                        .cartModel
+                                                        .value
+                                                        .discountTotal !=
+                                                    0.0) {
+                                              dashboardController
+                                                  .getCart
+                                                  .value = true;
+                                              var verify = await ApiClass()
+                                                  .removeCoupon('');
+                                              dashboardController
+                                                  .getCart
+                                                  .value = true;
+                                              if (verify != null) {
+                                                if (verify['success'] == true) {
+                                                  dashboardController
+                                                      .findCart();
+                                                  dashboardController
+                                                      .promoCodeFiled
+                                                      .value = false;
+                                                  dashboardController
+                                                      .promoCodeController
+                                                      .clear();
+                                                } else {
+                                                  dashboardController
+                                                      .getCart
+                                                      .value = false;
+                                                }
+                                              } else {
+                                                dashboardController
+                                                    .getCart
+                                                    .value = false;
+                                              }
+                                            } else {
+                                              dashboardController
+                                                  .promoCodeFiled
+                                                  .value = false;
+                                              dashboardController
+                                                  .promoCodeController
+                                                  .clear();
+                                            }
+                                          },
+                                          child: Text(
+                                            "Remove",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   )
                                   : const SizedBox(),
                         ),
@@ -378,7 +520,7 @@ class _CartPageState extends State<CartPage> {
                     bottom: 15,
                   ),
                   child: SizedBox(
-                    height: 140,
+                    height: 180,
                     child: ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -397,7 +539,13 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                 ),
                                 Text(
-                                  "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                  dashboardController
+                                              .cartModel
+                                              .value
+                                              .cartTotal !=
+                                          null
+                                      ? "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                      : "0.0",
                                   style: TextStyle(
                                     color: AppColors.nakedSyrup,
                                     fontSize: 18,
@@ -428,6 +576,50 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ],
                             ),
+                            SizedBox(
+                              height:
+                                  dashboardController
+                                                  .cartModel
+                                                  .value
+                                                  .discountTotal !=
+                                              null &&
+                                          dashboardController
+                                                  .cartModel
+                                                  .value
+                                                  .discountTotal !=
+                                              0.0
+                                      ? 3
+                                      : 0,
+                            ),
+                            dashboardController.cartModel.value.discountTotal !=
+                                        null &&
+                                    dashboardController
+                                            .cartModel
+                                            .value
+                                            .discountTotal !=
+                                        0.0
+                                ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "Discount : ",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    Text(
+                                      "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        color: AppColors.nakedSyrup,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                : const SizedBox(),
                             SizedBox(height: 3),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -441,7 +633,13 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                 ),
                                 Text(
-                                  "\$${double.parse(dashboardController.cartModel.value.grantTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                  dashboardController
+                                              .cartModel
+                                              .value
+                                              .grandTotal !=
+                                          null
+                                      ? "\$${double.parse(dashboardController.cartModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                      : '0.0',
                                   style: TextStyle(
                                     color: AppColors.nakedSyrup,
                                     fontSize: 18,
@@ -460,7 +658,6 @@ class _CartPageState extends State<CartPage> {
                           ),
                           onPressed: () {
                             dashboardController.getBillingDetails();
-                            dashboardController.getCountryList();
                             Get.to(CheckOutPage());
                           },
                           child: Text(
