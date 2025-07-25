@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+import 'get_observer_add.dart';
 import 'modules/splash_screen/splash_view.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Naked Syrups',
+      navigatorObservers: [GlobalRouteObserver()],
       builder: (context, child) {
         child = ResponsiveBreakpoints.builder(
           child: child!,

@@ -166,12 +166,6 @@ class LoginFlowController extends GetxController {
       }
     } else {
       callLoginApi.value = false;
-      Get.snackbar(
-        "Login response empty",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
     }
   }
 

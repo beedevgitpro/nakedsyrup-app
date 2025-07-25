@@ -187,37 +187,64 @@ class _ProductListPageState extends State<ProductListPage> {
                               ),
                             );
                           },
-                          child: Card(
-                            color: Colors.white,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.nakedSyrup.withOpacity(0.3),
+                              ),
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(3.0),
                               child: Column(
                                 children: [
-                                  Expanded(
-                                    child: Image.network(
-                                      dashboardController
-                                              .productModel
-                                              .value
-                                              .products?[j]
-                                              .image ??
-                                          "",
+                                  const SizedBox(height: 5),
 
-                                      fit: BoxFit.cover,
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 5,
+                                        right: 5,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          dashboardController
+                                                  .productModel
+                                                  .value
+                                                  .products?[j]
+                                                  .image ??
+                                              "",
+
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
+
                                   Text(
                                     "${dashboardController.productModel.value.products?[j].name ?? ""} (${dashboardController.productModel.value.products?[j].sku ?? ""})",
                                     textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          Get.width >= 600
+                                              ? getFontSize(context, 0)
+                                              : getFontSize(context, -4),
+                                      color: Colors.black,
+                                    ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 8),
+                                    padding: const EdgeInsets.only(top: 4),
                                     child: Text(
                                       "${price}",
                                       style: TextStyle(
+                                        fontWeight: FontWeight.bold,
                                         color: AppColors.nakedSyrup,
-                                        fontFamily: 'Euclid Circular B',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800,
+                                        fontSize:
+                                            Get.width >= 600
+                                                ? getFontSize(context, -1)
+                                                : getFontSize(context, -5),
                                       ),
                                     ),
                                   ),
@@ -230,26 +257,34 @@ class _ProductListPageState extends State<ProductListPage> {
                                         ),
                                       )
                                       : ElevatedButton(
-                                        style: ButtonStyle(
-                                          backgroundColor: WidgetStateProperty.all(
-                                            dashboardController
-                                                        .cartModel
-                                                        .value
-                                                        .cartItems
-                                                        ?.any(
-                                                          (item) =>
-                                                              item.productId
-                                                                  .toString() ==
-                                                              dashboardController
-                                                                  .productModel
-                                                                  .value
-                                                                  .products?[j]
-                                                                  .id
-                                                                  .toString(),
-                                                        ) ??
-                                                    false
-                                                ? Colors.green
-                                                : AppColors.nakedSyrup,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              dashboardController
+                                                          .cartModel
+                                                          .value
+                                                          .cartItems
+                                                          ?.any(
+                                                            (item) =>
+                                                                item.productId
+                                                                    .toString() ==
+                                                                dashboardController
+                                                                    .productModel
+                                                                    .value
+                                                                    .products?[j]
+                                                                    .id
+                                                                    .toString(),
+                                                          ) ??
+                                                      false
+                                                  ? Colors.green
+                                                  : AppColors.nakedSyrup,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 5,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                         ),
                                         onPressed: () async {
@@ -349,11 +384,15 @@ class _ProductListPageState extends State<ProductListPage> {
                                               : "Add to cart",
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontSize: getFontSize(context, -1),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                Get.width >= 600
+                                                    ? getFontSize(context, -1)
+                                                    : getFontSize(context, -5),
                                           ),
                                         ),
                                       ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 5),
                                 ],
                               ),
                             ),

@@ -4,7 +4,6 @@ import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../Resources/AppColors.dart';
-import '../../service.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/drop_down_field.dart';
@@ -26,50 +25,44 @@ class _CheckOutPageState extends State<CheckOutPage> {
     // TODO: implement initState
     dashboardController.differentAddress.value = false;
     dashboardController.enableCheckOut.value = false;
-    controler =
-        WebViewControllerPlus()
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..addJavaScriptChannel(
-            'Captcha',
-            onMessageReceived: (message) async {
-              final token = message.message;
-              print('reCAPTCHA token received: $token');
-              var verify = await ApiClass().verifyCaptchaToken(token);
-              if (verify != null) {
-                if (verify['success'] == true) {
-                  dashboardController.enableCheckOut.value = true;
-                }
-              }
-            },
-          )
-          ..addJavaScriptChannel(
-            'Resize',
-            onMessageReceived: (message) {
-              print("is collapse :::: ${message.message}");
-              if (message.message == "expand") {
-                Future.delayed(Duration(milliseconds: 10), () {
-                  dashboardController.recaptchaHeight.value = 400;
-                  setState(() {});
-                }); // expanded
-              } else if (message.message == "collapse") {
-                dashboardController.recaptchaHeight.value = 0;
-                Future.delayed(Duration(milliseconds: 10), () {
-                  dashboardController.recaptchaHeight.value = 500;
-                  setState(() {});
-                });
-              }
-            },
-          )
-          ..loadRequest(
-            Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
-          )
-          ..setNavigationDelegate(
-            NavigationDelegate(
-              onPageFinished: (_) {
-                controler.runJavaScript('document.body.style.zoom="1";');
-              },
-            ),
-          );
+    // controler =
+    //     WebViewControllerPlus()
+    //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    //       ..addJavaScriptChannel(
+    //         'Captcha',
+    //         onMessageReceived: (message) async {
+    //           final token = message.message;
+    //           print('reCAPTCHA token received: $token');
+    //           var verify = await ApiClass().verifyCaptchaToken(token);
+    //           if (verify != null) {
+    //             if (verify['success'] == true) {
+    //               dashboardController.enableCheckOut.value = true;
+    //               // dashboardController.recaptchaHeight.value = 100;
+    //             }
+    //           }
+    //         },
+    //       )
+    //       ..addJavaScriptChannel(
+    //         'Resize',
+    //         onMessageReceived: (message) {
+    //           print("is collapse :::: ${message.message}");
+    //           if (message.message == "expand") {
+    //             // dashboardController.recaptchaHeight.value = 500;
+    //           } else if (message.message == "collapse") {
+    //             // dashboardController.recaptchaHeight.value = 100;
+    //           }
+    //         },
+    //       )
+    //       ..loadRequest(
+    //         Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
+    //       )
+    //       ..setNavigationDelegate(
+    //         NavigationDelegate(
+    //           onPageFinished: (_) {
+    //             controler.runJavaScript('initResizeObserver()');
+    //           },
+    //         ),
+    //       );
     super.initState();
   }
 
@@ -1159,41 +1152,32 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                       ),
                                     );
                                   }),
-                                  Obx(() {
-                                    final screenWidth =
-                                        MediaQuery.of(context).size.width;
-                                    final screenHeight =
-                                        MediaQuery.of(context).size.height;
 
-                                    double width =
-                                        screenWidth >= 600
-                                            ? (screenWidth / 2) - 50
-                                            : screenWidth - 50;
-                                    double height =
-                                        dashboardController
-                                                .enableRegistration
-                                                .value
-                                            ? screenHeight *
-                                                0.1 // 20% of screen height
-                                            : screenWidth >= 600
-                                            ? screenHeight * 0.36
-                                            : screenHeight *
-                                                0.24; // 50% of screen height
-
-                                    return Center(
-                                      child: SizedBox(
-                                        height:
-                                            dashboardController
-                                                .recaptchaHeight
-                                                .value,
-                                        width: width,
-                                        child: WebViewWidget(
-                                          controller: controler,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-
+                                  // Obx(() {
+                                  //   final screenWidth =
+                                  //       MediaQuery.of(context).size.width;
+                                  //   double width =
+                                  //       screenWidth >= 600
+                                  //           ? (screenWidth / 2) - 50
+                                  //           : screenWidth - 50;
+                                  //   return Padding(
+                                  //     padding: const EdgeInsets.only(
+                                  //       top: 10,
+                                  //       bottom: 10,
+                                  //     ),
+                                  //     child: SizedBox(
+                                  //       height:
+                                  //           dashboardController
+                                  //               .recaptchaHeight
+                                  //               .value,
+                                  //       width: width,
+                                  //       child: WebViewWidget(
+                                  //         key: UniqueKey(),
+                                  //         controller: controler,
+                                  //       ),
+                                  //     ),
+                                  //   );
+                                  // }),
                                   Obx(
                                     () =>
                                         dashboardController.placeOrder.value
@@ -1213,32 +1197,40 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 8.0,
                                               ),
                                               child: ElevatedButton(
-                                                style: ButtonStyle(
+                                                style: ElevatedButton.styleFrom(
                                                   backgroundColor:
-                                                      WidgetStatePropertyAll(
-                                                        dashboardController
-                                                                .enableCheckOut
-                                                                .value
-                                                            ? AppColors
-                                                                .nakedSyrup
-                                                            : AppColors
-                                                                .lightColor,
+                                                      AppColors.nakedSyrup,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 14,
+                                                        vertical: 5,
                                                       ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
                                                 ),
-                                                onPressed:
-                                                    dashboardController
-                                                            .enableCheckOut
-                                                            .value
-                                                        ? () {
-                                                          dashboardController
-                                                              .placeOrderApi();
-                                                        }
-                                                        : null,
+                                                onPressed: () {
+                                                  dashboardController
+                                                      .placeOrderApi();
+                                                },
                                                 child: Text(
                                                   'Place Order',
                                                   style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize:
+                                                        Get.width >= 600
+                                                            ? getFontSize(
+                                                              context,
+                                                              -1,
+                                                            )
+                                                            : getFontSize(
+                                                              context,
+                                                              -5,
+                                                            ),
                                                   ),
                                                 ),
                                               ),
@@ -2278,59 +2270,25 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 ),
                               );
                             }),
-                            Obx(() {
-                              final screenWidth =
-                                  MediaQuery.of(context).size.width;
-                              final screenHeight =
-                                  MediaQuery.of(context).size.height;
-
-                              double width =
-                                  screenWidth >= 600
-                                      ? (screenWidth / 2) - 50
-                                      : screenWidth - 50;
-                              double height =
-                                  dashboardController.enableRegistration.value
-                                      ? screenHeight *
-                                          0.1 // 20% of screen height
-                                      : screenWidth >= 600
-                                      ? screenHeight * 0.36
-                                      : screenHeight *
-                                          0.5; // 50% of screen height
-
-                              return Center(
-                                child: SizedBox(
-                                  height:
-                                      dashboardController.recaptchaHeight.value,
-                                  width: width,
-                                  child: WebViewWidget(
-                                    key: ValueKey(
-                                      dashboardController.recaptchaHeight.value,
-                                    ),
-                                    controller: controler,
-                                  ),
-                                ),
-                              );
-                            }),
                             // Obx(() {
-                            //   double height;
-                            //   if (dashboardController.enableCheckOut.value) {
-                            //     height = Get.width >= 600 ? 200 : 50;
-                            //   } else {
-                            //     height = Get.width >= 600 ? 500 : 350;
-                            //   }
-                            //   return Center(
-                            //     child: Padding(
-                            //       padding: const EdgeInsets.all(8.0),
-                            //       child: SizedBox(
-                            //         height: height,
-                            //         // width: Get.width,
-                            //         child: Transform.scale(
-                            //           origin: Offset(-190, -180),
-                            //           scale: 2, // Adjust as needed
-                            //           child: WebViewWidget(
-                            //             controller: controler,
-                            //           ),
-                            //         ),
+                            //   final screenWidth =
+                            //       MediaQuery.of(context).size.width;
+                            //   double width =
+                            //       screenWidth >= 600
+                            //           ? (screenWidth / 2) - 50
+                            //           : screenWidth - 50;
+                            //   return Padding(
+                            //     padding: const EdgeInsets.only(
+                            //       top: 10,
+                            //       bottom: 10,
+                            //     ),
+                            //     child: SizedBox(
+                            //       height:
+                            //           dashboardController.recaptchaHeight.value,
+                            //       width: width,
+                            //       child: WebViewWidget(
+                            //         key: UniqueKey(),
+                            //         controller: controler,
                             //       ),
                             //     ),
                             //   );
@@ -2350,30 +2308,33 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                       : Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: ElevatedButton(
-                                          style: ButtonStyle(
+                                          style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                  dashboardController
-                                                          .enableCheckOut
-                                                          .value
-                                                      ? AppColors.nakedSyrup
-                                                      : AppColors.lightColor,
-                                                ),
+                                                AppColors.nakedSyrup,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                              vertical: 5,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
                                           ),
-                                          onPressed:
-                                              dashboardController
-                                                      .enableCheckOut
-                                                      .value
-                                                  ? () {
-                                                    dashboardController
-                                                        .placeOrderApi();
-                                                  }
-                                                  : null,
+                                          onPressed: () {
+                                            dashboardController.placeOrderApi();
+                                          },
                                           child: Text(
                                             'Place Order',
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, -1)
+                                                      : getFontSize(
+                                                        context,
+                                                        -5,
+                                                      ),
                                             ),
                                           ),
                                         ),

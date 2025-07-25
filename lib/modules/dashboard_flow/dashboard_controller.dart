@@ -27,7 +27,7 @@ class DashboardController extends GetxController {
   RxBool placeOrder = false.obs;
   RxBool getProduct = false.obs;
   RxInt cartCount = 0.obs;
-  RxDouble recaptchaHeight = 100.0.obs;
+  RxDouble recaptchaHeight = 500.0.obs;
   RxBool getCart = false.obs;
   RxBool isCaptchaVerified = false.obs;
   RxBool isVerifying = false.obs;
@@ -56,7 +56,7 @@ class DashboardController extends GetxController {
   RxString shippingMethods = ''.obs;
   RxString selectedPaymentMethods = 'cod'.obs;
   RxBool enableRegistration = false.obs;
-  RxBool enableCheckOut = false.obs;
+  RxBool enableCheckOut = true.obs;
   Rx<Variations> selectedVariations = Variations().obs;
   RxBool isCompleted = false.obs;
   RxBool isCanceled = false.obs;

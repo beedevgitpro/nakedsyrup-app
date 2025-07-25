@@ -10,11 +10,14 @@ PreferredSizeWidget AppBarWidget(
 }) {
   return AppBar(
     leading: leading,
+    actionsPadding: EdgeInsets.only(right: getFontSize(context, -3)),
+    backgroundColor: Color(0XFFF3E9D3),
+    leadingWidth: (getFontSize(context, 0) * 4),
     title: Text(
       text,
       style: TextStyle(
-        fontFamily: "Montserrat",
-        fontWeight: FontWeight.w700,
+        fontFamily: "Euclid Circular B",
+        fontWeight: FontWeight.bold,
         fontSize: getFontSize(context, 1),
         color: Colors.black,
       ),

@@ -23,6 +23,7 @@ class ApiClass {
         data: formData,
         options: Options(headers: {"Accept": "application/json"}),
       );
+      print("status code : ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         var decodedResponse = response.data;
         print("login api responce : $decodedResponse");
@@ -108,6 +109,71 @@ class ApiClass {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var decodedResponse = response.data;
         print("add to cart api responce : $decodedResponse");
+
+        return decodedResponse;
+      } else {
+        getT.Get.snackbar(
+          "Technical Error",
+          "",
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } on TimeoutException catch (_) {
+      getT.Get.snackbar(
+        "No Internet Connection",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on SocketException catch (e) {
+      print(e);
+      getT.Get.snackbar(
+        "SocketException",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    } on DioException catch (e) {
+      getT.Get.snackbar(
+        "Technical Error $e",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+
+      print("DioError:e");
+    } on Exception catch (e) {
+      print("Error : $e");
+      getT.Get.snackbar(
+        "Technical Error",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
+  FutureOr<dynamic> accessPay() async {
+    try {
+      String url = '${AppStrings.baseUrl}pay-by-account-access';
+      print("pay-by-account-access::$url");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String token = prefs.getString('token') ?? " ";
+      print("token : $token");
+      final response = await Dio().post(
+        url,
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            'Authorization': 'Bearer ${prefs.getString('token')}',
+          },
+        ),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var decodedResponse = response.data;
+        print("pay-by-account-access responce : $decodedResponse");
 
         return decodedResponse;
       } else {

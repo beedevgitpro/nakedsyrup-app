@@ -113,7 +113,21 @@ class _CartPageState extends State<CartPage> {
                             );
                             return Stack(
                               children: [
-                                Card(
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.yellowColor.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: AppColors.nakedSyrup.withOpacity(
+                                        0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(
+                                    getFontSize(context, -6),
+                                  ),
                                   child: Row(
                                     children: [
                                       SizedBox(
@@ -130,12 +144,12 @@ class _CartPageState extends State<CartPage> {
                                           fit: BoxFit.fill,
                                         ),
                                       ),
-                                      const SizedBox(width: 25),
+                                      const SizedBox(width: 20),
                                       SizedBox(
                                         width: Get.width - 190,
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
@@ -148,16 +162,19 @@ class _CartPageState extends State<CartPage> {
                                                   child: Text(
                                                     "${dashboardController.cartModel.value.cartItems?[j].productName ?? ""}",
                                                     style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize:
                                                           Get.width >= 600
                                                               ? getFontSize(
                                                                 context,
-                                                                2,
+                                                                0,
                                                               )
                                                               : getFontSize(
                                                                 context,
-                                                                -1,
+                                                                -4,
                                                               ),
+                                                      color: Colors.black,
                                                     ),
                                                     softWrap: true,
                                                     overflow:
@@ -193,7 +210,7 @@ class _CartPageState extends State<CartPage> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(height: 10),
+                                            const SizedBox(height: 8),
                                             Row(
                                               children: [
                                                 InkWell(
@@ -216,53 +233,35 @@ class _CartPageState extends State<CartPage> {
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                      color:
-                                                          AppColors.nakedSyrup,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            3.0,
-                                                          ),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        color: Colors.white,
-                                                        size:
-                                                            Get.width >= 600
-                                                                ? getFontSize(
-                                                                  context,
-                                                                  2,
-                                                                )
-                                                                : getFontSize(
-                                                                  context,
-                                                                  -1,
-                                                                ),
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: AppColors
+                                                            .nakedSyrup
+                                                            .withOpacity(0.8),
+                                                        width: 1.5,
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                                SizedBox(width: 7),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                    3.0,
-                                                  ),
-                                                  child: Text(
-                                                    quntity.toString() ?? "",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          Get.width >= 600
-                                                              ? getFontSize(
-                                                                context,
-                                                                2,
-                                                              )
-                                                              : getFontSize(
-                                                                context,
-                                                                -1,
-                                                              ),
+                                                    child: const Icon(
+                                                      Icons.remove,
+                                                      size: 24,
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: 7),
+
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  quntity.toString() ?? "",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        'Euclid Circular B',
+                                                    fontSize: getFontSize(
+                                                      context,
+                                                      -4,
+                                                    ),
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
                                                 InkWell(
                                                   onTap: () {
                                                     quntity = quntity + 1;
@@ -283,28 +282,17 @@ class _CartPageState extends State<CartPage> {
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                      color:
-                                                          AppColors.nakedSyrup,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            3.0,
-                                                          ),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        color: Colors.white,
-                                                        size:
-                                                            Get.width >= 600
-                                                                ? getFontSize(
-                                                                  context,
-                                                                  2,
-                                                                )
-                                                                : getFontSize(
-                                                                  context,
-                                                                  -1,
-                                                                ),
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: AppColors
+                                                            .nakedSyrup
+                                                            .withOpacity(0.8),
+                                                        width: 1.5,
                                                       ),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.add,
+                                                      size: 24,
                                                     ),
                                                   ),
                                                 ),
@@ -366,14 +354,21 @@ class _CartPageState extends State<CartPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         ElevatedButton(
-                                          style: ButtonStyle(
-                                            minimumSize: WidgetStatePropertyAll(
-                                              Size((Get.width / 2) - 30, 45),
-                                            ),
+                                          style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                  AppColors.nakedSyrup,
-                                                ),
+                                                AppColors.nakedSyrup,
+                                            minimumSize: Size(
+                                              (Get.width / 2) - 30,
+                                              45,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                              vertical: 5,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
                                           ),
                                           onPressed: () async {
                                             dashboardController.getCart.value =
@@ -409,14 +404,20 @@ class _CartPageState extends State<CartPage> {
                                           ),
                                         ),
                                         ElevatedButton(
-                                          style: ButtonStyle(
-                                            minimumSize: WidgetStatePropertyAll(
-                                              Size((Get.width / 2) - 30, 45),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                              vertical: 5,
                                             ),
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                  Colors.red,
-                                                ),
+                                            minimumSize: Size(
+                                              (Get.width / 2) - 30,
+                                              45,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
                                           ),
                                           onPressed: () async {
                                             if (dashboardController
@@ -520,7 +521,7 @@ class _CartPageState extends State<CartPage> {
                     bottom: 15,
                   ),
                   child: SizedBox(
-                    height: 180,
+                    height: (getFontSize(context, 0) * 9),
                     child: ListView(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -533,9 +534,10 @@ class _CartPageState extends State<CartPage> {
                                 Text(
                                   "Sub Total : ",
                                   style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                                 Text(
@@ -548,8 +550,9 @@ class _CartPageState extends State<CartPage> {
                                       : "0.0",
                                   style: TextStyle(
                                     color: AppColors.nakedSyrup,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                               ],
@@ -561,17 +564,19 @@ class _CartPageState extends State<CartPage> {
                                 Text(
                                   "GST : ",
                                   style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                                 Text(
                                   "\$${double.parse(dashboardController.cartModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
                                   style: TextStyle(
                                     color: AppColors.nakedSyrup,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                               ],
@@ -604,17 +609,19 @@ class _CartPageState extends State<CartPage> {
                                     Text(
                                       "Discount : ",
                                       style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: getFontSize(context, -2),
                                       ),
                                     ),
                                     Text(
                                       "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
                                       style: TextStyle(
                                         color: AppColors.nakedSyrup,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: getFontSize(context, -2),
                                       ),
                                     ),
                                   ],
@@ -627,9 +634,10 @@ class _CartPageState extends State<CartPage> {
                                 Text(
                                   "Grant Total : ",
                                   style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                                 Text(
@@ -642,8 +650,9 @@ class _CartPageState extends State<CartPage> {
                                       : '0.0',
                                   style: TextStyle(
                                     color: AppColors.nakedSyrup,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: getFontSize(context, -2),
                                   ),
                                 ),
                               ],
@@ -651,9 +660,14 @@ class _CartPageState extends State<CartPage> {
                           ],
                         ),
                         ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              AppColors.nakedSyrup,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.nakedSyrup,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           onPressed: () {
@@ -664,7 +678,8 @@ class _CartPageState extends State<CartPage> {
                             "Proceed To Checkout",
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.bold,
+                              fontSize: getFontSize(context, -5),
                             ),
                           ),
                         ),

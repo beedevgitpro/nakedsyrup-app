@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:html/parser.dart' show parse;
+import 'package:html/parser.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
 import '../../Resources/AppColors.dart';
@@ -20,6 +20,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   DashboardController dashboardController = Get.put(DashboardController());
   List<String> allImages = [];
+  List<String> svgImage = [];
   String price = "";
   @override
   void initState() {
@@ -29,7 +30,15 @@ class _ProductPageState extends State<ProductPage> {
     dashboardController.findCart();
     dashboardController.currentIndex = 0;
     allImages.add(widget.products.image ?? "");
-    allImages.addAll(widget.products.gallery ?? []);
+    if (widget.products.gallery?.isNotEmpty == true) {
+      widget.products.gallery?.forEach((imageS) {
+        if (imageS.toLowerCase().endsWith('.svg')) {
+          svgImage.add(imageS);
+        } else {
+          allImages.add(imageS);
+        }
+      });
+    }
     if (widget.products.variations?.isNotEmpty == true) {
       String lowPrice =
           (getLowestPrice(widget.products.variations ?? []) ?? 0.0)
@@ -51,6 +60,10 @@ class _ProductPageState extends State<ProductPage> {
     super.initState();
   }
 
+  int selectedImageIndex = 0;
+  int quantity = 2;
+  bool isPerUnit = true;
+  bool showDescription = true;
   double? getLowestPrice(List<Variations> variations) {
     final prices =
         variations
@@ -89,358 +102,974 @@ class _ProductPageState extends State<ProductPage> {
         context,
         actions: [dashboardController.cartUI()],
       ),
-      body: SingleChildScrollView(
+      body: ListView(
+        shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
+        padding: EdgeInsets.all(getFontSize(context, 2)),
+        children: [
+          Get.width >= 600
+              ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CarouselSlider(
-                    carouselController: dashboardController.carouselController,
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      enableInfiniteScroll: false,
-                      autoPlay: false,
-                      viewportFraction: 0.9,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          dashboardController.currentIndex = index;
-                        });
-                      },
-                    ),
-                    items:
-                        allImages.map((imgUrl) {
-                          return Builder(
-                            builder: (BuildContext context) {
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child:
-                                      imgUrl.toLowerCase().endsWith(".svg")
-                                          ? SvgPicture.network(
-                                            imgUrl,
-                                            placeholderBuilder:
-                                                (context) => const Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                ),
-                                            height: 200,
-                                            fit: BoxFit.contain,
-                                            alignment: Alignment.center,
-                                          )
-                                          : Image.network(
-                                            imgUrl,
-                                            fit: BoxFit.contain,
-                                            alignment: Alignment.center,
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    const Center(
-                                                      child: Icon(
-                                                        Icons.broken_image,
-                                                      ),
-                                                    ),
-                                          ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height:
+                        MediaQuery.of(context).size.height -
+                        kToolbarHeight - // AppBar height
+                        MediaQuery.of(context).padding.top,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(10),
+                          padding: EdgeInsets.all(getFontSize(context, 2)),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: AppColors.yellowColor.withOpacity(0.5),
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network(
+                              allImages[selectedImageIndex],
+                              fit: BoxFit.fitWidth,
+
+                              // alignment: Alignment.center,
+                              errorBuilder:
+                                  (context, error, stackTrace) => const Center(
+                                    child: Icon(Icons.broken_image),
+                                  ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: 80,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: allImages.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedImageIndex = index;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color:
+                                          selectedImageIndex == index
+                                              ? AppColors.nakedSyrup
+                                              : Colors.grey.shade300,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Image.network(
+                                    allImages[index],
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Center(
+                                              child: Icon(Icons.broken_image),
+                                            ),
+                                  ),
                                 ),
                               );
                             },
-                          );
-                        }).toList(),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  /// ✅ Dots Indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:
-                        allImages.asMap().entries.map((entry) {
-                          return GestureDetector(
-                            onTap:
-                                () => dashboardController.carouselController
-                                    .animateToPage(entry.key),
-                            child: Container(
-                              width:
-                                  dashboardController.currentIndex == entry.key
-                                      ? 12.0
-                                      : 8.0,
-                              height:
-                                  dashboardController.currentIndex == entry.key
-                                      ? 12.0
-                                      : 8.0,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 4.0,
-                              ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color:
-                                    dashboardController.currentIndex ==
-                                            entry.key
-                                        ? Colors.black87
-                                        : Colors.grey[400],
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Get.width >= 600
-                  ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.products.name ?? "",
-                            style: TextStyle(
-                              // color: AppColors.nakedSyrup,
-                              fontFamily: 'Euclid Circular B',
-                              // fontStyle: FontStyle.italic,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                            ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Text(
-                              price,
-                              style: TextStyle(
-                                color:
-                                    widget.products.variations?.isNotEmpty ==
-                                            true
-                                        ? Colors.black87
-                                        : AppColors.nakedSyrup,
-                                fontFamily: 'Euclid Circular B',
-                                fontSize: getFontSize(context, 1),
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.yellowColor.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: AppColors.nakedSyrup.withOpacity(0.5),
                           ),
-                          widget.products.variations?.isNotEmpty == true
-                              ? Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 8,
-                                  bottom: 4,
+                        ),
+                        padding: EdgeInsets.all(getFontSize(context, -2)),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.products.name ?? "",
+                                style: TextStyle(
+                                  fontFamily: 'Euclid Circular B',
+                                  fontSize: getFontSize(context, 2),
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                child: SizedBox(
-                                  height: 42,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Text(
+                                  price,
+                                  style: TextStyle(
+                                    color: AppColors.nakedSyrup,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontSize: getFontSize(context, 0),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+
+                              widget.products.variations?.isNotEmpty == true
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 8,
+                                      bottom: 4,
+                                    ),
+                                    child: SizedBox(
+                                      height: 42,
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount:
+                                            widget
+                                                .products
+                                                .variations
+                                                ?.length ??
+                                            0,
+                                        separatorBuilder: (context, ii) {
+                                          return const SizedBox(width: 10);
+                                        },
+                                        itemBuilder: (context, item) {
+                                          String teext = "";
+                                          if (widget
+                                                      .products
+                                                      .variations?[item]
+                                                      .attributes !=
+                                                  null &&
+                                              widget
+                                                      .products
+                                                      .variations?[item]
+                                                      .attributes
+                                                      ?.isNotEmpty ==
+                                                  true) {
+                                            teext =
+                                                widget
+                                                    .products
+                                                    .variations?[item]
+                                                    .attributes ??
+                                                "";
+                                          } else {
+                                            if (widget
+                                                    .products
+                                                    .variations?[item]
+                                                    .sku
+                                                    ?.contains('-') ==
+                                                true) {
+                                              teext =
+                                                  widget
+                                                      .products
+                                                      .variations?[item]
+                                                      .sku
+                                                      ?.split("-")
+                                                      .last ??
+                                                  "";
+                                            } else {
+                                              teext =
+                                                  widget
+                                                      .products
+                                                      .variations?[item]
+                                                      .sku
+                                                      ?.split("/")
+                                                      .last
+                                                      .substring(1) ??
+                                                  "";
+                                            }
+                                          }
+                                          return Obx(
+                                            () => ElevatedButton(
+                                              onPressed: () {
+                                                dashboardController
+                                                    .selectedVariance
+                                                    .value = teext;
+                                                dashboardController
+                                                    .selectedVariations
+                                                    .value = widget
+                                                        .products
+                                                        .variations?[item] ??
+                                                    Variations();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    dashboardController
+                                                                .selectedVariance
+                                                                .value ==
+                                                            teext
+                                                        ? AppColors.nakedSyrup
+                                                        : Colors.white,
+                                                side: BorderSide(
+                                                  color:
+                                                      dashboardController
+                                                                  .selectedVariance
+                                                                  .value !=
+                                                              teext
+                                                          ? AppColors.nakedSyrup
+                                                          : Colors.transparent,
+                                                  width: 1.0,
+                                                ),
+                                                foregroundColor:
+                                                    dashboardController
+                                                                .selectedVariance
+                                                                .value ==
+                                                            teext
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                teext,
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      'Euclid Circular B',
+                                                  fontSize: getFontSize(
+                                                    context,
+                                                    0,
+                                                  ),
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      dashboardController
+                                                                  .selectedVariance
+                                                                  .value ==
+                                                              teext
+                                                          ? Colors.white
+                                                          : Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                  : const SizedBox(),
+
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              if (widget.products.qty!.value >
+                                                  1) {
+                                                widget.products.qty?.value =
+                                                    widget.products.qty!.value -
+                                                    1;
+                                              }
+                                            },
+                                            icon: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: AppColors.nakedSyrup
+                                                      .withOpacity(0.8),
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.remove,
+                                                size: 28,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Obx(
+                                            () => Text(
+                                              widget.products.qty?.value
+                                                      .toString() ??
+                                                  "",
+                                              style: TextStyle(
+                                                fontFamily: 'Euclid Circular B',
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  0,
+                                                ),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          IconButton(
+                                            onPressed: () {
+                                              widget.products.qty?.value =
+                                                  widget.products.qty!.value +
+                                                  1;
+                                            },
+                                            icon: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: AppColors.nakedSyrup
+                                                      .withOpacity(0.8),
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.add,
+                                                size: 28,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  widget.products.variations?.isNotEmpty == true
+                                      ? Obx(
+                                        () =>
+                                            dashboardController
+                                                    .selectedVariance
+                                                    .value
+                                                    .isNotEmpty
+                                                ? RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      dashboardController
+                                                                  .selectedVariations
+                                                                  .value
+                                                                  .price !=
+                                                              dashboardController
+                                                                  .selectedVariations
+                                                                  .value
+                                                                  .regularPrice
+                                                          ? TextSpan(
+                                                            text:
+                                                                "\$${dashboardController.selectedVariations.value.regularPrice}",
+                                                            style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough,
+                                                              color:
+                                                                  AppColors
+                                                                      .nakedSyrup,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -3,
+                                                                  ),
+                                                            ),
+                                                          )
+                                                          : WidgetSpan(
+                                                            child: SizedBox(),
+                                                          ),
+                                                      TextSpan(
+                                                        text:
+                                                            dashboardController
+                                                                        .selectedVariations
+                                                                        .value
+                                                                        .regularPrice ==
+                                                                    dashboardController
+                                                                        .selectedVariations
+                                                                        .value
+                                                                        .price
+                                                                ? "  \$${dashboardController.selectedVariations.value.price}"
+                                                                : "  \$${dashboardController.selectedVariations.value.salePrice}",
+                                                        style: TextStyle(
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                          fontFamily:
+                                                              'Euclid Circular B',
+                                                          fontSize: getFontSize(
+                                                            context,
+                                                            1,
+                                                          ),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                                : const SizedBox(),
+                                      )
+                                      : const SizedBox(),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Obx(
+                                () =>
+                                    dashboardController.addToBasket.value
+                                        ? Center(
+                                          child: SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: CircularProgressIndicator(
+                                              color: AppColors.greenColor,
+                                            ),
+                                          ),
+                                        )
+                                        : SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              dashboardController.addToCart(
+                                                widget.products.id,
+                                                widget.products.qty,
+                                                dashboardController
+                                                        .selectedVariations
+                                                        .value
+                                                        .variationId ??
+                                                    0,
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  dashboardController
+                                                              .cartModel
+                                                              .value
+                                                              .cartItems
+                                                              ?.any(
+                                                                (item) =>
+                                                                    item.productId
+                                                                        .toString() ==
+                                                                    widget
+                                                                        .products
+                                                                        .id
+                                                                        .toString(),
+                                                              ) ??
+                                                          false
+                                                      ? Colors.green
+                                                      : AppColors.nakedSyrup,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 14,
+                                                  ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+
+                                            child: Text(
+                                              dashboardController
+                                                          .cartModel
+                                                          .value
+                                                          .cartItems
+                                                          ?.any(
+                                                            (item) =>
+                                                                item.productId
+                                                                    .toString() ==
+                                                                widget
+                                                                    .products
+                                                                    .id
+                                                                    .toString(),
+                                                          ) ??
+                                                      false
+                                                  ? "Added"
+                                                  : 'ADD TO CART',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  -2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                              ),
+                              dashboardController
+                                          .selectedVariations
+                                          .value
+                                          .stockStatus !=
+                                      null
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 8,
+                                      bottom: 8,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        '${dashboardController.selectedVariations.value.stockStatus}',
+                                        style: TextStyle(
+                                          color: AppColors.nakedSyrup,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: getFontSize(context, -2),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  : const SizedBox(),
+                              const SizedBox(height: 16),
+
+                              if (widget.products.shortDescription != null &&
+                                  widget
+                                          .products
+                                          .shortDescription
+                                          ?.isNotEmpty ==
+                                      true)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0),
+                                  child: Text(
+                                    parse(
+                                          widget.products.shortDescription,
+                                        ).body?.text ??
+                                        "",
+                                    overflow: TextOverflow.visible,
+                                    style: TextStyle(
+                                      color: AppColors.fontLightColor,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: getFontSize(context, -2),
+                                    ),
+                                  ),
+                                ),
+
+                              if (svgImage.isNotEmpty)
+                                SizedBox(
+                                  height: 100,
                                   child: ListView.separated(
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     physics: const BouncingScrollPhysics(),
-                                    itemCount:
-                                        widget.products.variations?.length ?? 0,
+                                    itemBuilder: (context, s) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 10,
+                                        ),
+                                        child: SvgPicture.network(
+                                          svgImage[s],
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                          placeholderBuilder:
+                                              (context) => const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+
+                                          alignment: Alignment.center,
+                                        ),
+                                      );
+                                    },
                                     separatorBuilder: (context, ii) {
                                       return const SizedBox(width: 8);
                                     },
-                                    itemBuilder: (context, item) {
-                                      String teext = "";
-                                      if (widget
-                                                  .products
-                                                  .variations?[item]
-                                                  .attributes !=
-                                              null &&
-                                          widget
-                                                  .products
-                                                  .variations?[item]
-                                                  .attributes
-                                                  ?.isNotEmpty ==
-                                              true) {
-                                        teext =
-                                            widget
-                                                .products
-                                                .variations?[item]
-                                                .attributes ??
-                                            "";
-                                      } else {
+                                    itemCount: svgImage.length,
+                                  ),
+                                ),
+                              if (widget.products.description != null &&
+                                  widget.products.description?.isNotEmpty ==
+                                      true)
+                                ExpansionTile(
+                                  title: Text(
+                                    'Description',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: getFontSize(context, 1),
+                                    ),
+                                  ),
+                                  childrenPadding: EdgeInsets.zero,
+                                  onExpansionChanged: (value) {},
+
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                      ),
+                                      child: Text(
+                                        parse(
+                                              widget.products.description,
+                                            ).body?.text ??
+                                            "",
+                                        style: TextStyle(
+                                          color: AppColors.fontLightColor,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: getFontSize(context, -2),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              // if (widget.products.recipes != null &&
+                              //     widget.products.recipes?.isNotEmpty == true)
+                              //   ExpansionTile(
+                              //     title: const Text('Recipes'),
+                              //     onExpansionChanged: (value) {},
+                              //     children: [
+                              //       Padding(
+                              //         padding: EdgeInsets.all(8.0),
+                              //         child: Text(
+                              //           parse(widget.products.recipes).body?.text ??
+                              //               "",
+                              //           style:    TextStyle(
+                              //             color: AppColors.fontLightColor,
+                              //             fontWeight: FontWeight.normal,
+                              //             fontSize: getFontSize(context, -1),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Column(
+                children: [
+                  Column(
+                    children: [
+                      CarouselSlider(
+                        carouselController:
+                            dashboardController.carouselController,
+                        options: CarouselOptions(
+                          enlargeCenterPage: true,
+                          enableInfiniteScroll: false,
+                          autoPlay: false,
+                          viewportFraction: 0.9,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              dashboardController.currentIndex = index;
+                            });
+                          },
+                        ),
+                        items:
+                            allImages.map((imgUrl) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        imgUrl,
+                                        fit: BoxFit.contain,
+                                        alignment: Alignment.center,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Center(
+                                                  child: Icon(
+                                                    Icons.broken_image,
+                                                  ),
+                                                ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }).toList(),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children:
+                            allImages.asMap().entries.map((entry) {
+                              return GestureDetector(
+                                onTap:
+                                    () => dashboardController.carouselController
+                                        .animateToPage(entry.key),
+                                child:
+                                    entry.value.toLowerCase().endsWith(".svg")
+                                        ? const SizedBox()
+                                        : Container(
+                                          width: 24,
+                                          height: 2,
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 4.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            color:
+                                                dashboardController
+                                                            .currentIndex ==
+                                                        entry.key
+                                                    ? AppColors.nakedSyrup
+                                                    : AppColors.nakedSyrup
+                                                        .withOpacity(0.4),
+                                          ),
+                                        ),
+                              );
+                            }).toList(),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.yellowColor.withOpacity(0.25),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: AppColors.nakedSyrup.withOpacity(0.5),
+                        ),
+                      ),
+                      padding: EdgeInsets.all(getFontSize(context, -6)),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.products.name ?? "",
+                              style: TextStyle(
+                                fontFamily: 'Euclid Circular B',
+                                fontSize: getFontSize(context, -2),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                price,
+                                style: TextStyle(
+                                  color: AppColors.nakedSyrup,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontSize: getFontSize(context, -4),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+
+                            widget.products.variations?.isNotEmpty == true
+                                ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 4,
+                                  ),
+                                  child: SizedBox(
+                                    height: 38,
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount:
+                                          widget.products.variations?.length ??
+                                          0,
+                                      separatorBuilder: (context, ii) {
+                                        return const SizedBox(width: 8);
+                                      },
+                                      itemBuilder: (context, item) {
+                                        String teext = "";
                                         if (widget
-                                                .products
-                                                .variations?[item]
-                                                .sku
-                                                ?.contains('-') ==
-                                            true) {
+                                                    .products
+                                                    .variations?[item]
+                                                    .attributes !=
+                                                null &&
+                                            widget
+                                                    .products
+                                                    .variations?[item]
+                                                    .attributes
+                                                    ?.isNotEmpty ==
+                                                true) {
                                           teext =
                                               widget
                                                   .products
                                                   .variations?[item]
-                                                  .sku
-                                                  ?.split("-")
-                                                  .last ??
+                                                  .attributes ??
                                               "";
                                         } else {
-                                          teext =
-                                              widget
+                                          if (widget
                                                   .products
                                                   .variations?[item]
                                                   .sku
-                                                  ?.split("/")
-                                                  .last
-                                                  .substring(1) ??
-                                              "";
-                                        }
-                                      }
-                                      return Obx(
-                                        () => InkWell(
-                                          onTap: () {
-                                            dashboardController
-                                                .selectedVariance
-                                                .value = teext;
-                                            dashboardController
-                                                .selectedVariations
-                                                .value = widget
+                                                  ?.contains('-') ==
+                                              true) {
+                                            teext =
+                                                widget
                                                     .products
-                                                    .variations?[item] ??
-                                                Variations();
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
+                                                    .variations?[item]
+                                                    .sku
+                                                    ?.split("-")
+                                                    .last ??
+                                                "";
+                                          } else {
+                                            teext =
+                                                widget
+                                                    .products
+                                                    .variations?[item]
+                                                    .sku
+                                                    ?.split("/")
+                                                    .last
+                                                    .substring(1) ??
+                                                "";
+                                          }
+                                        }
+                                        return Obx(
+                                          () => ElevatedButton(
+                                            onPressed: () {
+                                              dashboardController
+                                                  .selectedVariance
+                                                  .value = teext;
+                                              dashboardController
+                                                  .selectedVariations
+                                                  .value = widget
+                                                      .products
+                                                      .variations?[item] ??
+                                                  Variations();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
                                                   dashboardController
                                                               .selectedVariance
                                                               .value ==
                                                           teext
                                                       ? AppColors.nakedSyrup
-                                                      : AppColors.nakedSyrup
-                                                          .withOpacity(0.3),
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(10),
+                                                      : Colors.white,
+                                              side: BorderSide(
+                                                color:
+                                                    dashboardController
+                                                                .selectedVariance
+                                                                .value !=
+                                                            teext
+                                                        ? AppColors.nakedSyrup
+                                                        : Colors.transparent,
+                                                width: 1.0,
                                               ),
-                                              border: Border.all(
-                                                color: Colors.black87,
+                                              foregroundColor:
+                                                  dashboardController
+                                                              .selectedVariance
+                                                              .value ==
+                                                          teext
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                             ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                    ),
-                                                child: Text(
-                                                  teext,
-                                                  style: TextStyle(
-                                                    fontSize: getFontSize(
-                                                      context,
-                                                      -2,
-                                                    ),
-                                                    fontWeight: FontWeight.w600,
+                                            child: Text(
+                                              teext,
+                                              style: TextStyle(
+                                                fontFamily: 'Euclid Circular B',
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  -4,
+                                                ),
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    dashboardController
+                                                                .selectedVariance
+                                                                .value ==
+                                                            teext
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )
+                                : const SizedBox(),
 
-                                                    color:
-                                                        dashboardController
-                                                                    .selectedVariance
-                                                                    .value ==
-                                                                teext
-                                                            ? Colors.white
-                                                            : Colors.black87,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              )
-                              : const SizedBox(),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            const SizedBox(height: 8),
+                            Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.white,
-                                    border: Border.all(color: Colors.black54),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          if (widget.products.qty!.value > 1) {
-                                            widget.products.qty?.value =
-                                                widget.products.qty!.value - 1;
-                                          }
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            // color: Colors.white,
-                                            border: Border.merge(
-                                              Border(
-                                                right: BorderSide(
-                                                  color: Colors.black54,
-                                                ),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            if (widget.products.qty!.value >
+                                                1) {
+                                              widget.products.qty?.value =
+                                                  widget.products.qty!.value -
+                                                  1;
+                                            }
+                                          },
+                                          icon: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: AppColors.nakedSyrup
+                                                    .withOpacity(0.8),
+                                                width: 1.5,
                                               ),
-                                              Border(left: BorderSide.none),
                                             ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(3.0),
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.remove,
-                                              color: Colors.black,
+                                              size: 24,
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 7),
-                                      Obx(
-                                        () => Padding(
-                                          padding: const EdgeInsets.all(3.0),
-                                          child: Text(
+                                        const SizedBox(width: 3),
+                                        Obx(
+                                          () => Text(
                                             widget.products.qty?.value
                                                     .toString() ??
                                                 "",
                                             style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 7),
-                                      InkWell(
-                                        onTap: () {
-                                          widget.products.qty?.value =
-                                              widget.products.qty!.value + 1;
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            // color: Colors.white,
-                                            border: Border.merge(
-                                              Border(
-                                                left: BorderSide(
-                                                  color: Colors.black54,
-                                                ),
+                                              fontFamily: 'Euclid Circular B',
+                                              fontSize: getFontSize(
+                                                context,
+                                                -4,
                                               ),
-                                              Border(right: BorderSide.none),
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(3.0),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                        const SizedBox(width: 3),
+                                        IconButton(
+                                          onPressed: () {
+                                            widget.products.qty?.value =
+                                                widget.products.qty!.value + 1;
+                                          },
+                                          icon: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: AppColors.nakedSyrup
+                                                    .withOpacity(0.8),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            child: const Icon(
+                                              Icons.add,
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
+                                const Spacer(),
                                 widget.products.variations?.isNotEmpty == true
                                     ? Obx(
                                       () =>
@@ -461,7 +1090,7 @@ class _ProductPageState extends State<ProductPage> {
                                                                 .regularPrice
                                                         ? TextSpan(
                                                           text:
-                                                              "\$${double.parse(dashboardController.selectedVariations.value.regularPrice ?? "0").toStringAsFixed(2)}",
+                                                              "\$${dashboardController.selectedVariations.value.regularPrice}",
                                                           style: TextStyle(
                                                             decoration:
                                                                 TextDecoration
@@ -477,7 +1106,7 @@ class _ProductPageState extends State<ProductPage> {
                                                             fontSize:
                                                                 getFontSize(
                                                                   context,
-                                                                  1,
+                                                                  -3,
                                                                 ),
                                                           ),
                                                         )
@@ -494,20 +1123,20 @@ class _ProductPageState extends State<ProductPage> {
                                                                       .selectedVariations
                                                                       .value
                                                                       .price
-                                                              ? "  \$${double.parse(dashboardController.selectedVariations.value.price ?? "0").toStringAsFixed(2)}"
-                                                              : "  \$${double.parse(dashboardController.selectedVariations.value.salePrice ?? "0").toStringAsFixed(2)}",
+                                                              ? "  \$${dashboardController.selectedVariations.value.price}"
+                                                              : "  \$${dashboardController.selectedVariations.value.salePrice}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors
                                                                 .nakedSyrup,
                                                         fontFamily:
                                                             'Euclid Circular B',
-                                                        fontWeight:
-                                                            FontWeight.bold,
                                                         fontSize: getFontSize(
                                                           context,
-                                                          2,
+                                                          -3,
                                                         ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ],
@@ -518,10 +1147,7 @@ class _ProductPageState extends State<ProductPage> {
                                     : const SizedBox(),
                               ],
                             ),
-                          ),
-                          SizedBox(
-                            width: (Get.width / 2) - 30,
-                            child: Obx(
+                            Obx(
                               () =>
                                   dashboardController.addToBasket.value
                                       ? Center(
@@ -533,26 +1159,22 @@ class _ProductPageState extends State<ProductPage> {
                                           ),
                                         ),
                                       )
-                                      : (widget
-                                                      .products
-                                                      .variations
-                                                      ?.isNotEmpty ==
-                                                  true &&
+                                      : SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            dashboardController.addToCart(
+                                              widget.products.id,
+                                              widget.products.qty,
                                               dashboardController
-                                                  .selectedVariance
-                                                  .value
-                                                  .isNotEmpty) ||
-                                          widget.products.variations?.isEmpty ==
-                                              true
-                                      ? ListView(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.only(top: 10),
-                                        children: [
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor: WidgetStateProperty.all(
+                                                      .selectedVariations
+                                                      .value
+                                                      .variationId ??
+                                                  0,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
                                                 dashboardController
                                                             .cartModel
                                                             .value
@@ -569,590 +1191,179 @@ class _ProductPageState extends State<ProductPage> {
                                                         false
                                                     ? Colors.green
                                                     : AppColors.nakedSyrup,
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              dashboardController.addToCart(
-                                                widget.products.id,
-                                                widget.products.qty,
-                                                dashboardController
-                                                        .selectedVariations
-                                                        .value
-                                                        .variationId ??
-                                                    0,
-                                              );
-                                            },
-                                            child: Text(
-                                              dashboardController
-                                                          .cartModel
-                                                          .value
-                                                          .cartItems
-                                                          ?.any(
-                                                            (item) =>
-                                                                item.productId
-                                                                    .toString() ==
-                                                                widget
-                                                                    .products
-                                                                    .id
-                                                                    .toString(),
-                                                          ) ??
-                                                      false
-                                                  ? "Added"
-                                                  : "Add to cart",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: getFontSize(
-                                                  context,
-                                                  -2,
-                                                ),
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                          dashboardController
-                                                      .selectedVariations
-                                                      .value
-                                                      .stockStatus !=
-                                                  null
-                                              ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      text:
-                                                          "  ${dashboardController.selectedVariations.value.stockStatus}",
-                                                      style: TextStyle(
-                                                        color:
-                                                            dashboardController
-                                                                        .selectedVariations
-                                                                        .value
-                                                                        .stockStatus ==
-                                                                    'instock'
-                                                                ? Colors.green
-                                                                : Colors.red,
-                                                        fontFamily:
-                                                            'Euclid Circular B',
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        fontSize: getFontSize(
-                                                          context,
-                                                          0,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                              : const SizedBox(),
-                                        ],
-                                      )
-                                      : const SizedBox(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 10),
-                      if (widget.products.shortDescription != null &&
-                          widget.products.shortDescription?.isNotEmpty == true)
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 0),
-                            child: Text(
-                              parse(
-                                    widget.products.shortDescription,
-                                  ).body?.text ??
-                                  "",
-                              overflow: TextOverflow.visible,
-                            ),
-                          ),
-                        ),
-                    ],
-                  )
-                  : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.products.name ?? "",
-                        style: TextStyle(
-                          // color: AppColors.nakedSyrup,
-                          fontFamily: 'Euclid Circular B',
-                          // fontStyle: FontStyle.italic,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text(
-                          price,
-                          style: TextStyle(
-                            color:
-                                widget.products.variations?.isNotEmpty == true
-                                    ? Colors.black87
-                                    : AppColors.nakedSyrup,
-                            fontFamily: 'Euclid Circular B',
-                            fontSize: getFontSize(context, 1),
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                      widget.products.variations?.isNotEmpty == true
-                          ? Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 4),
-                            child: SizedBox(
-                              height: 42,
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount:
-                                    widget.products.variations?.length ?? 0,
-                                separatorBuilder: (context, ii) {
-                                  return const SizedBox(width: 8);
-                                },
-                                itemBuilder: (context, item) {
-                                  String teext = "";
-                                  if (widget
-                                              .products
-                                              .variations?[item]
-                                              .attributes !=
-                                          null &&
-                                      widget
-                                              .products
-                                              .variations?[item]
-                                              .attributes
-                                              ?.isNotEmpty ==
-                                          true) {
-                                    teext =
-                                        widget
-                                            .products
-                                            .variations?[item]
-                                            .attributes ??
-                                        "";
-                                  } else {
-                                    if (widget.products.variations?[item].sku
-                                            ?.contains('-') ==
-                                        true) {
-                                      teext =
-                                          widget.products.variations?[item].sku
-                                              ?.split("-")
-                                              .last ??
-                                          "";
-                                    } else {
-                                      teext =
-                                          widget.products.variations?[item].sku
-                                              ?.split("/")
-                                              .last
-                                              .substring(1) ??
-                                          "";
-                                    }
-                                  }
-                                  return Obx(
-                                    () => InkWell(
-                                      onTap: () {
-                                        dashboardController
-                                            .selectedVariance
-                                            .value = teext;
-                                        dashboardController
-                                                .selectedVariations
-                                                .value =
-                                            widget.products.variations?[item] ??
-                                            Variations();
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color:
-                                              dashboardController
-                                                          .selectedVariance
-                                                          .value ==
-                                                      teext
-                                                  ? AppColors.nakedSyrup
-                                                  : AppColors.nakedSyrup
-                                                      .withOpacity(0.3),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Padding(
                                             padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
+                                              horizontal: 20,
+                                              vertical: 14,
                                             ),
-                                            child: Text(
-                                              teext,
-                                              style: TextStyle(
-                                                fontSize: getFontSize(
-                                                  context,
-                                                  -2,
-                                                ),
-                                                fontWeight: FontWeight.w600,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
 
-                                                color:
-                                                    dashboardController
-                                                                .selectedVariance
-                                                                .value ==
-                                                            teext
-                                                        ? Colors.white
-                                                        : Colors.black87,
+                                          child: Text(
+                                            dashboardController
+                                                        .cartModel
+                                                        .value
+                                                        .cartItems
+                                                        ?.any(
+                                                          (item) =>
+                                                              item.productId
+                                                                  .toString() ==
+                                                              widget.products.id
+                                                                  .toString(),
+                                                        ) ??
+                                                    false
+                                                ? "Added"
+                                                : 'ADD TO CART',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -6,
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
                             ),
-                          )
-                          : const SizedBox(),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                // color: Colors.white,
-                                border: Border.all(color: Colors.black54),
+                            dashboardController
+                                        .selectedVariations
+                                        .value
+                                        .stockStatus !=
+                                    null
+                                ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 8,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '${dashboardController.selectedVariations.value.stockStatus}',
+                                      style: TextStyle(
+                                        color: AppColors.nakedSyrup,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: getFontSize(context, -4),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                : const SizedBox(),
+                            const SizedBox(height: 16),
+
+                            if (widget.products.shortDescription != null &&
+                                widget.products.shortDescription?.isNotEmpty ==
+                                    true)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0),
+                                child: Text(
+                                  parse(
+                                        widget.products.shortDescription,
+                                      ).body?.text ??
+                                      "",
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    color: AppColors.fontLightColor,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: getFontSize(context, -6),
+                                  ),
+                                ),
                               ),
-                              child: Row(
+
+                            if (svgImage.isNotEmpty)
+                              SizedBox(
+                                height: 60,
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, s) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10,
+                                      ),
+                                      child: SvgPicture.network(
+                                        svgImage[s],
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                        placeholderBuilder:
+                                            (context) => const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+
+                                        alignment: Alignment.center,
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (context, ii) {
+                                    return const SizedBox(width: 8);
+                                  },
+                                  itemCount: svgImage.length,
+                                ),
+                              ),
+                            if (widget.products.description != null &&
+                                widget.products.description?.isNotEmpty == true)
+                              ExpansionTile(
+                                title: Text(
+                                  'Description',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: getFontSize(context, -3),
+                                  ),
+                                ),
+                                childrenPadding: EdgeInsets.zero,
+                                onExpansionChanged: (value) {},
+
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      if (widget.products.qty!.value > 1) {
-                                        widget.products.qty?.value =
-                                            widget.products.qty!.value - 1;
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        // color: Colors.white,
-                                        border: Border.merge(
-                                          Border(
-                                            right: BorderSide(
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          Border(left: BorderSide.none),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 7),
-                                  Obx(
-                                    () => Padding(
-                                      padding: const EdgeInsets.all(3.0),
-                                      child: Text(
-                                        widget.products.qty?.value.toString() ??
-                                            "",
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 7),
-                                  InkWell(
-                                    onTap: () {
-                                      widget.products.qty?.value =
-                                          widget.products.qty!.value + 1;
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        // color: Colors.white,
-                                        border: Border.merge(
-                                          Border(
-                                            left: BorderSide(
-                                              color: Colors.black54,
-                                            ),
-                                          ),
-                                          Border(right: BorderSide.none),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: Colors.black,
-                                        ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: Text(
+                                      parse(
+                                            widget.products.description,
+                                          ).body?.text ??
+                                          "",
+                                      style: TextStyle(
+                                        color: AppColors.fontLightColor,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: getFontSize(context, -4),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            widget.products.variations?.isNotEmpty == true
-                                ? Obx(
-                                  () =>
-                                      dashboardController
-                                              .selectedVariance
-                                              .value
-                                              .isNotEmpty
-                                          ? RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                dashboardController
-                                                            .selectedVariations
-                                                            .value
-                                                            .price !=
-                                                        dashboardController
-                                                            .selectedVariations
-                                                            .value
-                                                            .regularPrice
-                                                    ? TextSpan(
-                                                      text:
-                                                          "\$${dashboardController.selectedVariations.value.regularPrice}",
-                                                      style: TextStyle(
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough,
-                                                        color:
-                                                            AppColors
-                                                                .nakedSyrup,
-                                                        fontFamily:
-                                                            'Euclid Circular B',
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        fontSize: getFontSize(
-                                                          context,
-                                                          1,
-                                                        ),
-                                                      ),
-                                                    )
-                                                    : WidgetSpan(
-                                                      child: SizedBox(),
-                                                    ),
-                                                TextSpan(
-                                                  text:
-                                                      dashboardController
-                                                                  .selectedVariations
-                                                                  .value
-                                                                  .regularPrice ==
-                                                              dashboardController
-                                                                  .selectedVariations
-                                                                  .value
-                                                                  .price
-                                                          ? "  \$${dashboardController.selectedVariations.value.price}"
-                                                          : "  \$${dashboardController.selectedVariations.value.salePrice}",
-                                                  style: TextStyle(
-                                                    color: AppColors.nakedSyrup,
-                                                    fontFamily:
-                                                        'Euclid Circular B',
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: getFontSize(
-                                                      context,
-                                                      2,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                          : const SizedBox(),
-                                )
-                                : const SizedBox(),
+                            // if (widget.products.recipes != null &&
+                            //     widget.products.recipes?.isNotEmpty == true)
+                            //   ExpansionTile(
+                            //     title: const Text('Recipes'),
+                            //     onExpansionChanged: (value) {},
+                            //     children: [
+                            //       Padding(
+                            //         padding: EdgeInsets.all(8.0),
+                            //         child: Text(
+                            //           parse(widget.products.recipes).body?.text ??
+                            //               "",
+                            //           style:    TextStyle(
+                            //             color: AppColors.fontLightColor,
+                            //             fontWeight: FontWeight.normal,
+                            //             fontSize: getFontSize(context, -1),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
                           ],
                         ),
                       ),
-                      // dashboardController.selectedVariance.value.isNotEmpty
-                      //     ? InkWell(
-                      //       onTap: () {
-                      //         dashboardController.selectedVariance.value = "";
-                      //       },
-                      //       child: SizedBox(
-                      //         width: 35,
-                      //         child: Padding(
-                      //           padding: const EdgeInsets.only(top: 10),
-                      //           child: Text(
-                      //             "clear",
-                      //             style: TextStyle(
-                      //               // color: AppColors.nakedSyrup,
-                      //               fontFamily: 'Euclid Circular B',
-                      //               fontSize: 12,
-                      //               fontWeight: FontWeight.w600,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     )
-                      //     : const SizedBox(),
-                      Obx(
-                        () =>
-                            dashboardController.addToBasket.value
-                                ? Center(
-                                  child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.greenColor,
-                                    ),
-                                  ),
-                                )
-                                : (widget.products.variations?.isNotEmpty ==
-                                            true &&
-                                        dashboardController
-                                            .selectedVariance
-                                            .value
-                                            .isNotEmpty) ||
-                                    widget.products.variations?.isEmpty == true
-                                ? ListView(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(top: 10),
-                                  children: [
-                                    ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor: WidgetStateProperty.all(
-                                          dashboardController
-                                                      .cartModel
-                                                      .value
-                                                      .cartItems
-                                                      ?.any(
-                                                        (item) =>
-                                                            item.productId
-                                                                .toString() ==
-                                                            widget.products.id
-                                                                .toString(),
-                                                      ) ??
-                                                  false
-                                              ? Colors.green
-                                              : AppColors.nakedSyrup,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        dashboardController.addToCart(
-                                          widget.products.id,
-                                          widget.products.qty,
-                                          dashboardController
-                                                  .selectedVariations
-                                                  .value
-                                                  .variationId ??
-                                              0,
-                                        );
-                                      },
-                                      child: Text(
-                                        dashboardController
-                                                    .cartModel
-                                                    .value
-                                                    .cartItems
-                                                    ?.any(
-                                                      (item) =>
-                                                          item.productId
-                                                              .toString() ==
-                                                          widget.products.id
-                                                              .toString(),
-                                                    ) ??
-                                                false
-                                            ? "Added"
-                                            : "Add to cart",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: getFontSize(context, -2),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    dashboardController
-                                                .selectedVariations
-                                                .value
-                                                .stockStatus !=
-                                            null
-                                        ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            RichText(
-                                              text: TextSpan(
-                                                text:
-                                                    "  ${dashboardController.selectedVariations.value.stockStatus}",
-                                                style: TextStyle(
-                                                  color:
-                                                      dashboardController
-                                                                  .selectedVariations
-                                                                  .value
-                                                                  .stockStatus ==
-                                                              'instock'
-                                                          ? Colors.green
-                                                          : Colors.red,
-                                                  fontFamily:
-                                                      'Euclid Circular B',
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: getFontSize(
-                                                    context,
-                                                    0,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                        : const SizedBox(),
-                                  ],
-                                )
-                                : const SizedBox(),
-                      ),
-                      if (widget.products.shortDescription != null &&
-                          widget.products.shortDescription?.isNotEmpty == true)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text(
-                            parse(
-                                  widget.products.shortDescription,
-                                ).body?.text ??
-                                "",
-                          ),
-                        ),
-                    ],
-                  ),
-
-              if (widget.products.description != null &&
-                  widget.products.description?.isNotEmpty == true)
-                Theme(
-                  data: Theme.of(
-                    context,
-                  ).copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(
-                        "Description",
-                        style: TextStyle(
-                          color: AppColors.nakedSyrup,
-                          fontFamily: 'Euclid Circular B',
-
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
                     ),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 0),
-                        child: Text(
-                          parse(widget.products.description).body?.text ?? "",
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-              SizedBox(height: 25),
-            ],
-          ),
-        ),
+                ],
+              ),
+        ],
       ),
     );
   }

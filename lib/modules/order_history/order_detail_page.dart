@@ -48,16 +48,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         shrinkWrap: true,
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 10,
-                  bottom: 10,
+            padding: EdgeInsets.all(getFontSize(context, 2)),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.yellowColor.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: AppColors.nakedSyrup.withOpacity(0.2),
                 ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(getFontSize(context, -2)),
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start, // Align text to start
@@ -67,118 +68,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            RichText(
-                              textAlign: TextAlign.left,
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "#${widget.orders.orderId} ",
-                                    style: TextStyle(
-                                      color: AppColors.nakedSyrup,
-                                      fontFamily: 'Euclid Circular B',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: getFontSize(context, 2),
-                                    ),
-                                  ),
-                                ],
-                                text: "Order ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Euclid Circular B',
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: getFontSize(context, 2),
-                                ),
-                              ),
-                            ),
-
                             Row(
-                              children: [
-                                RichText(
-                                  textAlign: TextAlign.left,
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: " $convertedDate  ",
-                                        style: TextStyle(
-                                          color: AppColors.nakedSyrup,
-                                          fontFamily: 'Euclid Circular B',
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: getFontSize(context, 2),
-                                        ),
-                                      ),
-                                    ],
-                                    text: "Order Date : ",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'Euclid Circular B',
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: getFontSize(context, 2),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        widget.orders.status.toString() ==
-                                                "cancelled"
-                                            ? Colors.red
-                                            : widget.orders.status.toString() ==
-                                                "completed"
-                                            ? Color(0XFF008000)
-                                            : Color(0XFFFFBF00),
-                                    borderRadius: BorderRadius.circular(9),
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 10,
-                                        right: 10,
-                                        top: 5,
-                                        bottom: 5,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            widget.orders.status.toString() ==
-                                                    "cancelled"
-                                                ? Icons.cancel_outlined
-                                                : widget.orders.status
-                                                        .toString() ==
-                                                    "completed"
-                                                ? Icons.check_circle_outline
-                                                : Icons
-                                                    .incomplete_circle_rounded,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            widget.orders.status.toString() ??
-                                                "",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -3,
-                                              ),
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "Open Sans",
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                        : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RichText(
                                   textAlign: TextAlign.left,
@@ -189,202 +79,349 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         style: TextStyle(
                                           color: AppColors.nakedSyrup,
                                           fontFamily: 'Euclid Circular B',
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           fontSize: getFontSize(context, 2),
                                         ),
                                       ),
                                     ],
-                                    text: "Order ",
+                                    text: "Order ID : ",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'Euclid Circular B',
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.w600,
                                       fontSize: getFontSize(context, 2),
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        widget.orders.status.toString() ==
-                                                "cancelled"
-                                            ? Colors.red
-                                            : widget.orders.status.toString() ==
-                                                "completed"
-                                            ? Color(0XFF008000)
-                                            : Color(0XFFFFBF00),
-                                    borderRadius: BorderRadius.circular(9),
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 10,
-                                        right: 10,
-                                        top: 5,
-                                        bottom: 5,
+                                const SizedBox(width: 15),
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: " $convertedDate  ",
+                                        style: TextStyle(
+                                          color: AppColors.nakedSyrup,
+                                          fontFamily: 'Euclid Circular B',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: getFontSize(context, 2),
+                                        ),
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            widget.orders.status.toString() ==
-                                                    "cancelled"
-                                                ? Icons.cancel_outlined
-                                                : widget.orders.status
-                                                        .toString() ==
-                                                    "completed"
-                                                ? Icons.check_circle_outline
-                                                : Icons
-                                                    .incomplete_circle_rounded,
-                                            color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            widget.orders.status.toString() ??
-                                                "",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -3,
-                                              ),
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "Open Sans",
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                    ],
+                                    text: "Order Date : ",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Euclid Circular B',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: getFontSize(context, 2),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            RichText(
-                              textAlign: TextAlign.left,
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: " $convertedDate  ",
+                            Container(
+                              decoration: BoxDecoration(
+                                color:
+                                    widget.orders.status.toString() ==
+                                            "cancelled"
+                                        ? AppColors.redColor.withOpacity(0.15)
+                                        : widget.orders.status.toString() ==
+                                            "completed"
+                                        ? Color(0XFF3FD75A).withOpacity(0.2)
+                                        : Color(0XFFFFAE00).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 16,
+                                    right: 16,
+                                    top: 10,
+                                    bottom: 10,
+                                  ),
+                                  child: Text(
+                                    (widget.orders.status
+                                                .toString()
+                                                .toString() ??
+                                            "")
+                                        .toUpperCase(),
                                     style: TextStyle(
-                                      color: AppColors.nakedSyrup,
-                                      fontFamily: 'Euclid Circular B',
+                                      color:
+                                          widget.orders.status.toString() ==
+                                                  "cancelled"
+                                              ? AppColors.redColor
+                                              : widget.orders.status
+                                                      .toString()
+                                                      .toString() ==
+                                                  "completed"
+                                              ? Color(0XFF3FD75A)
+                                              : Color(0XFFFFAE00),
+                                      fontSize: getFontSize(context, 0),
                                       fontWeight: FontWeight.bold,
-                                      fontSize: getFontSize(context, 2),
+                                      fontFamily: "Euclid Circular B",
                                     ),
                                   ),
-                                ],
-                                text: "Order Date : ",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Euclid Circular B',
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: getFontSize(context, 2),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                        : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "#${widget.orders.orderId} ",
+                                        style: TextStyle(
+                                          color: AppColors.nakedSyrup,
+                                          fontFamily: 'Euclid Circular B',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: getFontSize(context, -2),
+                                        ),
+                                      ),
+                                    ],
+                                    text: "Order ID : ",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Euclid Circular B',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: getFontSize(context, -2),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                RichText(
+                                  textAlign: TextAlign.left,
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: " $convertedDate  ",
+                                        style: TextStyle(
+                                          color: AppColors.nakedSyrup,
+                                          fontFamily: 'Euclid Circular B',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: getFontSize(context, -2),
+                                        ),
+                                      ),
+                                    ],
+                                    text: "Order Date : ",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Euclid Circular B',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: getFontSize(context, -2),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 120,
+                              decoration: BoxDecoration(
+                                color:
+                                    widget.orders.status.toString() ==
+                                            "cancelled"
+                                        ? AppColors.redColor.withOpacity(0.15)
+                                        : widget.orders.status.toString() ==
+                                            "completed"
+                                        ? Color(0XFF3FD75A).withOpacity(0.2)
+                                        : Color(0XFFFFAE00).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    top: 8,
+                                    bottom: 8,
+                                  ),
+                                  child: Text(
+                                    (widget.orders.status
+                                                .toString()
+                                                .toString() ??
+                                            "")
+                                        .toUpperCase(),
+                                    style: TextStyle(
+                                      color:
+                                          widget.orders.status.toString() ==
+                                                  "cancelled"
+                                              ? AppColors.redColor
+                                              : widget.orders.status
+                                                      .toString()
+                                                      .toString() ==
+                                                  "completed"
+                                              ? Color(0XFF3FD75A)
+                                              : Color(0XFFFFAE00),
+                                      fontSize: getFontSize(context, -4),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Euclid Circular B",
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: getFontSize(context, 0),
+                      ),
+                      child: Divider(
+                        color: AppColors.nakedSyrup.withOpacity(0.2),
+                        thickness: 1.5,
+                      ),
+                    ),
                     widget.orders.items!.isNotEmpty
                         ? Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SizedBox(
-                            // height: 100,
-                            child: ListView.separated(
-                              itemCount: widget.orders.items?.length ?? 0,
-                              separatorBuilder: (context, i) {
-                                return SizedBox(width: 10);
-                              },
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder: (context, x) {
-                                return SizedBox(
-                                  height:
-                                      widget.orders.items?[x].image
-                                                  .toString()
-                                                  .isNotEmpty ==
-                                              true
-                                          ? 150
-                                          : 70,
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      widget.orders.items?[x].image
-                                                  .toString()
-                                                  .isNotEmpty ==
-                                              true
-                                          ? Image.network(
-                                            widget.orders.items?[x].image
-                                                    .toString() ??
-                                                "",
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                          )
-                                          : const SizedBox(),
-                                      const SizedBox(width: 7),
-                                      Expanded(
-                                        // Ensures Column takes remaining horizontal space
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .start, // Align text to start
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              widget
-                                                      .orders
-                                                      .items?[x]
-                                                      .productName ??
+                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          child: ListView.separated(
+                            itemCount: widget.orders.items?.length ?? 0,
+                            separatorBuilder: (context, i) {
+                              return SizedBox(width: 10);
+                            },
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, x) {
+                              return SizedBox(
+                                height:
+                                    widget.orders.items?[x].image
+                                                .toString()
+                                                .isNotEmpty ==
+                                            true
+                                        ? Get.width >= 600
+                                            ? 150
+                                            : 80
+                                        : 70,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    widget.orders.items?[x].image
+                                                .toString()
+                                                .isNotEmpty ==
+                                            true
+                                        ? Container(
+                                          width:
+                                              Get.width >= 600
+                                                  ? (getFontSize(context, -2) *
+                                                      10)
+                                                  : (getFontSize(context, -2) *
+                                                      5),
+                                          decoration: BoxDecoration(
+                                            // color: AppColors.yellowColor.withOpacity(0.02),
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.yellowColor
+                                                  .withOpacity(0.5),
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                            child: Image.network(
+                                              widget.orders.items?[x].image
+                                                      .toString() ??
                                                   "",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: getFontSize(
-                                                  context,
-                                                  1,
-                                                ),
-                                              ),
-                                              softWrap: true,
-                                              overflow: TextOverflow.visible,
+                                              fit: BoxFit.cover,
                                             ),
-                                            Text(
-                                              "\$${double.parse(widget.orders.items?[x].price.toString() ?? "0.0").toStringAsFixed(2)}",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.nakedSyrup,
-                                                fontSize: getFontSize(
-                                                  context,
-                                                  1,
-                                                ),
-                                              ),
-                                              softWrap: true,
-                                              overflow: TextOverflow.visible,
+                                          ),
+                                        )
+                                        : const SizedBox(),
+                                    const SizedBox(width: 7),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .start, // Align text to start
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 0),
+                                          Text(
+                                            widget
+                                                    .orders
+                                                    .items?[x]
+                                                    .productName ??
+                                                "",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(
+                                                        context,
+                                                        -2,
+                                                      ),
+                                              color: Colors.black,
                                             ),
-                                          ],
-                                        ),
+                                            softWrap: true,
+                                            overflow: TextOverflow.visible,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "\$${double.parse(widget.orders.items?[x].price.toString() ?? "0.0").toStringAsFixed(2)}",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.nakedSyrup,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 0)
+                                                      : getFontSize(
+                                                        context,
+                                                        -4,
+                                                      ),
+                                            ),
+                                            softWrap: true,
+                                            overflow: TextOverflow.visible,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         )
                         : const SizedBox(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical:
+                            Get.width >= 600
+                                ? (getFontSize(context, 4))
+                                : getFontSize(context, -4),
+                      ),
+                      child: Divider(
+                        color: AppColors.nakedSyrup.withOpacity(0.2),
+                        thickness: 1.5,
+                      ),
+                    ),
                     widget.orders.subTotal != null &&
                             widget.orders.subTotal != 0
                         ? Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Subtotal : ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Euclid Circular B',
-                                fontWeight: FontWeight.w500,
-                                fontSize: getFontSize(context, 1),
+                                fontWeight: FontWeight.w600,
+                                fontSize:
+                                    Get.width >= 600
+                                        ? getFontSize(context, 2)
+                                        : getFontSize(context, -2),
                               ),
                             ),
                             Text(
@@ -393,7 +430,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 color: AppColors.nakedSyrup,
                                 fontFamily: 'Euclid Circular B',
                                 fontWeight: FontWeight.bold,
-                                fontSize: getFontSize(context, 1),
+                                fontSize:
+                                    Get.width >= 600
+                                        ? getFontSize(context, 2)
+                                        : getFontSize(context, -2),
                               ),
                             ),
                           ],
@@ -404,15 +444,18 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         ? const SizedBox(height: 10)
                         : const SizedBox(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "GST : ",
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Euclid Circular B',
-                            fontWeight: FontWeight.w500,
-                            fontSize: getFontSize(context, 1),
+                            fontWeight: FontWeight.w600,
+                            fontSize:
+                                Get.width >= 600
+                                    ? getFontSize(context, 2)
+                                    : getFontSize(context, -2),
                           ),
                         ),
                         Text(
@@ -421,7 +464,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             color: AppColors.nakedSyrup,
                             fontFamily: 'Euclid Circular B',
                             fontWeight: FontWeight.bold,
-                            fontSize: getFontSize(context, 1),
+                            fontSize:
+                                Get.width >= 600
+                                    ? getFontSize(context, 2)
+                                    : getFontSize(context, -2),
                           ),
                         ),
                       ],
@@ -430,15 +476,18 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     widget.orders.discount != null &&
                             widget.orders.discount != 0
                         ? Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Discount : ",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Euclid Circular B',
-                                fontWeight: FontWeight.w500,
-                                fontSize: getFontSize(context, 1),
+                                fontWeight: FontWeight.w600,
+                                fontSize:
+                                    Get.width >= 600
+                                        ? getFontSize(context, 2)
+                                        : getFontSize(context, -2),
                               ),
                             ),
                             Text(
@@ -447,7 +496,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 color: AppColors.nakedSyrup,
                                 fontFamily: 'Euclid Circular B',
                                 fontWeight: FontWeight.bold,
-                                fontSize: getFontSize(context, 1),
+                                fontSize:
+                                    Get.width >= 600
+                                        ? getFontSize(context, 2)
+                                        : getFontSize(context, -2),
                               ),
                             ),
                           ],
@@ -458,15 +510,18 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         ? const SizedBox(height: 10)
                         : const SizedBox(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Total : ",
                           style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Euclid Circular B',
-                            fontWeight: FontWeight.w500,
-                            fontSize: getFontSize(context, 1),
+                            fontWeight: FontWeight.w600,
+                            fontSize:
+                                Get.width >= 600
+                                    ? getFontSize(context, 2)
+                                    : getFontSize(context, 2),
                           ),
                         ),
                         Text(
@@ -475,7 +530,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             color: AppColors.nakedSyrup,
                             fontFamily: 'Euclid Circular B',
                             fontWeight: FontWeight.bold,
-                            fontSize: getFontSize(context, 1),
+                            fontSize:
+                                Get.width >= 600
+                                    ? getFontSize(context, 2)
+                                    : getFontSize(context, -2),
                           ),
                         ),
                       ],
@@ -487,268 +545,343 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              width: (Get.width / 2) - 30,
+                              width: (Get.width / 2) - 55,
+                              height: 380,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                color: AppColors.yellowColor.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: AppColors.nakedSyrup.withOpacity(0.2),
                                 ),
-                                border: Border.all(color: Colors.black54),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  getFontSize(context, 0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Billing Address ",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            Get.width >= 600
+                                                ? getFontSize(context, 6)
+                                                : getFontSize(context, 2),
                                       ),
-                                      border: Border.all(color: Colors.black54),
-                                      color: Colors.black12,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: getFontSize(context, 0),
+                                      ),
+                                      child: Divider(
+                                        color: AppColors.nakedSyrup.withOpacity(
+                                          0.2,
+                                        ),
+                                        thickness: 1.5,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Billing Address ",
+                                            "${widget.orders.billing?.firstName} ${widget.orders.billing?.lastName}",
                                             style: TextStyle(
-                                              color: Colors.black87,
+                                              color: AppColors.fontLightColor,
                                               fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: getFontSize(context, 1),
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.company}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.city} ${widget.orders.billing?.state} ${widget.orders.billing?.postcode}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.yellowColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    WidgetSpan(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              right: 5,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .person_4_outlined,
+                                                          size: getFontSize(
+                                                            context,
+                                                            6,
+                                                          ),
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${widget.orders.billing?.phone}",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize:
+                                                            Get.width >= 600
+                                                                ? getFontSize(
+                                                                  context,
+                                                                  2,
+                                                                )
+                                                                : getFontSize(
+                                                                  context,
+                                                                  0,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.yellowColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    WidgetSpan(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              right: 5,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons.email_outlined,
+                                                          size: getFontSize(
+                                                            context,
+                                                            6,
+                                                          ),
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${widget.orders.billing?.email}",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize:
+                                                            Get.width >= 600
+                                                                ? getFontSize(
+                                                                  context,
+                                                                  2,
+                                                                )
+                                                                : getFontSize(
+                                                                  context,
+                                                                  0,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${widget.orders.billing?.firstName} ${widget.orders.billing?.lastName}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.company}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.city} ${widget.orders.billing?.state} ${widget.orders.billing?.postcode}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -1,
-                                              ),
-                                            ),
-                                            children: [
-                                              WidgetSpan(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
-                                                  child: Icon(
-                                                    Icons.person_pin_outlined,
-                                                    size: getFontSize(
-                                                      context,
-                                                      2,
-                                                    ),
-                                                    color: AppColors.nakedSyrup,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "${widget.orders.billing?.phone}",
-                                                style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontFamily:
-                                                      'Euclid Circular B',
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: getFontSize(
-                                                    context,
-                                                    -1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -1,
-                                              ),
-                                            ),
-                                            children: [
-                                              WidgetSpan(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
-                                                  child: Icon(
-                                                    Icons.email_outlined,
-                                                    size: getFontSize(
-                                                      context,
-                                                      2,
-                                                    ),
-                                                    color: AppColors.nakedSyrup,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "${widget.orders.billing?.email}",
-                                                style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontFamily:
-                                                      'Euclid Circular B',
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: getFontSize(
-                                                    context,
-                                                    -1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-
+                            SizedBox(width: getFontSize(context, 2)),
                             Container(
-                              width: (Get.width / 2) - 30,
+                              width: (Get.width / 2) - 55,
+                              height: 380,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                color: AppColors.yellowColor.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: AppColors.nakedSyrup.withOpacity(0.2),
                                 ),
-                                border: Border.all(color: Colors.black54),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  getFontSize(context, 0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Shipping Address ",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize:
+                                            Get.width >= 600
+                                                ? getFontSize(context, 6)
+                                                : getFontSize(context, 2),
                                       ),
-                                      border: Border.all(color: Colors.black54),
-                                      color: Colors.black12,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: getFontSize(context, 0),
+                                      ),
+                                      child: Divider(
+                                        color: AppColors.nakedSyrup.withOpacity(
+                                          0.2,
+                                        ),
+                                        thickness: 1.5,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Shipping Address ",
+                                            "${widget.orders.shipping?.firstName} ${widget.orders.shipping?.lastName}",
                                             style: TextStyle(
-                                              color: Colors.black87,
+                                              color: AppColors.fontLightColor,
                                               fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: getFontSize(context, 1),
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.company}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.city} ${widget.orders.shipping?.state} ${widget.orders.shipping?.postcode}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize:
+                                                  Get.width >= 600
+                                                      ? getFontSize(context, 4)
+                                                      : getFontSize(context, 2),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${widget.orders.shipping?.firstName} ${widget.orders.shipping?.lastName}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.company}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.city} ${widget.orders.shipping?.state} ${widget.orders.shipping?.postcode}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -759,265 +892,320 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                color: AppColors.yellowColor.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: AppColors.nakedSyrup.withOpacity(0.2),
                                 ),
-                                border: Border.all(color: Colors.black54),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  getFontSize(context, -2),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Billing Address ",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: getFontSize(context, -2),
                                       ),
-                                      border: Border.all(color: Colors.black54),
-                                      color: Colors.black12,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: getFontSize(context, -6),
+                                      ),
+                                      child: Divider(
+                                        color: AppColors.nakedSyrup.withOpacity(
+                                          0.2,
+                                        ),
+                                        thickness: 1.5,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Billing Address ",
+                                            "${widget.orders.billing?.firstName} ${widget.orders.billing?.lastName}",
                                             style: TextStyle(
-                                              color: Colors.black87,
+                                              color: AppColors.fontLightColor,
                                               fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: getFontSize(context, 1),
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.company}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.billing?.city} ${widget.orders.billing?.state} ${widget.orders.billing?.postcode}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.yellowColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    WidgetSpan(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              right: 5,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons
+                                                              .person_4_outlined,
+                                                          size: getFontSize(
+                                                            context,
+                                                            2,
+                                                          ),
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${widget.orders.billing?.phone}",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -4,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: AppColors.yellowColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    WidgetSpan(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              right: 5,
+                                                            ),
+                                                        child: Icon(
+                                                          Icons.email_outlined,
+                                                          size: getFontSize(
+                                                            context,
+                                                            2,
+                                                          ),
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${widget.orders.billing?.email}",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -4,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${widget.orders.billing?.firstName} ${widget.orders.billing?.lastName}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.company}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.billing?.city} ${widget.orders.billing?.state} ${widget.orders.billing?.postcode}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -1,
-                                              ),
-                                            ),
-                                            children: [
-                                              WidgetSpan(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
-                                                  child: Icon(
-                                                    Icons.person_pin_outlined,
-                                                    size: getFontSize(
-                                                      context,
-                                                      2,
-                                                    ),
-                                                    color: AppColors.nakedSyrup,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "${widget.orders.billing?.phone}",
-                                                style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontFamily:
-                                                      'Euclid Circular B',
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: getFontSize(
-                                                    context,
-                                                    -1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -1,
-                                              ),
-                                            ),
-                                            children: [
-                                              WidgetSpan(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        right: 5,
-                                                      ),
-                                                  child: Icon(
-                                                    Icons.email_outlined,
-                                                    size: getFontSize(
-                                                      context,
-                                                      2,
-                                                    ),
-                                                    color: AppColors.nakedSyrup,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    "${widget.orders.billing?.email}",
-                                                style: TextStyle(
-                                                  color: Colors.black87,
-                                                  fontFamily:
-                                                      'Euclid Circular B',
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: getFontSize(
-                                                    context,
-                                                    -1,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: getFontSize(context, -2)),
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                color: AppColors.yellowColor.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: AppColors.nakedSyrup.withOpacity(0.2),
                                 ),
-                                border: Border.all(color: Colors.black54),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
+                              child: Padding(
+                                padding: EdgeInsets.all(
+                                  getFontSize(context, -2),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Shipping Address ",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'Euclid Circular B',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: getFontSize(context, -2),
                                       ),
-                                      border: Border.all(color: Colors.black54),
-                                      color: Colors.black12,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: getFontSize(context, -6),
+                                      ),
+                                      child: Divider(
+                                        color: AppColors.nakedSyrup.withOpacity(
+                                          0.2,
+                                        ),
+                                        thickness: 1.5,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        bottom: 8,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Shipping Address ",
+                                            "${widget.orders.shipping?.firstName} ${widget.orders.shipping?.lastName}",
                                             style: TextStyle(
-                                              color: Colors.black87,
+                                              color: AppColors.fontLightColor,
                                               fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: getFontSize(context, 1),
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.company}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "${widget.orders.shipping?.city} ${widget.orders.shipping?.state} ${widget.orders.shipping?.postcode}",
+                                            style: TextStyle(
+                                              color: AppColors.fontLightColor,
+                                              fontFamily: 'Euclid Circular B',
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: getFontSize(
+                                                context,
+                                                -2,
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "${widget.orders.shipping?.firstName} ${widget.orders.shipping?.lastName}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.company}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                        Text(
-                                          "${widget.orders.shipping?.city} ${widget.orders.shipping?.state} ${widget.orders.shipping?.postcode}",
-                                          style: TextStyle(
-                                            color: Colors.black87,
-                                            fontFamily: 'Euclid Circular B',
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: getFontSize(context, -1),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],

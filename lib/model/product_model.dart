@@ -48,6 +48,7 @@ class Products {
     String? image,
     List<String>? gallery,
     String? shortDescription,
+    String? recipes,
     String? description,
     List<Variations>? variations,
   }) {
@@ -62,6 +63,7 @@ class Products {
     _image = image;
     _gallery = gallery;
     _shortDescription = shortDescription;
+    _recipes = recipes;
     _description = description;
     _variations = variations;
   }
@@ -77,6 +79,7 @@ class Products {
     _image = json['image'];
     _gallery = json['gallery'] != null ? json['gallery'].cast<String>() : [];
     _shortDescription = json['short_description'];
+    _recipes = json['recipes'];
     _description = json['description'];
     if (json['variations'] != null) {
       _variations = [];
@@ -95,6 +98,7 @@ class Products {
   String? _stockStatus;
   String? _image;
   List<String>? _gallery;
+  String? _recipes;
   String? _shortDescription;
   String? _description;
   List<Variations>? _variations;
@@ -109,6 +113,7 @@ class Products {
     String? image,
     List<String>? gallery,
     String? shortDescription,
+    String? recipes,
     String? description,
     List<Variations>? variations,
   }) => Products(
@@ -122,6 +127,7 @@ class Products {
     image: image ?? _image,
     gallery: gallery ?? _gallery,
     shortDescription: shortDescription ?? _shortDescription,
+    recipes: recipes ?? _recipes,
     description: description ?? _description,
     variations: variations ?? _variations,
   );
@@ -136,6 +142,7 @@ class Products {
   String? get image => _image;
   List<String>? get gallery => _gallery;
   String? get shortDescription => _shortDescription;
+  String? get recipes => _recipes;
   String? get description => _description;
   List<Variations>? get variations => _variations;
 
@@ -151,6 +158,7 @@ class Products {
     map['image'] = _image;
     map['gallery'] = _gallery;
     map['short_description'] = _shortDescription;
+    map['recipes'] = _recipes;
     map['description'] = _description;
     if (_variations != null) {
       map['variations'] = _variations?.map((v) => v.toJson()).toList();
