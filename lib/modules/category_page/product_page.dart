@@ -2,13 +2,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:html/parser.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as htmlParser;
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
 import '../../Resources/AppColors.dart';
 import '../../model/product_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
+import '../../widgets/view_photo.dart';
 
 class ProductPage extends StatefulWidget {
   ProductPage({super.key, required this.products});
@@ -22,6 +24,43 @@ class _ProductPageState extends State<ProductPage> {
   List<String> allImages = [];
   List<String> svgImage = [];
   String price = "";
+
+  String convertHtmlListToText(String htmlString) {
+    final document = htmlParser.parse(htmlString);
+    final buffer = StringBuffer();
+
+    void extractNodeText(dom.Node node) {
+      if (node is dom.Element) {
+        if (node.localName == 'p') {
+          buffer.writeln(node.text.trim());
+          buffer.writeln();
+        } else if (node.localName == 'ol') {
+          int index = 1;
+          for (var li in node.getElementsByTagName('li')) {
+            buffer.writeln('$index. ${li.text.trim()}');
+            index++;
+          }
+          buffer.writeln();
+        } else if (node.localName == 'ul') {
+          for (var li in node.getElementsByTagName('li')) {
+            buffer.writeln('• ${li.text.trim()}');
+          }
+          buffer.writeln();
+        } else {
+          for (var child in node.nodes) {
+            extractNodeText(child);
+          }
+        }
+      }
+    }
+
+    for (var node in document.body?.nodes ?? []) {
+      extractNodeText(node);
+    }
+
+    return buffer.toString().trim();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -119,27 +158,38 @@ class _ProductPageState extends State<ProductPage> {
                         MediaQuery.of(context).padding.top,
                     child: Column(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.all(10),
-                          padding: EdgeInsets.all(getFontSize(context, 2)),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: AppColors.yellowColor.withOpacity(0.5),
+                        InkWell(
+                          onTap: () {
+                            Get.to(
+                              PhotoViewInApp(
+                                galleryItems: allImages,
+                                currentIndex: selectedImageIndex,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(10),
+                            padding: EdgeInsets.all(getFontSize(context, 2)),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.yellowColor.withOpacity(0.5),
+                              ),
                             ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.network(
-                              allImages[selectedImageIndex],
-                              fit: BoxFit.fitWidth,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.network(
+                                allImages[selectedImageIndex],
+                                fit: BoxFit.fitWidth,
 
-                              // alignment: Alignment.center,
-                              errorBuilder:
-                                  (context, error, stackTrace) => const Center(
-                                    child: Icon(Icons.broken_image),
-                                  ),
+                                // alignment: Alignment.center,
+                                errorBuilder:
+                                    (context, error, stackTrace) =>
+                                        const Center(
+                                          child: Icon(Icons.broken_image),
+                                        ),
+                              ),
                             ),
                           ),
                         ),
@@ -533,15 +583,36 @@ class _ProductPageState extends State<ProductPage> {
                                           width: double.infinity,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              dashboardController.addToCart(
-                                                widget.products.id,
-                                                widget.products.qty,
-                                                dashboardController
-                                                        .selectedVariations
-                                                        .value
-                                                        .variationId ??
-                                                    0,
-                                              );
+                                              if ((widget
+                                                              .products
+                                                              .variations
+                                                              ?.isNotEmpty ==
+                                                          true &&
+                                                      dashboardController
+                                                              .selectedVariations
+                                                              .value
+                                                              .variationId !=
+                                                          null) ||
+                                                  widget
+                                                          .products
+                                                          .variations
+                                                          ?.isNotEmpty ==
+                                                      false) {
+                                                dashboardController.addToCart(
+                                                  widget.products.id,
+                                                  widget.products.qty,
+                                                  dashboardController
+                                                          .selectedVariations
+                                                          .value
+                                                          .variationId ??
+                                                      0,
+                                                );
+                                              } else {
+                                                Get.snackbar(
+                                                  'Please select one variance',
+                                                  "",
+                                                );
+                                              }
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
@@ -635,9 +706,12 @@ class _ProductPageState extends State<ProductPage> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 0),
                                   child: Text(
-                                    parse(
-                                          widget.products.shortDescription,
-                                        ).body?.text ??
+                                    htmlParser
+                                            .parse(
+                                              widget.products.shortDescription,
+                                            )
+                                            .body
+                                            ?.text ??
                                         "",
                                     overflow: TextOverflow.visible,
                                     style: TextStyle(
@@ -701,12 +775,16 @@ class _ProductPageState extends State<ProductPage> {
                                       padding: EdgeInsets.only(
                                         left: 8,
                                         right: 8,
+                                        bottom: 10,
                                       ),
                                       child: Text(
-                                        parse(
-                                              widget.products.description,
-                                            ).body?.text ??
-                                            "",
+                                        convertHtmlListToText(
+                                          widget.products.description ?? "",
+                                        ),
+                                        // parse(
+                                        //       widget.products.description,
+                                        //     ).body?.text ??
+                                        //     "",
                                         style: TextStyle(
                                           color: AppColors.fontLightColor,
                                           fontWeight: FontWeight.normal,
@@ -766,26 +844,37 @@ class _ProductPageState extends State<ProductPage> {
                             allImages.map((imgUrl) {
                               return Builder(
                                 builder: (BuildContext context) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        imgUrl,
-                                        fit: BoxFit.contain,
-                                        alignment: Alignment.center,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                const Center(
-                                                  child: Icon(
-                                                    Icons.broken_image,
+                                  return InkWell(
+                                    onTap: () {
+                                      Get.to(
+                                        PhotoViewInApp(
+                                          galleryItems: allImages,
+                                          currentIndex:
+                                              dashboardController.currentIndex,
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          imgUrl,
+                                          fit: BoxFit.contain,
+                                          alignment: Alignment.center,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Center(
+                                                    child: Icon(
+                                                      Icons.broken_image,
+                                                    ),
                                                   ),
-                                                ),
+                                        ),
                                       ),
                                     ),
                                   );
@@ -799,9 +888,10 @@ class _ProductPageState extends State<ProductPage> {
                         children:
                             allImages.asMap().entries.map((entry) {
                               return GestureDetector(
-                                onTap:
-                                    () => dashboardController.carouselController
-                                        .animateToPage(entry.key),
+                                onTap: () {
+                                  dashboardController.carouselController
+                                      .animateToPage(entry.key);
+                                },
                                 child:
                                     entry.value.toLowerCase().endsWith(".svg")
                                         ? const SizedBox()
@@ -1163,15 +1253,36 @@ class _ProductPageState extends State<ProductPage> {
                                         width: double.infinity,
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            dashboardController.addToCart(
-                                              widget.products.id,
-                                              widget.products.qty,
-                                              dashboardController
-                                                      .selectedVariations
-                                                      .value
-                                                      .variationId ??
-                                                  0,
-                                            );
+                                            if ((widget
+                                                            .products
+                                                            .variations
+                                                            ?.isNotEmpty ==
+                                                        true &&
+                                                    dashboardController
+                                                            .selectedVariations
+                                                            .value
+                                                            .variationId !=
+                                                        null) ||
+                                                widget
+                                                        .products
+                                                        .variations
+                                                        ?.isNotEmpty ==
+                                                    false) {
+                                              dashboardController.addToCart(
+                                                widget.products.id,
+                                                widget.products.qty,
+                                                dashboardController
+                                                        .selectedVariations
+                                                        .value
+                                                        .variationId ??
+                                                    0,
+                                              );
+                                            } else {
+                                              Get.snackbar(
+                                                'Please select one variance',
+                                                "",
+                                              );
+                                            }
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
@@ -1259,9 +1370,12 @@ class _ProductPageState extends State<ProductPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 0),
                                 child: Text(
-                                  parse(
-                                        widget.products.shortDescription,
-                                      ).body?.text ??
+                                  htmlParser
+                                          .parse(
+                                            widget.products.shortDescription,
+                                          )
+                                          .body
+                                          ?.text ??
                                       "",
                                   overflow: TextOverflow.visible,
                                   style: TextStyle(
@@ -1321,12 +1435,19 @@ class _ProductPageState extends State<ProductPage> {
 
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    padding: EdgeInsets.only(
+                                      left: 8,
+                                      right: 8,
+                                      bottom: 10,
+                                    ),
                                     child: Text(
-                                      parse(
-                                            widget.products.description,
-                                          ).body?.text ??
-                                          "",
+                                      convertHtmlListToText(
+                                        widget.products.description ?? "",
+                                      ),
+                                      // parse(
+                                      //       widget.products.description,
+                                      //     ).body?.text ??
+                                      //     "",
                                       style: TextStyle(
                                         color: AppColors.fontLightColor,
                                         fontWeight: FontWeight.normal,

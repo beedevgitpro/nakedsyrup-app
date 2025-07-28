@@ -1228,7 +1228,6 @@ class ApiClass {
   }
 
   FutureOr<dynamic> getProductFromCategory(slug) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       String url = '${AppStrings.baseUrl}products?category=$slug';
       print("Category URL::$url");
@@ -1257,9 +1256,9 @@ class ApiClass {
         backgroundColor: Colors.white,
       );
     } on SocketException catch (e) {
-      print(e);
+      print("SocketException $e");
       getT.Get.snackbar(
-        "SocketException",
+        "SocketException ",
         '',
         colorText: Colors.red,
         backgroundColor: Colors.white,
@@ -1272,7 +1271,7 @@ class ApiClass {
         backgroundColor: Colors.white,
       );
 
-      print("DioError:e");
+      print("DioError:e $e");
     } on Exception catch (e) {
       print("Error : $e");
       getT.Get.snackbar(

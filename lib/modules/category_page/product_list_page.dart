@@ -12,7 +12,7 @@ import '../../service.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../cart/cart_page.dart';
-import '../dashboard_flow/product_page.dart';
+import 'product_page.dart';
 
 class ProductListPage extends StatefulWidget {
   ProductListPage({super.key, this.categories});

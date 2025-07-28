@@ -7,7 +7,7 @@ import '../../model/product_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../dashboard_flow/dashboard_controller.dart';
-import '../dashboard_flow/product_page.dart';
+import 'product_page.dart';
 
 class CategoryPage extends StatefulWidget {
   const CategoryPage({super.key});
