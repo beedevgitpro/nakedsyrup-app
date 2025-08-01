@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -12,8 +13,6 @@ import '../dashboard_flow/dashboard.dart';
 import 'order_detail_page.dart';
 
 class OrderHistoryPage extends StatefulWidget {
-  // CartPage({super.key, this.categories});
-  // Categories? categories;
   @override
   State<OrderHistoryPage> createState() => _OrderHistoryPageState();
 }
@@ -200,8 +199,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                                 BorderRadius.circular(
                                                                   15,
                                                                 ),
-                                                            child: Image.network(
-                                                              dashboardController
+                                                            child: CachedNetworkImage(
+                                                              fit: BoxFit.cover,
+                                                              imageUrl:
+                                                                  dashboardController
                                                                       .orderHistoryModel
                                                                       .value
                                                                       .orders?[j]
@@ -209,7 +210,23 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                                       .image
                                                                       .toString() ??
                                                                   "",
-                                                              fit: BoxFit.cover,
+                                                              placeholder:
+                                                                  (
+                                                                    context,
+                                                                    url,
+                                                                  ) => CircularProgressIndicator(
+                                                                    color:
+                                                                        Colors
+                                                                            .transparent,
+                                                                  ),
+                                                              errorWidget:
+                                                                  (
+                                                                    context,
+                                                                    url,
+                                                                    error,
+                                                                  ) => Icon(
+                                                                    Icons.error,
+                                                                  ),
                                                             ),
                                                           );
                                                         } else {
@@ -247,7 +264,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                " #${dashboardController.orderHistoryModel.value.orders?[j].orderId}",
+                                                                " #${dashboardController.orderHistoryModel.value.orders?[j].orderNumber}",
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -478,8 +495,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                                 BorderRadius.circular(
                                                                   15,
                                                                 ),
-                                                            child: Image.network(
-                                                              dashboardController
+                                                            child: CachedNetworkImage(
+                                                              fit: BoxFit.cover,
+                                                              imageUrl:
+                                                                  dashboardController
                                                                       .orderHistoryModel
                                                                       .value
                                                                       .orders?[j]
@@ -487,7 +506,23 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                                       .image
                                                                       .toString() ??
                                                                   "",
-                                                              fit: BoxFit.cover,
+                                                              placeholder:
+                                                                  (
+                                                                    context,
+                                                                    url,
+                                                                  ) => CircularProgressIndicator(
+                                                                    color:
+                                                                        Colors
+                                                                            .transparent,
+                                                                  ),
+                                                              errorWidget:
+                                                                  (
+                                                                    context,
+                                                                    url,
+                                                                    error,
+                                                                  ) => Icon(
+                                                                    Icons.error,
+                                                                  ),
                                                             ),
                                                           );
                                                         } else {

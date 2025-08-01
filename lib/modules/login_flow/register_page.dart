@@ -2,8 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/login_flow/login_page.dart';
-import 'package:naked_syrups/service.dart';
-import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 import '../../Resources/AppColors.dart';
 import '../../utility/responsive_text.dart';
@@ -22,30 +20,29 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   DashboardController dashboardController = Get.put(DashboardController());
-  late WebViewControllerPlus controler;
   @override
   void initState() {
     // TODO: implement initState
     dashboardController.getCountryList();
-    dashboardController.enableRegistration.value = false;
-    controler =
-        WebViewControllerPlus()
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..addJavaScriptChannel(
-            'Captcha',
-            onMessageReceived: (message) async {
-              final token = message.message;
-              var verify = await ApiClass().verifyCaptchaToken(token);
-              if (verify != null) {
-                if (verify['success'] == true) {
-                  dashboardController.enableRegistration.value = true;
-                }
-              }
-            },
-          )
-          ..loadRequest(
-            Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
-          );
+    dashboardController.enableRegistration.value = true;
+    // controler =
+    //     WebViewControllerPlus()
+    //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    //       ..addJavaScriptChannel(
+    //         'Captcha',
+    //         onMessageReceived: (message) async {
+    //           final token = message.message;
+    //           var verify = await ApiClass().verifyCaptchaToken(token);
+    //           if (verify != null) {
+    //             if (verify['success'] == true) {
+    //               dashboardController.enableRegistration.value = true;
+    //             }
+    //           }
+    //         },
+    //       )
+    //       ..loadRequest(
+    //         Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
+    //       );
     super.initState();
   }
 
@@ -407,28 +404,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                     ),
-                    Obx(() {
-                      final screenWidth = MediaQuery.of(context).size.width;
-                      final screenHeight = MediaQuery.of(context).size.height;
-
-                      double width =
-                          screenWidth >= 600
-                              ? (screenWidth / 2) - 50
-                              : screenWidth - 50;
-                      double height =
-                          dashboardController.enableRegistration.value
-                              ? screenHeight *
-                                  0.1 // 20% of screen height
-                              : screenHeight * 0.24; // 50% of screen height
-
-                      return Center(
-                        child: SizedBox(
-                          height: height,
-                          width: width,
-                          child: WebViewWidget(controller: controler),
-                        ),
-                      );
-                    }),
                     const SizedBox(height: 15),
                     Obx(() {
                       if (dashboardController.callRegisterApi.value) {

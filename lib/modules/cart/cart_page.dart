@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
@@ -133,15 +134,23 @@ class _CartPageState extends State<CartPage> {
                                       SizedBox(
                                         height: 100,
                                         width: 100,
-                                        child: Image.network(
-                                          dashboardController
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.fill,
+                                          imageUrl:
+                                              dashboardController
                                                   .cartModel
                                                   .value
                                                   .cartItems?[j]
                                                   .productImage ??
                                               "",
-
-                                          fit: BoxFit.fill,
+                                          placeholder:
+                                              (context, url) =>
+                                                  CircularProgressIndicator(
+                                                    color: Colors.transparent,
+                                                  ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Icon(Icons.error),
                                         ),
                                       ),
                                       const SizedBox(width: 20),

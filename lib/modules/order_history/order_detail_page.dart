@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -34,7 +35,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     ).format(DateTime.parse(date));
     return Scaffold(
       appBar: AppBarWidget(
-        'Order #${widget.orders.orderId}',
+        'Order #${widget.orders.orderNumber}',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
@@ -75,7 +76,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "#${widget.orders.orderId} ",
+                                        text: "#${widget.orders.orderNumber} ",
                                         style: TextStyle(
                                           color: AppColors.nakedSyrup,
                                           fontFamily: 'Euclid Circular B',
@@ -178,7 +179,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "#${widget.orders.orderId} ",
+                                        text: "#${widget.orders.orderNumber} ",
                                         style: TextStyle(
                                           color: AppColors.nakedSyrup,
                                           fontFamily: 'Euclid Circular B',
@@ -329,11 +330,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             borderRadius: BorderRadius.circular(
                                               15,
                                             ),
-                                            child: Image.network(
-                                              widget.orders.items?[x].image
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  widget.orders.items?[x].image
                                                       .toString() ??
                                                   "",
-                                              fit: BoxFit.cover,
+                                              placeholder:
+                                                  (context, url) =>
+                                                      CircularProgressIndicator(
+                                                        color:
+                                                            Colors.transparent,
+                                                      ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
                                             ),
                                           ),
                                         )
@@ -546,7 +557,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           children: [
                             Container(
                               width: (Get.width / 2) - 55,
-                              height: 380,
+                              height: 405,
                               decoration: BoxDecoration(
                                 color: AppColors.yellowColor.withOpacity(0.25),
                                 borderRadius: BorderRadius.circular(15),
@@ -778,7 +789,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             SizedBox(width: getFontSize(context, 2)),
                             Container(
                               width: (Get.width / 2) - 55,
-                              height: 380,
+                              height: 405,
                               decoration: BoxDecoration(
                                 color: AppColors.yellowColor.withOpacity(0.25),
                                 borderRadius: BorderRadius.circular(15),

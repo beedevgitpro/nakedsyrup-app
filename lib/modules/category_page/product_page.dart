@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -179,16 +180,15 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(15),
-                              child: Image.network(
-                                allImages[selectedImageIndex],
+                              child: CachedNetworkImage(
                                 fit: BoxFit.fitWidth,
-
-                                // alignment: Alignment.center,
-                                errorBuilder:
-                                    (context, error, stackTrace) =>
-                                        const Center(
-                                          child: Icon(Icons.broken_image),
-                                        ),
+                                imageUrl: allImages[selectedImageIndex],
+                                placeholder:
+                                    (context, url) => CircularProgressIndicator(
+                                      color: Colors.transparent,
+                                    ),
+                                errorWidget:
+                                    (context, url, error) => Icon(Icons.error),
                               ),
                             ),
                           ),
@@ -221,16 +221,19 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: Image.network(
-                                    allImages[index],
+                                  child: CachedNetworkImage(
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            const Center(
-                                              child: Icon(Icons.broken_image),
+                                    imageUrl: allImages[index],
+                                    placeholder:
+                                        (context, url) =>
+                                            CircularProgressIndicator(
+                                              color: Colors.transparent,
                                             ),
+                                    errorWidget:
+                                        (context, url, error) =>
+                                            Icon(Icons.error),
                                   ),
                                 ),
                               );
@@ -741,8 +744,7 @@ class _ProductPageState extends State<ProductPage> {
                                           fit: BoxFit.cover,
                                           placeholderBuilder:
                                               (context) => const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                                child: SizedBox(),
                                               ),
 
                                           alignment: Alignment.center,
@@ -794,26 +796,40 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                   ],
                                 ),
-                              // if (widget.products.recipes != null &&
-                              //     widget.products.recipes?.isNotEmpty == true)
-                              //   ExpansionTile(
-                              //     title: const Text('Recipes'),
-                              //     onExpansionChanged: (value) {},
-                              //     children: [
-                              //       Padding(
-                              //         padding: EdgeInsets.all(8.0),
-                              //         child: Text(
-                              //           parse(widget.products.recipes).body?.text ??
-                              //               "",
-                              //           style:    TextStyle(
-                              //             color: AppColors.fontLightColor,
-                              //             fontWeight: FontWeight.normal,
-                              //             fontSize: getFontSize(context, -1),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
+                              if (widget.products.recipes != null &&
+                                  widget.products.recipes?.isNotEmpty == true)
+                                ExpansionTile(
+                                  title: Text(
+                                    'Recipes',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: getFontSize(context, 1),
+                                    ),
+                                  ),
+                                  childrenPadding: EdgeInsets.zero,
+                                  onExpansionChanged: (value) {},
+
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        bottom: 10,
+                                      ),
+                                      child: Text(
+                                        convertHtmlListToText(
+                                          widget.products.recipes ?? "",
+                                        ),
+                                        style: TextStyle(
+                                          color: AppColors.fontLightColor,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: getFontSize(context, -2),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         ),
@@ -863,17 +879,18 @@ class _ProductPageState extends State<ProductPage> {
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(12),
-                                        child: Image.network(
-                                          imgUrl,
+                                        child: CachedNetworkImage(
                                           fit: BoxFit.contain,
                                           alignment: Alignment.center,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const Center(
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                    ),
+                                          imageUrl: imgUrl,
+                                          placeholder:
+                                              (context, url) =>
+                                                  CircularProgressIndicator(
+                                                    color: Colors.transparent,
                                                   ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Icon(Icons.error),
                                         ),
                                       ),
                                     ),
@@ -1444,10 +1461,7 @@ class _ProductPageState extends State<ProductPage> {
                                       convertHtmlListToText(
                                         widget.products.description ?? "",
                                       ),
-                                      // parse(
-                                      //       widget.products.description,
-                                      //     ).body?.text ??
-                                      //     "",
+
                                       style: TextStyle(
                                         color: AppColors.fontLightColor,
                                         fontWeight: FontWeight.normal,
@@ -1457,26 +1471,41 @@ class _ProductPageState extends State<ProductPage> {
                                   ),
                                 ],
                               ),
-                            // if (widget.products.recipes != null &&
-                            //     widget.products.recipes?.isNotEmpty == true)
-                            //   ExpansionTile(
-                            //     title: const Text('Recipes'),
-                            //     onExpansionChanged: (value) {},
-                            //     children: [
-                            //       Padding(
-                            //         padding: EdgeInsets.all(8.0),
-                            //         child: Text(
-                            //           parse(widget.products.recipes).body?.text ??
-                            //               "",
-                            //           style:    TextStyle(
-                            //             color: AppColors.fontLightColor,
-                            //             fontWeight: FontWeight.normal,
-                            //             fontSize: getFontSize(context, -1),
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
+                            if (widget.products.recipes != null &&
+                                widget.products.recipes?.isNotEmpty == true)
+                              ExpansionTile(
+                                title: Text(
+                                  'Recipes',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: getFontSize(context, -3),
+                                  ),
+                                ),
+                                childrenPadding: EdgeInsets.zero,
+                                onExpansionChanged: (value) {},
+
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 8,
+                                      right: 8,
+                                      bottom: 10,
+                                    ),
+                                    child: Text(
+                                      convertHtmlListToText(
+                                        widget.products.recipes ?? "",
+                                      ),
+
+                                      style: TextStyle(
+                                        color: AppColors.fontLightColor,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: getFontSize(context, -4),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       ),

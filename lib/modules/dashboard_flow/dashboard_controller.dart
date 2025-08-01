@@ -38,7 +38,7 @@ class DashboardController extends GetxController {
   RxBool getHistory = false.obs;
   RxBool addToBasket = false.obs;
   RxBool showDescription = false.obs;
-  RxBool fetchInvoice = false.obs;
+  RxBool loadWebView = false.obs;
   RxBool isExpanded = false.obs;
   RxBool isOnline = false.obs;
   RxBool callRegisterApi = false.obs;
@@ -681,6 +681,7 @@ class DashboardController extends GetxController {
 
   orderHistory() async {
     getHistory.value = true;
+
     var history = await ApiClass().getOrderHistory();
     if (history != null) {
       orderHistoryModel.value = OrderHistoryModel.fromJson(history);

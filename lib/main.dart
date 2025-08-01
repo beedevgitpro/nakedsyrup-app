@@ -4,8 +4,11 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import 'get_observer_add.dart';
 import 'modules/splash_screen/splash_view.dart';
+import 'service.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupDio();
   runApp(const MyApp());
 }
 

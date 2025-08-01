@@ -21,6 +21,7 @@ class GlobalRouteObserver extends GetObserver {
     return name == '/' ||
         name == '/splash' ||
         name == '/LoginPage' ||
+        name == '/WebViewApp' ||
         name == '/RegisterPage';
   }
 

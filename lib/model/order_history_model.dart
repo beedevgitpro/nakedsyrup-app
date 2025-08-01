@@ -36,6 +36,7 @@ class OrderHistoryModel {
 class Orders {
   Orders({
     dynamic orderId,
+    dynamic orderNumber,
     Billing? billing,
     Shipping? shipping,
     String? orderDate,
@@ -47,6 +48,7 @@ class Orders {
     List<Items>? items,
   }) {
     _orderId = orderId;
+    _orderNumber = orderNumber;
     _billing = billing;
     _shipping = shipping;
     _orderDate = orderDate;
@@ -60,6 +62,7 @@ class Orders {
 
   Orders.fromJson(dynamic json) {
     _orderId = json['order_id'];
+    _orderNumber = json['order_number'];
     _billing =
         json['billing'] != null ? Billing.fromJson(json['billing']) : null;
     _shipping =
@@ -78,6 +81,7 @@ class Orders {
     }
   }
   dynamic _orderId;
+  dynamic _orderNumber;
   Billing? _billing;
   Shipping? _shipping;
   String? _orderDate;
@@ -89,6 +93,7 @@ class Orders {
   List<Items>? _items;
   Orders copyWith({
     dynamic orderId,
+    dynamic orderNumber,
     Billing? billing,
     Shipping? shipping,
     String? orderDate,
@@ -100,6 +105,7 @@ class Orders {
     List<Items>? items,
   }) => Orders(
     orderId: orderId ?? _orderId,
+    orderNumber: orderNumber ?? _orderNumber,
     billing: billing ?? _billing,
     shipping: shipping ?? _shipping,
     orderDate: orderDate ?? _orderDate,
@@ -111,6 +117,7 @@ class Orders {
     items: items ?? _items,
   );
   dynamic get orderId => _orderId;
+  dynamic get orderNumber => _orderNumber;
   Billing? get billing => _billing;
   Shipping? get shipping => _shipping;
   String? get orderDate => _orderDate;
@@ -124,6 +131,7 @@ class Orders {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['order_id'] = _orderId;
+    map['order_number'] = _orderNumber;
     if (_billing != null) {
       map['billing'] = _billing?.toJson();
     }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -44,16 +45,23 @@ class _DashboardPageState extends State<DashboardPage>
   advancedStatusCheck(NewVersionPlus newVersion) async {
     final status = await newVersion.getVersionStatus();
     if (status != null) {
-      checkVersionStatus(status.localVersion, status.storeVersion,status,newVersion);
+      checkVersionStatus(
+        status.localVersion,
+        status.storeVersion,
+        status,
+        newVersion,
+      );
     }
   }
+
   bool isUpdateAvailable(String localVersion, String storeVersion) {
     List<String> localParts = localVersion.split('.');
     List<String> storeParts = storeVersion.split('.');
 
-    int maxLength = localParts.length > storeParts.length
-        ? localParts.length
-        : storeParts.length;
+    int maxLength =
+        localParts.length > storeParts.length
+            ? localParts.length
+            : storeParts.length;
 
     for (int i = 0; i < maxLength; i++) {
       int localPart = i < localParts.length ? int.parse(localParts[i]) : 0;
@@ -65,13 +73,20 @@ class _DashboardPageState extends State<DashboardPage>
 
     return false; // Versions are equal
   }
-  void checkVersionStatus(String localVersion, String storeVersion,status,newVersion) {
+
+  void checkVersionStatus(
+    String localVersion,
+    String storeVersion,
+    status,
+    newVersion,
+  ) {
     if (isUpdateAvailable(localVersion, storeVersion)) {
       newVersion.showUpdateDialog(
         context: context,
         versionStatus: status,
         dialogTitle: 'Update Available',
-        dialogText: 'You can update this app from ${localVersion} to ${storeVersion}',
+        dialogText:
+            'You can update this app from ${localVersion} to ${storeVersion}',
         launchModeVersion: LaunchModeVersion.external,
         allowDismissal: true,
       );
@@ -198,14 +213,23 @@ class _DashboardPageState extends State<DashboardPage>
                                               .image
                                               ?.isNotEmpty ==
                                           true
-                                      ? Image.network(
-                                        dashboardController
+                                      ? CachedNetworkImage(
+                                        fit: BoxFit.cover,
+                                        imageUrl:
+                                            dashboardController
                                                 .categoryModel
                                                 .value
                                                 .categories?[j]
                                                 .image ??
                                             "",
-                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            (context, url) =>
+                                                CircularProgressIndicator(
+                                                  color: Colors.transparent,
+                                                ),
+                                        errorWidget:
+                                            (context, url, error) =>
+                                                Icon(Icons.error),
                                       )
                                       : dashboardController
                                               .categoryModel
@@ -472,11 +496,28 @@ class _DashboardPageState extends State<DashboardPage>
                                                                           BorderRadius.circular(
                                                                             15,
                                                                           ),
-                                                                      child: Image.network(
-                                                                        dashboardController.orderHistoryModel.value.orders?[j].items?[x].image.toString() ??
-                                                                            "",
+                                                                      child: CachedNetworkImage(
                                                                         fit:
                                                                             BoxFit.cover,
+                                                                        imageUrl:
+                                                                            dashboardController.orderHistoryModel.value.orders?[j].items?[x].image.toString() ??
+                                                                            "",
+                                                                        placeholder:
+                                                                            (
+                                                                              context,
+                                                                              url,
+                                                                            ) => CircularProgressIndicator(
+                                                                              color:
+                                                                                  Colors.transparent,
+                                                                            ),
+                                                                        errorWidget:
+                                                                            (
+                                                                              context,
+                                                                              url,
+                                                                              error,
+                                                                            ) => Icon(
+                                                                              Icons.error,
+                                                                            ),
                                                                       ),
                                                                     );
                                                                   } else {
@@ -525,7 +566,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                          " #${dashboardController.orderHistoryModel.value.orders?[j].orderId}",
+                                                                          " #${dashboardController.orderHistoryModel.value.orders?[j].orderNumber}",
                                                                       style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,
@@ -779,11 +820,28 @@ class _DashboardPageState extends State<DashboardPage>
                                                                           BorderRadius.circular(
                                                                             15,
                                                                           ),
-                                                                      child: Image.network(
-                                                                        dashboardController.orderHistoryModel.value.orders?[j].items?[x].image.toString() ??
-                                                                            "",
+                                                                      child: CachedNetworkImage(
                                                                         fit:
                                                                             BoxFit.cover,
+                                                                        imageUrl:
+                                                                            dashboardController.orderHistoryModel.value.orders?[j].items?[x].image.toString() ??
+                                                                            "",
+                                                                        placeholder:
+                                                                            (
+                                                                              context,
+                                                                              url,
+                                                                            ) => CircularProgressIndicator(
+                                                                              color:
+                                                                                  Colors.transparent,
+                                                                            ),
+                                                                        errorWidget:
+                                                                            (
+                                                                              context,
+                                                                              url,
+                                                                              error,
+                                                                            ) => Icon(
+                                                                              Icons.error,
+                                                                            ),
                                                                       ),
                                                                     );
                                                                   } else {
@@ -831,7 +889,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                   children: [
                                                                     TextSpan(
                                                                       text:
-                                                                          " #${dashboardController.orderHistoryModel.value.orders?[j].orderId}",
+                                                                          " #${dashboardController.orderHistoryModel.value.orders?[j].orderNumber}",
                                                                       style: TextStyle(
                                                                         fontWeight:
                                                                             FontWeight.w700,

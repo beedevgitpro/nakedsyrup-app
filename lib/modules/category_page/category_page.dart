@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -142,13 +143,20 @@ class _CategoryPageState extends State<CategoryPage> {
                                 ),
                               );
                             },
-                            leading: Image.network(
-                              dashboardController
+                            leading: CachedNetworkImage(
+                              imageUrl:
+                                  dashboardController
                                       .dashboardList
                                       .value
                                       .products?[0]
                                       .image ??
                                   "",
+                              placeholder:
+                                  (context, url) => CircularProgressIndicator(
+                                    color: Colors.transparent,
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Icon(Icons.error),
                             ),
                             title: Text(
                               dashboardController

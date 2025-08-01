@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/cart/cart_page.dart';
 import 'package:naked_syrups/modules/order_history/order_history_page.dart';
+import 'package:naked_syrups/web_view_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Resources/AppColors.dart';
@@ -225,9 +226,6 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             ),
             Column(
               children: [
-                // drawersRow(context, Icons.shop_outlined, 'Shop', () async {
-                //   Get.to(CategoryPage());
-                // }, false),
                 drawersRow(
                   context,
                   Icons.shopping_cart_outlined,
@@ -242,7 +240,50 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                 }, false),
               ],
             ),
-
+            drawersRow(
+              context,
+              Icons.document_scanner_outlined,
+              'Vegan Australia Certified',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'Vegan Australia Certified',
+                    url:
+                        'https://nakedsyrups.com.au/wp-content/uploads/2025/07/Vegan-Australia-Certificate-Naked-Syrups-2025.pdf',
+                  ),
+                );
+              },
+              false,
+            ),
+            drawersRow(
+              context,
+              Icons.document_scanner_outlined,
+              'HACCP Certification',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'HACCP Certification',
+                    url:
+                        'https://nakedsyrups.com.au/wp-content/uploads/2024/11/Naked-Syrups-HACCP-Certificate-Exp-2025-11-08a.pdf',
+                  ),
+                );
+              },
+              false,
+            ),
+            drawersRow(
+              context,
+              Icons.document_scanner_outlined,
+              'Privacy Policy',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'Privacy Policy',
+                    url: 'https://nakedsyrups.com.au/privacy-policy/',
+                  ),
+                );
+              },
+              false,
+            ),
             drawersRow(context, Icons.logout, 'Logout', () async {
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();

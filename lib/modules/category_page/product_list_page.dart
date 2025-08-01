@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -208,15 +209,23 @@ class _ProductListPageState extends State<ProductListPage> {
                                       ),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(15),
-                                        child: Image.network(
-                                          dashboardController
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl:
+                                              dashboardController
                                                   .productModel
                                                   .value
                                                   .products?[j]
                                                   .image ??
                                               "",
-
-                                          fit: BoxFit.cover,
+                                          placeholder:
+                                              (context, url) =>
+                                                  CircularProgressIndicator(
+                                                    color: Colors.transparent,
+                                                  ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Icon(Icons.error),
                                         ),
                                       ),
                                     ),
