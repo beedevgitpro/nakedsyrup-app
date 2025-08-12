@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
         return child;
       },
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         fontFamily: 'Euclid Circular B',
       ),

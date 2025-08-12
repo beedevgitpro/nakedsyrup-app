@@ -273,12 +273,41 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             drawersRow(
               context,
               Icons.document_scanner_outlined,
+              'HALAL Certification',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'HALAL Certification',
+                    url:
+                        'https://nakedsyrups.com.au/wp-content/uploads/2025/08/Halal-Certificate-2024.pdf',
+                  ),
+                );
+              },
+              false,
+            ),
+            drawersRow(
+              context,
+              Icons.document_scanner_outlined,
               'Privacy Policy',
               () async {
                 Get.to(
                   WebViewApp(
                     name: 'Privacy Policy',
                     url: 'https://nakedsyrups.com.au/privacy-policy/',
+                  ),
+                );
+              },
+              false,
+            ),
+            drawersRow(
+              context,
+              Icons.document_scanner_outlined,
+              'Deliveries and Returns',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'Deliveries and Returns',
+                    url: 'https://nakedsyrups.com.au/deliveries-returns/',
                   ),
                 );
               },

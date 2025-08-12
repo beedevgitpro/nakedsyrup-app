@@ -16,7 +16,7 @@ class AppStrings {
 
   static String baseUrl = "https://nakedsyrups.com.au/wp-json/ns/v1/";
   static String imageBaseUrl = "https://buildinginspectionapps.com.au";
-  static String version = "v1.0.1";
+  static String version = "v1.1.2";
   static String termsAndCondition =
       "https://buildinginspectionapps.com.au/public/terms-conditions";
   static String privacyPolicy =

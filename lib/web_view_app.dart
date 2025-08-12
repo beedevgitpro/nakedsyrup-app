@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/widgets/appbar_widget.dart';
@@ -20,15 +22,20 @@ class _WebViewAppState extends State<WebViewApp> {
 
   @override
   void initState() {
+    if (Platform.isAndroid && widget.url?.endsWith('.pdf') == true) {
+      widget.url =
+          'https://docs.google.com/gview?embedded=true&url=${widget.url}';
+    }
     dashboardController.loadWebView.value = true;
     controller =
         WebViewControllerPlus()
           ..setNavigationDelegate(
             NavigationDelegate(
+              onPageStarted: (url) {
+                dashboardController.loadWebView.value = true;
+              },
               onPageFinished: (url) async {
                 dashboardController.loadWebView.value = false;
-
-                double height = await controller.webViewHeight;
               },
             ),
           )
