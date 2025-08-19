@@ -217,7 +217,7 @@ class LoginPage extends StatelessWidget {
                                           text: TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: "Not a Member? ",
+                                                text: "Not a Customer? ",
                                                 style: TextStyle(
                                                   color: Colors.black87,
                                                   fontFamily: "Montserrat",
@@ -229,7 +229,7 @@ class LoginPage extends StatelessWidget {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: "Register",
+                                                text: "Signup Now",
                                                 style: TextStyle(
                                                   color: AppColors.nakedSyrup,
                                                   fontFamily: "Montserrat",

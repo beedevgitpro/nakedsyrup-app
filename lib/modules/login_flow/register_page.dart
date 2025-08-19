@@ -472,7 +472,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "Already a Member? ",
+                                  text: "Already a Customer? ",
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontFamily: "Montserrat",

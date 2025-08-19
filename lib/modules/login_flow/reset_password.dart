@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../Resources/AppColors.dart';
 import '../../utility/responsive_text.dart';
+import '../../widgets/mandtory_text_lables.dart';
+import '../../widgets/text_form_fields.dart';
 import 'loginflow_controller.dart';
 
 class ResetPassword extends StatelessWidget {
@@ -21,10 +23,12 @@ class ResetPassword extends StatelessWidget {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: 10, vertical: (Get.height - 250) * 0.2),
+                  horizontal: 10,
+                  vertical: (Get.height - 250) * 0.2,
+                ),
                 child: const SizedBox(
-                    // height: loginFlowController.isItTablet.value ? 50 : 0,
-                    ),
+                  // height: loginFlowController.isItTablet.value ? 50 : 0,
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -40,113 +44,79 @@ class ResetPassword extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                        ),
+                        child: const Icon(Icons.arrow_back_ios),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 15, top: 15),
-                      child: Text(
-                        "New Password",
-                        style: TextStyle(
-                            fontSize: getFontSize(context, -2),
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
-                      ),
+                      padding: const EdgeInsets.only(top: 30),
+                      child: textLabel('Email Address', context, true),
                     ),
-                    Center(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(top: 7, left: 15, right: 15),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: const Color(0XFFced4da),
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              5,
-                            ),
-                          ),
-                          child: TextField(
-                            onChanged: (value) {
-                              // loginFlowController.newPassword.value = value;
-                            },
-                            obscureText: true,
-                            controller:
-                                loginFlowController.newPassWordController,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: getFontSize(context, 0)),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              hintText: 'New Password',
-                              hintStyle: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: getFontSize(context, 0)),
-                            ),
-                          ),
-                        ),
-                      ),
+                    AppTextFormField(
+                      controller: loginFlowController.emailController,
+                      lable: 'Email',
+                      function: (value) {},
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    // const SizedBox(height: 20),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 15, top: 15),
+                    //   child: Text(
+                    //     "Confirm Password",
+                    //     style: TextStyle(
+                    //       fontSize: getFontSize(context, -2),
+                    //       fontWeight: FontWeight.w700,
+                    //       color: Colors.black,
+                    //     ),
+                    //   ),
+                    // ),
+                    // Center(
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(
+                    //       top: 7,
+                    //       left: 15,
+                    //       right: 15,
+                    //     ),
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         border: Border.all(
+                    //           width: 1,
+                    //           color: const Color(0XFFced4da),
+                    //         ),
+                    //         borderRadius: BorderRadius.circular(5),
+                    //       ),
+                    //       padding: const EdgeInsets.all(0),
+                    //       child: TextField(
+                    //         onChanged: (value) {
+                    //           // loginFlowController.confirmPassword.value = value;
+                    //         },
+                    //         obscureText: true,
+                    //         controller:
+                    //             loginFlowController.confirmPassWordController,
+                    //         style: TextStyle(
+                    //           color: Colors.black87,
+                    //           fontSize: getFontSize(context, 0),
+                    //         ),
+                    //         decoration: InputDecoration(
+                    //           border: InputBorder.none,
+                    //           hintText: 'Confirm Password',
+                    //           contentPadding: const EdgeInsets.symmetric(
+                    //             horizontal: 15,
+                    //           ),
+                    //           hintStyle: TextStyle(
+                    //             color: Colors.black38,
+                    //             fontSize: getFontSize(context, 0),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.only(left: 15, top: 15),
-                      child: Text(
-                        "Confirm Password",
-                        style: TextStyle(
-                            fontSize: getFontSize(context, -2),
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
+                      padding: const EdgeInsets.only(
+                        top: 20,
+                        left: 15,
+                        right: 15,
                       ),
-                    ),
-                    Center(
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(top: 7, left: 15, right: 15),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: const Color(0XFFced4da),
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          padding: const EdgeInsets.all(0),
-                          child: TextField(
-                            onChanged: (value) {
-                              // loginFlowController.confirmPassword.value = value;
-                            },
-                            obscureText: true,
-                            controller:
-                                loginFlowController.confirmPassWordController,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: getFontSize(context, 0)),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Confirm Password',
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              hintStyle: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: getFontSize(context, 0)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 20, left: 15, right: 15),
                       child: Obx(() {
                         if (loginFlowController.isReset.value) {
                           return Center(
@@ -161,26 +131,28 @@ class ResetPassword extends StatelessWidget {
                         } else {
                           return ElevatedButton(
                             style: ButtonStyle(
-                                minimumSize: WidgetStateProperty.all(
-                                  Size(Get.width, 49),
-                                ),
-                                backgroundColor: WidgetStateProperty.all(
-                                    AppColors.greenColor)),
+                              minimumSize: WidgetStateProperty.all(
+                                Size(Get.width, 49),
+                              ),
+                              backgroundColor: WidgetStateProperty.all(
+                                AppColors.greenColor,
+                              ),
+                            ),
                             onPressed: () {
                               loginFlowController.resetValidate();
                             },
                             child: Text(
                               "Reset Password".toUpperCase(),
-                              style:
-                                  TextStyle(fontSize: getFontSize(context, 2)),
+                              style: TextStyle(
+                                fontSize: getFontSize(context, 2),
+                                color: Colors.white,
+                              ),
                             ),
                           );
                         }
                       }),
                     ),
-                    const SizedBox(
-                      height: 25,
-                    )
+                    const SizedBox(height: 25),
                   ],
                 ),
               ),

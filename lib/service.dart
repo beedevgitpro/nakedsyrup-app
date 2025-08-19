@@ -139,9 +139,9 @@ FutureOr<dynamic> dioPostApiCall(apiurl, formData) async {
     }
     String url = '${AppStrings.baseUrl}$apiurl';
     print("$apiurl URL::$url");
-    if (formData.length > 0) {
-      print("$apiurl map-post data::${formData.fields}");
-    }
+    // if (formData.length > 0) {
+    //   print("$apiurl map-post data::${formData.fields}");
+    // }
     final response = await dio.post(
       url,
       data:
@@ -279,6 +279,29 @@ class ApiClass {
     }
   }
 
+  FutureOr<dynamic> resetPass(email) async {
+    Map<String, dynamic> mappp = {};
+    mappp = {'email': email};
+    FormData formData = FormData.fromMap(mappp);
+
+    var decodedResponse = await dioPostApiCall(
+      'reset-password-request',
+      formData,
+    );
+
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
   FutureOr<dynamic> loginApi(email, password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> mappp = {};
@@ -377,10 +400,25 @@ class ApiClass {
   }
 
   FutureOr<dynamic> orderPlaced(mapp) async {
-    Map<String, dynamic> mappp = {};
-
-    FormData formData = FormData.fromMap(mappp);
+    FormData formData = FormData.fromMap(mapp);
     var decodedResponse = await dioPostApiCall('checkout', formData);
+
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
+  FutureOr<dynamic> updateProfile(mapp) async {
+    // FormData formData = FormData.fromMap(mapp);
+    var decodedResponse = await dioPostApiCall('edit-profile', mapp);
 
     if (decodedResponse['success'] == true) {
       return decodedResponse;
@@ -458,12 +496,21 @@ class ApiClass {
     if (decodedResponse['success'] == true) {
       return decodedResponse;
     } else {
-      getT.Get.snackbar(
-        "Error $decodedResponse",
-        "",
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
+      if (decodedResponse['message'] != null) {
+        getT.Get.snackbar(
+          "Error ${decodedResponse['message']}",
+          "",
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      } else {
+        getT.Get.snackbar(
+          "Error $decodedResponse",
+          "",
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
       return null;
     }
   }
@@ -520,6 +567,22 @@ class ApiClass {
 
   FutureOr<dynamic> getBillingDetails() async {
     var decodedResponse = await dioGetApiCall('billing-details');
+
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
+  FutureOr<dynamic> getProfileDetails() async {
+    var decodedResponse = await dioGetApiCall('get-profile');
 
     if (decodedResponse['success'] == true) {
       return decodedResponse;

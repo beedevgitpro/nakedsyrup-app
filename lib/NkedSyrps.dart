@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/cart/cart_page.dart';
+import 'package:naked_syrups/modules/login_flow/reset_password.dart';
 import 'package:naked_syrups/modules/order_history/order_history_page.dart';
 import 'package:naked_syrups/web_view_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,7 @@ import '../Resources/AppColors.dart';
 import '../utility/responsive_text.dart';
 import 'Resources/AppStrings.dart';
 import 'modules/dashboard_flow/dashboard.dart';
+import 'modules/login_flow/edit_profile.dart';
 import 'modules/login_flow/login_page.dart';
 import 'modules/login_flow/loginflow_controller.dart';
 
@@ -26,6 +28,41 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  Widget expansionWidget({titleText, children}) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 25, right: 25),
+          child: Container(
+            height: 1,
+            width: 500,
+            decoration: BoxDecoration(
+              color: AppColors.lightColor.withOpacity(0.5),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: ExpansionTile(
+            leading: Icon(
+              Icons.library_books,
+              color: AppColors.nakedSyrup,
+              size: 28,
+            ),
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                titleText,
+                style: TextStyle(fontSize: getFontSize(context, 1)),
+              ),
+            ),
+            children: children,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget newBookings() {
@@ -240,51 +277,57 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                 }, false),
               ],
             ),
-            drawersRow(
-              context,
-              Icons.document_scanner_outlined,
-              'Vegan Australia Certified',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'Vegan Australia Certified',
-                    url:
-                        'https://nakedsyrups.com.au/wp-content/uploads/2025/07/Vegan-Australia-Certificate-Naked-Syrups-2025.pdf',
-                  ),
-                );
-              },
-              false,
+            expansionWidget(
+              titleText: 'Certifications',
+              children: <Widget>[
+                drawersRow(
+                  context,
+                  Icons.document_scanner_outlined,
+                  'Vegan Australia Certified',
+                  () async {
+                    Get.to(
+                      WebViewApp(
+                        name: 'Vegan Australia Certified',
+                        url:
+                            'https://nakedsyrups.com.au/wp-content/uploads/2025/07/Vegan-Australia-Certificate-Naked-Syrups-2025.pdf',
+                      ),
+                    );
+                  },
+                  false,
+                ),
+                drawersRow(
+                  context,
+                  Icons.document_scanner_outlined,
+                  'HACCP Certification',
+                  () async {
+                    Get.to(
+                      WebViewApp(
+                        name: 'HACCP Certification',
+                        url:
+                            'https://nakedsyrups.com.au/wp-content/uploads/2024/11/Naked-Syrups-HACCP-Certificate-Exp-2025-11-08a.pdf',
+                      ),
+                    );
+                  },
+                  false,
+                ),
+                drawersRow(
+                  context,
+                  Icons.document_scanner_outlined,
+                  'HALAL CERTIFICATE',
+                  () async {
+                    Get.to(
+                      WebViewApp(
+                        name: 'HALAL CERTIFICATE',
+                        url:
+                            'https://nakedsyrups.com.au/wp-content/uploads/2025/08/Halal-Certificate-2024.pdf',
+                      ),
+                    );
+                  },
+                  false,
+                ),
+              ],
             ),
-            drawersRow(
-              context,
-              Icons.document_scanner_outlined,
-              'HACCP Certification',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'HACCP Certification',
-                    url:
-                        'https://nakedsyrups.com.au/wp-content/uploads/2024/11/Naked-Syrups-HACCP-Certificate-Exp-2025-11-08a.pdf',
-                  ),
-                );
-              },
-              false,
-            ),
-            drawersRow(
-              context,
-              Icons.document_scanner_outlined,
-              'HALAL Certification',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'HALAL Certification',
-                    url:
-                        'https://nakedsyrups.com.au/wp-content/uploads/2025/08/Halal-Certificate-2024.pdf',
-                  ),
-                );
-              },
-              false,
-            ),
+
             drawersRow(
               context,
               Icons.document_scanner_outlined,
@@ -301,7 +344,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             ),
             drawersRow(
               context,
-              Icons.document_scanner_outlined,
+              Icons.local_shipping_outlined,
               'Deliveries and Returns',
               () async {
                 Get.to(
@@ -313,6 +356,33 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
               },
               false,
             ),
+            drawersRow(
+              context,
+              Icons.local_shipping_outlined,
+              'Contact Us',
+              () async {
+                Get.to(
+                  WebViewApp(
+                    name: 'Contact Us',
+                    url: 'https://nakedsyrups.com.au/contact/',
+                  ),
+                );
+              },
+              false,
+            ),
+            drawersRow(context, Icons.edit_outlined, 'Edit Profile', () async {
+              Get.to(EditProfilePage());
+            }, false),
+            drawersRow(
+              context,
+              Icons.lock_reset_outlined,
+              'Reset Password',
+              () async {
+                Get.to(ResetPassword());
+              },
+              false,
+            ),
+
             drawersRow(context, Icons.logout, 'Logout', () async {
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();
@@ -339,7 +409,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
     );
   }
 
-  drawersRow(context, icon, text, function, isFirst) {
+  Widget drawersRow(context, icon, text, function, isFirst) {
     return Column(
       children: [
         isFirst

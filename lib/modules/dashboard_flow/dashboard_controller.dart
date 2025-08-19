@@ -34,6 +34,8 @@ class DashboardController extends GetxController {
   RxBool isImageChallengeLikelyVisible = false.obs;
   RxBool getShipping = false.obs;
   RxBool getCheckOut = false.obs;
+  RxBool getProfile = false.obs;
+  RxBool saveProfile = false.obs;
   RxBool differentAddress = false.obs;
   RxBool getHistory = false.obs;
   RxBool addToBasket = false.obs;
@@ -96,6 +98,8 @@ class DashboardController extends GetxController {
   TextEditingController inspectionCostController = TextEditingController();
   TextEditingController travelController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
+  TextEditingController firstNormalController = TextEditingController();
+  TextEditingController lastNormalController = TextEditingController();
   TextEditingController promoCodeController = TextEditingController();
   TextEditingController firstNameDiffController = TextEditingController();
   TextEditingController orderNotesController = TextEditingController();
@@ -114,6 +118,7 @@ class DashboardController extends GetxController {
   TextEditingController postCodeController = TextEditingController();
   TextEditingController postCodeDiffController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController emailNormalController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
   TextEditingController pOController = TextEditingController();
@@ -374,6 +379,142 @@ class DashboardController extends GetxController {
       }
     } else {
       placeOrder.value = false;
+      Get.snackbar(
+        "Quantity update error",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
+  updateProfile() async {
+    if (addressFormKey.currentState?.validate() == true) {
+      saveProfile.value = true;
+      print(
+        "addressFormKey validation : ${addressFormKey.currentState?.validate()}",
+      );
+      // print(
+      //   "addressFormKey validation : ${shippingAddressFormKey.currentState?.validate()}",
+      // );
+
+      Map<String, dynamic> mapp = {};
+      mapp = {
+        "billing_first_name": firstNameController.text,
+        "billing_last_name": lastNameController.text,
+        "billing_company": companyNameController.text,
+        "billing_address_1": streetAddressController.text,
+        "billing_address_2": streetAddress2Controller.text,
+        "billing_city": townController.text,
+        "billing_state": selectedState.value,
+        "billing_postcode": postCodeController.text,
+        "billing_country": selectedCountry.value,
+        "billing_email": emailController.text,
+        "billing_phone": phoneController.text,
+        "shipping_first_name": firstNameDiffController.text,
+        "shipping_last_name": lastNameDiffController.text,
+        "shipping_company": companyNameDiffController.text,
+        "shipping_address_1": streetAddressDiffController.text,
+        "shipping_address_2": streetAddress2DiffController.text,
+        "shipping_city": townDiffController.text,
+        "shipping_state": selectedStateDiff.value,
+        "shipping_postcode": postCodeDiffController.text,
+        "shipping_country": selectedCountryDiff.value,
+        'first_name': firstNormalController.text,
+        'last_name': lastNormalController.text,
+        'display_name': userNameController.text,
+        'email': emailNormalController.text,
+      };
+
+      var shipping = await ApiClass().updateProfile(mapp);
+      if (shipping != null) {
+        if (shipping['success'] == true) {
+          Get.snackbar(
+            shipping['message'],
+            '',
+            colorText: Colors.black,
+            backgroundColor: Colors.white,
+          );
+          Get.back();
+          saveProfile.value = false;
+        } else {
+          saveProfile.value = false;
+          Get.snackbar(
+            shipping['message'],
+            '',
+            colorText: Colors.red,
+            backgroundColor: Colors.white,
+          );
+        }
+      } else {
+        saveProfile.value = false;
+        Get.snackbar(
+          "Profile update error",
+          '',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } else {
+      Get.snackbar(
+        "Please fill all mandatory fields",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
+  fillProfileData() async {
+    getProfile.value = true;
+    var profile = await ApiClass().getProfileDetails();
+    if (profile != null) {
+      if (profile['success'] == true) {
+        firstNormalController.text = profile['data']['first_name'];
+        lastNormalController.text = profile['data']['last_name'];
+        userNameController.text = profile['data']['display_name'];
+        emailNormalController.text = profile['data']['email'];
+        print("billing is List : ${profile['data']['billing']}");
+        print("shipping is List : ${profile['data']['shipping'] is List}");
+        firstNameController.text = profile['data']['billing'][0];
+        lastNameController.text = profile['data']['billing'][1];
+        companyNameController.text = profile['data']['billing'][2];
+        streetAddressController.text = profile['data']['billing'][3];
+        streetAddress2Controller.text = profile['data']['billing'][4];
+        townController.text = profile['data']['billing'][5];
+        postCodeController.text = profile['data']['billing'][6];
+        selectedCountry.value = profile['data']['billing'][7];
+        if (selectedCountry.value.isNotEmpty) {
+          getStateList(selectedCountry.value, false);
+        }
+        selectedState.value = profile['data']['billing'][8];
+        phoneController.text = profile['data']['billing'][9];
+        emailController.text = profile['data']['billing'][10];
+        firstNameDiffController.text = profile['data']['shipping'][0];
+        lastNameDiffController.text = profile['data']['shipping'][1];
+        companyNameDiffController.text = profile['data']['shipping'][2];
+        streetAddressDiffController.text = profile['data']['shipping'][3];
+        streetAddress2DiffController.text = profile['data']['shipping'][4];
+        townDiffController.text = profile['data']['shipping'][5];
+        postCodeDiffController.text = profile['data']['shipping'][6];
+        selectedCountryDiff.value = profile['data']['shipping'][7];
+        if (selectedCountryDiff.value.isNotEmpty) {
+          getStateList(selectedCountryDiff.value, true);
+        }
+        selectedStateDiff.value = profile['data']['shipping'][8];
+
+        getProfile.value = false;
+      } else {
+        getProfile.value = false;
+        Get.snackbar(
+          profile['message'],
+          '',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } else {
+      getProfile.value = false;
       Get.snackbar(
         "Quantity update error",
         '',

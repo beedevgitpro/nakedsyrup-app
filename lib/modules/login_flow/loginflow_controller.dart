@@ -20,44 +20,40 @@ class LoginFlowController extends GetxController {
 
   resetValidate() async {
     isReset.value = true;
-    if (newPassWordController.text.trim().isEmpty) {
+    if (emailController.text.trim().isEmpty) {
       isReset.value = false;
       return Get.snackbar(
-        'Please enter new password',
+        'Please enter email address',
         "",
         backgroundColor: Colors.white,
       );
     }
-    if (confirmPassWordController.text.trim().isEmpty) {
-      isReset.value = false;
-
-      return Get.snackbar(
-        'Please enter confirm password',
-        "",
-        backgroundColor: Colors.white,
-      );
-    }
-    if (newPassWordController.text != confirmPassWordController.text) {
-      isReset.value = false;
-      return Get.snackbar(
-        'Passwords Mismatch',
-        "",
-        backgroundColor: Colors.white,
-      );
-    }
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var data;
-    // var data = await ApiClass().resetPassword(
-    //     newPassWordController.text, confirmPassWordController.text);
+    // if (confirmPassWordController.text.trim().isEmpty) {
+    //   isReset.value = false;
+    //
+    //   return Get.snackbar(
+    //     'Please enter confirm password',
+    //     "",
+    //     backgroundColor: Colors.white,
+    //   );
+    // }
+    // if (newPassWordController.text != confirmPassWordController.text) {
+    //   isReset.value = false;
+    //   return Get.snackbar(
+    //     'Passwords Mismatch',
+    //     "",
+    //     backgroundColor: Colors.white,
+    //   );
+    // }
+    var data = await ApiClass().resetPass(emailController.text);
     print("data : $data :: ${data is String}");
     isReset.value = false;
     if (data != null) {
       if (data['success'] == true) {
-        newPassWordController.clear();
-        confirmPassWordController.clear();
-
-        await prefs.remove('reset_password');
+        emailController.clear();
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.clear();
+        Get.offAll(LoginPage());
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       } else {
         print("forgotPass response : $data");
