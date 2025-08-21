@@ -2,8 +2,8 @@ class CartModel {
   CartModel({
     bool? success,
     List<CartItems>? cartItems,
-    int? cartCount,
-    int? cartTotal,
+    dynamic cartCount,
+    dynamic cartTotal,
     dynamic cartTotalFormatted,
     dynamic discountTotal,
     dynamic discountTotalFormatted,
@@ -53,8 +53,8 @@ class CartModel {
   }
   bool? _success;
   List<CartItems>? _cartItems;
-  int? _cartCount;
-  int? _cartTotal;
+  dynamic _cartCount;
+  dynamic _cartTotal;
   dynamic _cartTotalFormatted;
   dynamic _discountTotal;
   dynamic _discountTotalFormatted;
@@ -66,8 +66,8 @@ class CartModel {
   CartModel copyWith({
     bool? success,
     List<CartItems>? cartItems,
-    int? cartCount,
-    int? cartTotal,
+    dynamic cartCount,
+    dynamic cartTotal,
     dynamic cartTotalFormatted,
     dynamic discountTotal,
     dynamic discountTotalFormatted,
@@ -92,8 +92,8 @@ class CartModel {
   );
   bool? get success => _success;
   List<CartItems>? get cartItems => _cartItems;
-  int? get cartCount => _cartCount;
-  int? get cartTotal => _cartTotal;
+  dynamic get cartCount => _cartCount;
+  dynamic get cartTotal => _cartTotal;
   dynamic get cartTotalFormatted => _cartTotalFormatted;
   dynamic get discountTotal => _discountTotal;
   dynamic get discountTotalFormatted => _discountTotalFormatted;
@@ -128,7 +128,7 @@ class Coupons {
   Coupons({
     dynamic code,
     dynamic type,
-    int? amount,
+    dynamic amount,
     dynamic calculatedDiscount,
   }) {
     _code = code;
@@ -145,12 +145,12 @@ class Coupons {
   }
   dynamic _code;
   dynamic _type;
-  int? _amount;
+  dynamic _amount;
   dynamic _calculatedDiscount;
   Coupons copyWith({
     dynamic code,
     dynamic type,
-    int? amount,
+    dynamic amount,
     dynamic calculatedDiscount,
   }) => Coupons(
     code: code ?? _code,
@@ -160,7 +160,7 @@ class Coupons {
   );
   dynamic get code => _code;
   dynamic get type => _type;
-  int? get amount => _amount;
+  dynamic get amount => _amount;
   dynamic get calculatedDiscount => _calculatedDiscount;
 
   Map<String, dynamic> toJson() {
@@ -176,15 +176,15 @@ class Coupons {
 class CartItems {
   CartItems({
     dynamic cartItemKey,
-    int? productId,
-    int? variationId,
+    dynamic productId,
+    dynamic variationId,
     dynamic productName,
-    int? quantity,
-    int? regularPrice,
+    dynamic quantity,
+    dynamic regularPrice,
     dynamic salePrice,
-    int? currentPrice,
+    dynamic currentPrice,
     dynamic currentPriceFormatted,
-    int? lineSubtotal,
+    dynamic lineSubtotal,
     dynamic lineSubtotalFormatted,
     dynamic productImage,
   }) {
@@ -217,28 +217,28 @@ class CartItems {
     _productImage = json['product_image'];
   }
   dynamic _cartItemKey;
-  int? _productId;
-  int? _variationId;
+  dynamic _productId;
+  dynamic _variationId;
   dynamic _productName;
-  int? _quantity;
-  int? _regularPrice;
+  dynamic _quantity;
+  dynamic _regularPrice;
   dynamic _salePrice;
-  int? _currentPrice;
+  dynamic _currentPrice;
   dynamic _currentPriceFormatted;
-  int? _lineSubtotal;
+  dynamic _lineSubtotal;
   dynamic _lineSubtotalFormatted;
   dynamic _productImage;
   CartItems copyWith({
     dynamic cartItemKey,
-    int? productId,
-    int? variationId,
+    dynamic productId,
+    dynamic variationId,
     dynamic productName,
-    int? quantity,
-    int? regularPrice,
+    dynamic quantity,
+    dynamic regularPrice,
     dynamic salePrice,
-    int? currentPrice,
+    dynamic currentPrice,
     dynamic currentPriceFormatted,
-    int? lineSubtotal,
+    dynamic lineSubtotal,
     dynamic lineSubtotalFormatted,
     dynamic productImage,
   }) => CartItems(
@@ -256,15 +256,15 @@ class CartItems {
     productImage: productImage ?? _productImage,
   );
   dynamic get cartItemKey => _cartItemKey;
-  int? get productId => _productId;
-  int? get variationId => _variationId;
+  dynamic get productId => _productId;
+  dynamic get variationId => _variationId;
   dynamic get productName => _productName;
-  int? get quantity => _quantity;
-  int? get regularPrice => _regularPrice;
+  dynamic get quantity => _quantity;
+  dynamic get regularPrice => _regularPrice;
   dynamic get salePrice => _salePrice;
-  int? get currentPrice => _currentPrice;
+  dynamic get currentPrice => _currentPrice;
   dynamic get currentPriceFormatted => _currentPriceFormatted;
-  int? get lineSubtotal => _lineSubtotal;
+  dynamic get lineSubtotal => _lineSubtotal;
   dynamic get lineSubtotalFormatted => _lineSubtotalFormatted;
   dynamic get productImage => _productImage;
 

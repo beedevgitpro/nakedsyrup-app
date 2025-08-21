@@ -85,8 +85,68 @@ class LoginFlowController extends GetxController {
     if (loginApi != null) {
       if (loginApi['success'] == true) {
         if (loginApi['user'] != null) {
-          if (loginApi['user']['pay_by_account'] == 'yes') {
-            Get.offAll(const DashboardPage());
+          if (loginApi['user']['has_app_access'] == 'yes') {
+            if (loginApi['user']['pay_by_account'] == 'yes') {
+              Get.offAll(const DashboardPage());
+            } else {
+              showDialog<void>(
+                context: Get.context!,
+                barrierDismissible: false,
+                // user must tap button!
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return AlertDialog(
+                        title: Text(
+                          "Sorry, you can not complete the login",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        content: const SizedBox(
+                          width: double.maxFinite,
+                          child: Text(
+                            "Your account is in review,Our team will get back to you within 48 hours.",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll<Color>(
+                                AppColors.nakedSyrup,
+                              ),
+                              padding: WidgetStateProperty.all(
+                                const EdgeInsets.all(8),
+                              ),
+                            ),
+                            child: const Text(
+                              "Close",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                            onPressed: () async {
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              Get.back();
+                              prefs.clear();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            }
           } else {
             showDialog<void>(
               context: Get.context!,
@@ -107,7 +167,7 @@ class LoginFlowController extends GetxController {
                       content: const SizedBox(
                         width: double.maxFinite,
                         child: Text(
-                          "Your account is in review,Our team will get back to you within 48 hours.",
+                          "Your account is deactivate",
                           style: TextStyle(
                             color: Colors.black87,
                             fontSize: 16,

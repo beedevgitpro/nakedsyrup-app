@@ -1000,6 +1000,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   .cartItems
                                                   ?.isNotEmpty ==
                                               true &&
+                                          dashboardController
+                                                  .shippingMethodsModel
+                                                  .value
+                                                  .shippingMethods
+                                                  ?.isNotEmpty ==
+                                              true &&
                                           ((dashboardController
                                                       .selectedStateDiff
                                                       .value
@@ -2127,6 +2133,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                             .cartModel
                                             .value
                                             .cartItems
+                                            ?.isNotEmpty ==
+                                        true &&
+                                    dashboardController
+                                            .shippingMethodsModel
+                                            .value
+                                            .shippingMethods
                                             ?.isNotEmpty ==
                                         true &&
                                     ((dashboardController

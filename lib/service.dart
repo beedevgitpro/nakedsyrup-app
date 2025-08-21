@@ -107,6 +107,10 @@ dynamic afterApiFire(response, apiurl) {
   if (response.statusCode == 200 || response.statusCode == 201) {
     var decodedResponse = response.data;
     print("$apiurl responce : $decodedResponse");
+    // if (apiurl == 'get-cart') {
+    //   print("$apiurl responce header: ${decodedResponse['headers']['cookie']}");
+    //   print("$apiurl responce cokkie: ${decodedResponse['cookies']}");
+    // }
     if (decodedResponse != null) {
       return decodedResponse;
     } else {
@@ -317,6 +321,10 @@ class ApiClass {
         "pay_by_account",
         decodedResponse['user']['pay_by_account'],
       );
+      await prefs.setString(
+        "has_app_access",
+        decodedResponse['user']['has_app_access'],
+      );
       return decodedResponse;
     } else {
       getT.Get.snackbar(
@@ -336,6 +344,7 @@ class ApiClass {
       "quantity": qty,
       'variation_id': variationId,
     };
+    print("Mapp add-to cart :${mappp}");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('add-to-cart', formData);
 
@@ -550,7 +559,23 @@ class ApiClass {
   }
 
   FutureOr<dynamic> getCart() async {
-    var decodedResponse = await dioGetApiCall('get-cart');
+    var decodedResponse = await dioPostApiCall('get-cart', {});
+
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
+  FutureOr<dynamic> deleteAccount() async {
+    var decodedResponse = await dioPostApiCall('deactivate-account', {});
 
     if (decodedResponse['success'] == true) {
       return decodedResponse;

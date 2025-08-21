@@ -25,6 +25,7 @@ class DashboardController extends GetxController {
   final GlobalKey<FormState> registerationForm = GlobalKey<FormState>();
   RxBool getData = false.obs;
   RxBool placeOrder = false.obs;
+  RxBool deleteAccount = false.obs;
   RxBool getProduct = false.obs;
   RxInt cartCount = 0.obs;
   RxDouble recaptchaHeight = 500.0.obs;
@@ -309,12 +310,12 @@ class DashboardController extends GetxController {
     var shipping = await ApiClass().orderPlaced(mapp);
     if (shipping != null) {
       if (shipping['success'] == true) {
-        Get.snackbar(
-          shipping['message'],
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
+        // Get.snackbar(
+        //   shipping['message'],
+        //   '',
+        //   colorText: Colors.red,
+        //   backgroundColor: Colors.white,
+        // );
         showDialog<void>(
           context: Get.context!,
           barrierDismissible: false,
@@ -380,12 +381,101 @@ class DashboardController extends GetxController {
     } else {
       placeOrder.value = false;
       Get.snackbar(
-        "Quantity update error",
+        "Error in placing order",
         '',
         colorText: Colors.red,
         backgroundColor: Colors.white,
       );
     }
+  }
+
+  deActiveAcc() {
+    showDialog<void>(
+      context: Get.context!,
+      barrierDismissible: false,
+      // user must tap button!
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                "Are you sure, do you want to deactivate your account?",
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              actions: <Widget>[
+                Obx(
+                  () =>
+                      deleteAccount.value
+                          ? Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                color: AppColors.greenColor,
+                              ),
+                            ),
+                          )
+                          : ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll<Color>(
+                                AppColors.nakedSyrup,
+                              ),
+                              padding: WidgetStateProperty.all(
+                                const EdgeInsets.all(8),
+                              ),
+                            ),
+                            child: const Text(
+                              "Yes",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                            onPressed: () async {
+                              deleteAccount.value = true;
+                              var delete = await ApiClass().deleteAccount();
+                              deleteAccount.value = false;
+                              if (delete != null) {
+                                Get.snackbar(
+                                  "Error ${delete['message']}",
+                                  "",
+                                  colorText: Colors.red,
+                                  backgroundColor: Colors.white,
+                                );
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                Get.back();
+                                prefs.clear();
+                                Get.offAll(LoginPage());
+                              }
+                            },
+                          ),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll<Color>(
+                      AppColors.lightColor,
+                    ),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(8)),
+                  ),
+                  child: const Text(
+                    "No",
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                  onPressed: () async {
+                    Get.back();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   updateProfile() async {

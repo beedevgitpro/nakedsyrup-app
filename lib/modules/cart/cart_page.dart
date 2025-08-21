@@ -518,93 +518,92 @@ class _CartPageState extends State<CartPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Obx(
-        () =>
-            dashboardController.cartModel.value.cartItems?.isNotEmpty == true &&
-                    dashboardController.getCart.value == false
-                ? Padding(
-                  padding: const EdgeInsets.only(
-                    top: 15,
-                    left: 15,
-                    right: 15,
-                    bottom: 15,
-                  ),
-                  child: SizedBox(
-                    height: (getFontSize(context, 0) * 9),
-                    child: ListView(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "Sub Total : ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
-                                ),
-                                Text(
-                                  dashboardController
-                                              .cartModel
-                                              .value
-                                              .cartTotal !=
-                                          null
-                                      ? "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString() ?? "0.0").toStringAsFixed(2)}"
-                                      : "0.0",
-                                  style: TextStyle(
-                                    color: AppColors.nakedSyrup,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
-                                ),
-                              ],
+      bottomNavigationBar: Obx(() {
+        if (dashboardController.cartModel.value.cartItems?.isNotEmpty == true &&
+            dashboardController.getCart.value == false) {
+          var heighht = Get.width * 0.1;
+          if (dashboardController.cartModel.value.cartTotal != null) {
+            heighht = heighht + 30;
+          }
+          if (dashboardController.cartModel.value.gstTotal != null) {
+            heighht = heighht + 30;
+          }
+          if (dashboardController.cartModel.value.discountTotal != null &&
+              dashboardController.cartModel.value.discountTotal != 0.0) {
+            heighht = heighht + 30;
+          }
+          if (dashboardController.cartModel.value.grandTotal != null) {
+            heighht = heighht + 30;
+          }
+          return Padding(
+            padding: const EdgeInsets.only(
+              top: 15,
+              left: 15,
+              right: 15,
+              bottom: 15,
+            ),
+            child: SizedBox(
+              height: heighht,
+              child: ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Sub Total : ",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Euclid Circular B',
+                              fontWeight: FontWeight.w600,
+                              fontSize: getFontSize(context, -2),
                             ),
-                            SizedBox(height: 3),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "GST : ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
-                                ),
-                                Text(
-                                  "\$${double.parse(dashboardController.cartModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                    color: AppColors.nakedSyrup,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
-                                ),
-                              ],
+                          ),
+                          Text(
+                            dashboardController.cartModel.value.cartTotal !=
+                                    null
+                                ? "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                : "0.0",
+                            style: TextStyle(
+                              color: AppColors.nakedSyrup,
+                              fontFamily: 'Euclid Circular B',
+                              fontWeight: FontWeight.bold,
+                              fontSize: getFontSize(context, -2),
                             ),
-                            SizedBox(
-                              height:
-                                  dashboardController
-                                                  .cartModel
-                                                  .value
-                                                  .discountTotal !=
-                                              null &&
-                                          dashboardController
-                                                  .cartModel
-                                                  .value
-                                                  .discountTotal !=
-                                              0.0
-                                      ? 3
-                                      : 0,
-                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 3),
+                      dashboardController.cartModel.value.gstTotal != null
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "GST : ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: getFontSize(context, -2),
+                                ),
+                              ),
+                              Text(
+                                "\$${double.parse(dashboardController.cartModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  color: AppColors.nakedSyrup,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: getFontSize(context, -2),
+                                ),
+                              ),
+                            ],
+                          )
+                          : const SizedBox(),
+                      SizedBox(
+                        height:
                             dashboardController.cartModel.value.discountTotal !=
                                         null &&
                                     dashboardController
@@ -612,92 +611,100 @@ class _CartPageState extends State<CartPage> {
                                             .value
                                             .discountTotal !=
                                         0.0
-                                ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "Discount : ",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontFamily: 'Euclid Circular B',
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: getFontSize(context, -2),
-                                      ),
-                                    ),
-                                    Text(
-                                      "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
-                                      style: TextStyle(
-                                        color: AppColors.nakedSyrup,
-                                        fontFamily: 'Euclid Circular B',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: getFontSize(context, -2),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                                : const SizedBox(),
-                            SizedBox(height: 3),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  "Grant Total : ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
+                                ? 3
+                                : 0,
+                      ),
+                      dashboardController.cartModel.value.discountTotal !=
+                                  null &&
+                              dashboardController
+                                      .cartModel
+                                      .value
+                                      .discountTotal !=
+                                  0.0
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Discount : ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: getFontSize(context, -2),
                                 ),
-                                Text(
-                                  dashboardController
-                                              .cartModel
-                                              .value
-                                              .grandTotal !=
-                                          null
-                                      ? "\$${double.parse(dashboardController.cartModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}"
-                                      : '0.0',
-                                  style: TextStyle(
-                                    color: AppColors.nakedSyrup,
-                                    fontFamily: 'Euclid Circular B',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: getFontSize(context, -2),
-                                  ),
+                              ),
+                              Text(
+                                "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  color: AppColors.nakedSyrup,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: getFontSize(context, -2),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.nakedSyrup,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 5,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            dashboardController.getBillingDetails();
-                            Get.to(CheckOutPage());
-                          },
-                          child: Text(
-                            "Proceed To Checkout",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: getFontSize(context, -5),
-                            ),
-                          ),
-                        ),
-                      ],
+                              ),
+                            ],
+                          )
+                          : const SizedBox(),
+                      SizedBox(height: 3),
+                      dashboardController.cartModel.value.grandTotal != null
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Grant Total : ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: getFontSize(context, -2),
+                                ),
+                              ),
+                              Text(
+                                "\$${double.parse(dashboardController.cartModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  color: AppColors.nakedSyrup,
+                                  fontFamily: 'Euclid Circular B',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: getFontSize(context, -2),
+                                ),
+                              ),
+                            ],
+                          )
+                          : const SizedBox(),
+                    ],
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.nakedSyrup,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 5,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      dashboardController.getBillingDetails();
+                      Get.to(CheckOutPage());
+                    },
+                    child: Text(
+                      "Proceed To Checkout",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: getFontSize(context, -5),
+                      ),
                     ),
                   ),
-                )
-                : const SizedBox(),
-      ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      }),
     );
   }
 }

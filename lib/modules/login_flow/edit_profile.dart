@@ -928,6 +928,37 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 ),
                                               ),
                                     ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.redAccent,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 5,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          dashboardController.deActiveAcc();
+                                        },
+                                        child: Text(
+                                          'Deactivate Account',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                                Get.width >= 600
+                                                    ? getFontSize(context, -1)
+                                                    : getFontSize(context, -5),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1753,6 +1784,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                               horizontal: 14,
                                               vertical: 5,
                                             ),
+                                            minimumSize: Size(Get.width, 40),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8),
@@ -1777,6 +1809,36 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           ),
                                         ),
                                       ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 5,
+                                  ),
+                                  minimumSize: Size(Get.width, 40),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  dashboardController.deActiveAcc();
+                                },
+                                child: Text(
+                                  'Deactivate Account',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        Get.width >= 600
+                                            ? getFontSize(context, -1)
+                                            : getFontSize(context, -5),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

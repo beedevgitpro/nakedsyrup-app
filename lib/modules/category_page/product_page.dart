@@ -614,6 +614,8 @@ class _ProductPageState extends State<ProductPage> {
                                                 Get.snackbar(
                                                   'Please select one variance',
                                                   "",
+                                                  backgroundColor: Colors.white,
+                                                  colorText: Colors.red,
                                                 );
                                               }
                                             },
@@ -1298,6 +1300,8 @@ class _ProductPageState extends State<ProductPage> {
                                               Get.snackbar(
                                                 'Please select one variance',
                                                 "",
+                                                backgroundColor: Colors.white,
+                                                colorText: Colors.red,
                                               );
                                             }
                                           },

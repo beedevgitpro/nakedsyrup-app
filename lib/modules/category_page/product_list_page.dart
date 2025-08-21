@@ -9,10 +9,8 @@ import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
 import '../../Resources/AppColors.dart';
 import '../../model/category_model.dart';
-import '../../service.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
-import '../cart/cart_page.dart';
 import 'product_page.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -39,7 +37,13 @@ class _ProductListPageState extends State<ProductListPage> {
     });
     dashboardController.fetchDataForTab(widget.categories?.slug);
     return completer.future.then<void>((_) {
-      Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Refresh complete',
+        "",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
     });
   }
 
@@ -133,8 +137,8 @@ class _ProductListPageState extends State<ProductListPage> {
                       physics: ScrollPhysics(),
 
                       itemBuilder: (context, j) {
-                        bool addDataInCart = false;
                         String price = "";
+                        int selectedd = -1;
                         if (dashboardController
                                 .productModel
                                 .value
@@ -257,150 +261,125 @@ class _ProductListPageState extends State<ProductListPage> {
                                       ),
                                     ),
                                   ),
-                                  addDataInCart == true
-                                      ? SizedBox(
-                                        width: 50,
-                                        height: 50,
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.greenColor,
-                                        ),
-                                      )
-                                      : ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              dashboardController
-                                                          .cartModel
-                                                          .value
-                                                          .cartItems
-                                                          ?.any(
-                                                            (item) =>
-                                                                item.productId
-                                                                    .toString() ==
-                                                                dashboardController
-                                                                    .productModel
-                                                                    .value
-                                                                    .products?[j]
-                                                                    .id
-                                                                    .toString(),
-                                                          ) ??
-                                                      false
-                                                  ? Colors.green
-                                                  : AppColors.nakedSyrup,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 14,
-                                            vertical: 5,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          if (dashboardController
-                                                  .productModel
-                                                  .value
-                                                  .products?[j]
-                                                  .variations
-                                                  ?.isNotEmpty ==
-                                              true) {
-                                            Get.to(
-                                              ProductPage(
-                                                products:
+                                  Obx(
+                                    () =>
+                                        dashboardController.addToBasket.value ==
+                                                    true &&
+                                                selectedd == j
+                                            ? SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: CircularProgressIndicator(
+                                                color: AppColors.greenColor,
+                                              ),
+                                            )
+                                            : ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    dashboardController.cartModel.value.cartItems?.any(
+                                                              (item) =>
+                                                                  item.productId
+                                                                      .toString() ==
+                                                                  dashboardController
+                                                                      .productModel
+                                                                      .value
+                                                                      .products?[j]
+                                                                      .id
+                                                                      .toString(),
+                                                            ) ??
+                                                            false
+                                                        ? Colors.green
+                                                        : AppColors.nakedSyrup,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 5,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                if (dashboardController
+                                                        .productModel
+                                                        .value
+                                                        .products?[j]
+                                                        .variations
+                                                        ?.isNotEmpty ==
+                                                    true) {
+                                                  Get.to(
+                                                    ProductPage(
+                                                      products:
+                                                          dashboardController
+                                                              .productModel
+                                                              .value
+                                                              .products?[j] ??
+                                                          Products(),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  selectedd = j;
+                                                  dashboardController.addToCart(
                                                     dashboardController
                                                         .productModel
                                                         .value
-                                                        .products?[j] ??
-                                                    Products(),
+                                                        .products?[j]
+                                                        .id,
+                                                    dashboardController
+                                                        .productModel
+                                                        .value
+                                                        .products?[j]
+                                                        .qty
+                                                        ?.value,
+                                                    0,
+                                                  );
+                                                }
+                                              },
+                                              child: Text(
+                                                dashboardController
+                                                            .cartModel
+                                                            .value
+                                                            .cartItems
+                                                            ?.any(
+                                                              (item) =>
+                                                                  item.productId
+                                                                      .toString() ==
+                                                                  dashboardController
+                                                                      .productModel
+                                                                      .value
+                                                                      .products?[j]
+                                                                      .id
+                                                                      .toString(),
+                                                            ) ??
+                                                        false
+                                                    ? "Added"
+                                                    : dashboardController
+                                                            .productModel
+                                                            .value
+                                                            .products?[j]
+                                                            .variations
+                                                            ?.isNotEmpty ==
+                                                        true
+                                                    ? "Select Option"
+                                                    : "Add to cart",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                      Get.width >= 600
+                                                          ? getFontSize(
+                                                            context,
+                                                            -1,
+                                                          )
+                                                          : getFontSize(
+                                                            context,
+                                                            -5,
+                                                          ),
+                                                ),
                                               ),
-                                            );
-                                          } else {
-                                            setState(() {
-                                              addDataInCart = true;
-                                            });
-
-                                            var addedd = await ApiClass()
-                                                .addToCart(
-                                                  dashboardController
-                                                      .productModel
-                                                      .value
-                                                      .products?[j]
-                                                      .id,
-                                                  dashboardController
-                                                      .productModel
-                                                      .value
-                                                      .products?[j]
-                                                      .qty
-                                                      ?.value,
-                                                  0,
-                                                );
-                                            if (addedd != null) {
-                                              if (addedd['success'] == true) {
-                                                Get.to(CartPage());
-                                                setState(() {
-                                                  addDataInCart = false;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  addDataInCart = false;
-                                                });
-                                                Get.snackbar(
-                                                  addedd['message'],
-                                                  '',
-                                                  colorText: Colors.red,
-                                                  backgroundColor: Colors.white,
-                                                );
-                                              }
-                                            } else {
-                                              setState(() {
-                                                addDataInCart = false;
-                                              });
-                                              Get.snackbar(
-                                                "Error..",
-                                                '',
-                                                colorText: Colors.red,
-                                                backgroundColor: Colors.white,
-                                              );
-                                            }
-                                          }
-                                        },
-                                        child: Text(
-                                          dashboardController
-                                                      .cartModel
-                                                      .value
-                                                      .cartItems
-                                                      ?.any(
-                                                        (item) =>
-                                                            item.productId
-                                                                .toString() ==
-                                                            dashboardController
-                                                                .productModel
-                                                                .value
-                                                                .products?[j]
-                                                                .id
-                                                                .toString(),
-                                                      ) ??
-                                                  false
-                                              ? "Added"
-                                              : dashboardController
-                                                      .productModel
-                                                      .value
-                                                      .products?[j]
-                                                      .variations
-                                                      ?.isNotEmpty ==
-                                                  true
-                                              ? "Select Option"
-                                              : "Add to cart",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize:
-                                                Get.width >= 600
-                                                    ? getFontSize(context, -1)
-                                                    : getFontSize(context, -5),
-                                          ),
-                                        ),
-                                      ),
+                                            ),
+                                  ),
                                   const SizedBox(height: 5),
                                 ],
                               ),
