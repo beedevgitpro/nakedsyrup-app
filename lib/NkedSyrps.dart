@@ -304,7 +304,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                       WebViewApp(
                         name: 'HACCP Certification',
                         url:
-                            'https://nakedsyrups.com.au/wp-content/uploads/2024/11/Naked-Syrups-HACCP-Certificate-Exp-2025-11-08a.pdf',
+                            'https://nakedsyrups.com.au/wp-content/uploads/2025/10/Naked-Syrups-HACCP-Certificate-Exp-2026-10-31a.pdf',
                       ),
                     );
                   },

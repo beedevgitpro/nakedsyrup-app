@@ -80,6 +80,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "cookie_jar",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/cookie_jar-4.0.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/crypto-3.0.6",
       "packageUri": "lib/",
@@ -98,8 +104,26 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "device_info_plus",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/device_info_plus-12.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "device_info_plus_platform_interface",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "dio",
       "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/dio-5.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "dio_cookie_manager",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/dio_cookie_manager-3.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -159,9 +183,9 @@
     },
     {
       "name": "flutter_svg",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/flutter_svg-2.2.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/flutter_svg-2.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "flutter_test",
@@ -219,7 +243,7 @@
     },
     {
       "name": "leak_tracker",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/leak_tracker-11.0.1",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/leak_tracker-11.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -315,15 +339,15 @@
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/path_provider_android-2.2.17",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/path_provider_android-2.2.20",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.9"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.2",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.3",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.9"
     },
     {
       "name": "path_provider_linux",
@@ -345,9 +369,9 @@
     },
     {
       "name": "petitparser",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/petitparser-6.1.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/petitparser-7.0.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
     },
     {
       "name": "photo_view",
@@ -393,15 +417,15 @@
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.11",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.15",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.9"
     },
     {
       "name": "shared_preferences_foundation",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.4",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.5",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.9"
     },
     {
       "name": "shared_preferences_linux",
@@ -518,6 +542,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "universal_io",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/universal_io-2.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "url_launcher",
       "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher-6.3.2",
       "packageUri": "lib/",
@@ -525,15 +555,15 @@
     },
     {
       "name": "url_launcher_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.17",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.24",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.9"
     },
     {
       "name": "url_launcher_ios",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.4",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.5",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.9"
     },
     {
       "name": "url_launcher_linux",
@@ -543,9 +573,9 @@
     },
     {
       "name": "url_launcher_macos",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.3",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.4",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.9"
     },
     {
       "name": "url_launcher_platform_interface",
@@ -585,9 +615,9 @@
     },
     {
       "name": "vector_graphics_compiler",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.18",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.19",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.7"
     },
     {
       "name": "vector_math",
@@ -615,9 +645,9 @@
     },
     {
       "name": "webview_flutter_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.5",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.9"
     },
     {
       "name": "webview_flutter_platform_interface",
@@ -633,15 +663,21 @@
     },
     {
       "name": "webview_flutter_wkwebview",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.2",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.9"
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/win32-5.14.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/win32-5.15.0",
       "packageUri": "lib/",
       "languageVersion": "3.8"
+    },
+    {
+      "name": "win32_registry",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/win32_registry-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
     },
     {
       "name": "xdg_directories",
@@ -651,9 +687,9 @@
     },
     {
       "name": "xml",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/xml-6.5.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/xml-6.6.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.8"
     },
     {
       "name": "yaml",
@@ -669,8 +705,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.9.0",
+  "generatorVersion": "3.9.2",
   "flutterRoot": "file:///Users/jalpa/flutter",
-  "flutterVersion": "3.35.1",
+  "flutterVersion": "3.35.7",
   "pubCache": "file:///Users/jalpa/.pub-cache"
 }

@@ -11,6 +11,7 @@ import '../../Resources/AppColors.dart';
 import '../../model/category_model.dart';
 import '../../model/dashboard_list.dart';
 import '../../model/order_history_model.dart';
+import '../../model/price_model.dart';
 import '../../model/product_model.dart';
 import '../../model/shipping_methods_model.dart';
 import '../../service.dart';
@@ -25,6 +26,7 @@ class DashboardController extends GetxController {
   final GlobalKey<FormState> registerationForm = GlobalKey<FormState>();
   RxBool getData = false.obs;
   RxBool placeOrder = false.obs;
+  RxBool getPriceDetails = false.obs;
   RxBool deleteAccount = false.obs;
   RxBool getProduct = false.obs;
   RxInt cartCount = 0.obs;
@@ -49,6 +51,7 @@ class DashboardController extends GetxController {
   RxBool saveInvoice = false.obs;
   RxString isPayment = 'no'.obs;
   RxString name = ''.obs;
+  RxString isPayByAcc = ''.obs;
   RxString captchaToken = ''.obs;
   RxString selectedVariance = ''.obs;
   RxString selectedCountry = ''.obs;
@@ -76,6 +79,7 @@ class DashboardController extends GetxController {
   List newsletter = ['Distributor/Roaster', 'Café/Restaurant', 'Home'];
   Rx<ProductModel> productModel = ProductModel().obs;
   Rx<CartModel> cartModel = CartModel().obs;
+  Rx<PriceModel> priceModel = PriceModel().obs;
   Rx<OrderHistoryModel> orderHistoryModel = OrderHistoryModel().obs;
   Rx<ShippingMethodsModel> shippingMethodsModel = ShippingMethodsModel().obs;
   final GlobalKey<LiquidPullToRefreshState> refreshIndicatorKey =
@@ -130,6 +134,7 @@ class DashboardController extends GetxController {
       completer.complete();
     });
     getName();
+    getPayByAcc();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderHistory();
     });
@@ -244,13 +249,16 @@ class DashboardController extends GetxController {
   }
 
   placeOrderApi() async {
+    if (shippingMethods.value.isEmpty) {
+      Get.snackbar(
+        "Please select shipping method",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return;
+    }
     placeOrder.value = true;
-    // print(
-    //   "addressFormKey validation : ${addressFormKey.currentState?.validate()}",
-    // );
-    // print(
-    //   "addressFormKey validation : ${shippingAddressFormKey.currentState?.validate()}",
-    // );
     Map<String, dynamic> mapp = {};
     if (differentAddress.value) {
       mapp = {
@@ -261,12 +269,12 @@ class DashboardController extends GetxController {
           "address_1": streetAddressController.text,
           "address_2": streetAddress2Controller.text,
           "city": townController.text,
-          "state": selectedState.value,
+          "state": selectedState.value, //
           "postcode": postCodeController.text,
           "country": selectedCountry.value,
           "email": emailController.text,
           "phone": phoneController.text,
-          "po_number": postCodeController.text,
+          "po_number": pOController.text,
         },
         "shipping": {
           "first_name": firstNameDiffController.text,
@@ -280,7 +288,7 @@ class DashboardController extends GetxController {
           "country": selectedCountryDiff.value,
         },
         "use_shipping": "yes",
-        "payment_method": "cod",
+        "payment_method": selectedPaymentMethods.value,
         "shipping_method": shippingMethods.value,
         "order_notes": orderNotesController.text,
       };
@@ -298,10 +306,10 @@ class DashboardController extends GetxController {
           "country": selectedCountry.value,
           "email": emailController.text,
           "phone": phoneController.text,
-          "po_number": postCodeController.text,
+          "po_number": pOController.text,
         },
         "use_shipping": "no",
-        "payment_method": "cod",
+        "payment_method": selectedPaymentMethods.value,
         "shipping_method": shippingMethods.value,
         "order_notes": orderNotesController.text,
       };
@@ -389,6 +397,70 @@ class DashboardController extends GetxController {
     }
   }
 
+  priceDetails() async {
+    getPriceDetails.value = true;
+
+    Map<String, dynamic> mapp = {};
+    if (differentAddress.value) {
+      mapp = {
+        "billing": {
+          "address_1": streetAddressController.text,
+          "city": townController.text,
+          "state": selectedState.value,
+          "postcode": postCodeController.text,
+          "country": selectedCountry.value,
+        },
+        "shipping": {
+          "address_1": streetAddressDiffController.text,
+          "city": townDiffController.text,
+          "state": selectedStateDiff.value,
+          "postcode": postCodeDiffController.text,
+          "country": selectedCountryDiff.value,
+        },
+        "payment_method": selectedPaymentMethods.value,
+        "shipping_method": shippingMethods.value,
+      };
+    } else {
+      mapp = {
+        "billing": {
+          "address_1": streetAddressController.text,
+          "city": townController.text,
+          "state": selectedState.value,
+          "postcode": postCodeController.text,
+          "country": selectedCountry.value,
+        },
+        "payment_method": selectedPaymentMethods.value,
+        "shipping_method": shippingMethods.value,
+      };
+    }
+
+    var shipping = await ApiClass().getPriceDetails(mapp);
+    if (shipping != null) {
+      if (shipping['success'] == true) {
+        priceModel.value = PriceModel();
+        print("shipping : ${shipping is Map}");
+        priceModel.value = PriceModel.fromJson(shipping);
+        getPriceDetails.value = false;
+      } else {
+        getPriceDetails.value = false;
+        Get.snackbar(
+          shipping['message'],
+          '',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } else {
+      placeOrder.value = false;
+      Get.snackbar(
+        "Error in placing order",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
+  }
+
   deActiveAcc() {
     showDialog<void>(
       context: Get.context!,
@@ -399,7 +471,7 @@ class DashboardController extends GetxController {
           builder: (context, setState) {
             return AlertDialog(
               title: Text(
-                "Are you sure, do you want to deactivate your account?",
+                "Are you sure, do you want to Delete your account?",
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 18,
@@ -762,6 +834,11 @@ class DashboardController extends GetxController {
   getName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     name.value = prefs.getString('name') ?? "";
+  }
+
+  getPayByAcc() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    isPayByAcc.value = prefs.getString('pay_by_account') ?? "";
   }
 
   Widget cartUI() {

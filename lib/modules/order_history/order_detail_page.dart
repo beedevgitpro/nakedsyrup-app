@@ -298,9 +298,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 .isNotEmpty ==
                                             true
                                         ? Get.width >= 600
-                                            ? 150
-                                            : 80
-                                        : 70,
+                                            ? 170
+                                            : 100
+                                        : 80,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -520,6 +520,80 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             widget.orders.discount != 0
                         ? const SizedBox(height: 10)
                         : const SizedBox(),
+                    widget.orders.shippingTotal != null &&
+                            widget.orders.shippingTotal != 0
+                        ? Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Shipping Charges : ",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize:
+                                        Get.width >= 600
+                                            ? getFontSize(context, 2)
+                                            : getFontSize(context, -2),
+                                  ),
+                                ),
+                                Text(
+                                  "\$${double.parse(widget.orders.shippingTotal.toString()).toStringAsFixed(2)} ",
+                                  style: TextStyle(
+                                    color: AppColors.nakedSyrup,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        Get.width >= 600
+                                            ? getFontSize(context, 2)
+                                            : getFontSize(context, -2),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        )
+                        : const SizedBox(),
+                    widget.orders.feeTotal != null &&
+                            widget.orders.feeTotal != 0
+                        ? Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Transaction Charges : ",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize:
+                                        Get.width >= 600
+                                            ? getFontSize(context, 2)
+                                            : getFontSize(context, -2),
+                                  ),
+                                ),
+                                Text(
+                                  "\$${double.parse(widget.orders.feeTotal.toString()).toStringAsFixed(2)} ",
+                                  style: TextStyle(
+                                    color: AppColors.nakedSyrup,
+                                    fontFamily: 'Euclid Circular B',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        Get.width >= 600
+                                            ? getFontSize(context, 2)
+                                            : getFontSize(context, -2),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        )
+                        : const SizedBox(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -620,18 +694,26 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       : getFontSize(context, 2),
                                             ),
                                           ),
-                                          Text(
-                                            "${widget.orders.billing?.company}",
-                                            style: TextStyle(
-                                              color: AppColors.fontLightColor,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize:
-                                                  Get.width >= 600
-                                                      ? getFontSize(context, 4)
-                                                      : getFontSize(context, 2),
+                                          if (widget.orders.billing?.company !=
+                                              null)
+                                            Text(
+                                              "${widget.orders.billing?.company}",
+                                              style: TextStyle(
+                                                color: AppColors.fontLightColor,
+                                                fontFamily: 'Euclid Circular B',
+                                                fontWeight: FontWeight.normal,
+                                                fontSize:
+                                                    Get.width >= 600
+                                                        ? getFontSize(
+                                                          context,
+                                                          4,
+                                                        )
+                                                        : getFontSize(
+                                                          context,
+                                                          2,
+                                                        ),
+                                              ),
                                             ),
-                                          ),
                                           Text(
                                             "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
                                             style: TextStyle(
@@ -852,18 +934,26 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       : getFontSize(context, 2),
                                             ),
                                           ),
-                                          Text(
-                                            "${widget.orders.shipping?.company}",
-                                            style: TextStyle(
-                                              color: AppColors.fontLightColor,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize:
-                                                  Get.width >= 600
-                                                      ? getFontSize(context, 4)
-                                                      : getFontSize(context, 2),
+                                          if (widget.orders.shipping?.company !=
+                                              null)
+                                            Text(
+                                              "${widget.orders.shipping?.company}",
+                                              style: TextStyle(
+                                                color: AppColors.fontLightColor,
+                                                fontFamily: 'Euclid Circular B',
+                                                fontWeight: FontWeight.normal,
+                                                fontSize:
+                                                    Get.width >= 600
+                                                        ? getFontSize(
+                                                          context,
+                                                          4,
+                                                        )
+                                                        : getFontSize(
+                                                          context,
+                                                          2,
+                                                        ),
+                                              ),
                                             ),
-                                          ),
                                           Text(
                                             "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
                                             style: TextStyle(
@@ -961,18 +1051,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               ),
                                             ),
                                           ),
-                                          Text(
-                                            "${widget.orders.billing?.company}",
-                                            style: TextStyle(
-                                              color: AppColors.fontLightColor,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -2,
+                                          if (widget.orders.billing?.company !=
+                                              null)
+                                            Text(
+                                              "${widget.orders.billing?.company}",
+                                              style: TextStyle(
+                                                color: AppColors.fontLightColor,
+                                                fontFamily: 'Euclid Circular B',
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  -2,
+                                                ),
                                               ),
                                             ),
-                                          ),
                                           Text(
                                             "${widget.orders.billing?.address1} ${widget.orders.billing?.address2}",
                                             style: TextStyle(
@@ -1176,18 +1268,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               ),
                                             ),
                                           ),
-                                          Text(
-                                            "${widget.orders.shipping?.company}",
-                                            style: TextStyle(
-                                              color: AppColors.fontLightColor,
-                                              fontFamily: 'Euclid Circular B',
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: getFontSize(
-                                                context,
-                                                -2,
+                                          if (widget.orders.shipping?.company !=
+                                              null)
+                                            Text(
+                                              "${widget.orders.shipping?.company}",
+                                              style: TextStyle(
+                                                color: AppColors.fontLightColor,
+                                                fontFamily: 'Euclid Circular B',
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: getFontSize(
+                                                  context,
+                                                  -2,
+                                                ),
                                               ),
                                             ),
-                                          ),
                                           Text(
                                             "${widget.orders.shipping?.address1} ${widget.orders.shipping?.address2}",
                                             style: TextStyle(

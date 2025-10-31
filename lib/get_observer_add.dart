@@ -90,61 +90,61 @@ class GlobalRouteObserver extends GetObserver {
             );
           });
         } else {
-          if (loginApi['pay_by_account'] != null) {
-            if (loginApi['pay_by_account'] == 'no') {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
-
-              Get.offAll(() => LoginPage(), routeName: '/LoginPage');
-
-              // Show dialog AFTER pushing login page
-              Future.delayed(Duration(milliseconds: 100), () {
-                showDialog<void>(
-                  context: Get.context!,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text(
-                        "Sorry, you can not continue.",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      content: const Text(
-                        "Your pay by account is disable.",
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      actions: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.nakedSyrup,
-                            padding: const EdgeInsets.all(8),
-                          ),
-                          child: const Text(
-                            "Close",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                          onPressed: () {
-                            Get.back();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              });
-            }
-          } else {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.clear();
-            Get.offAll(() => LoginPage(), routeName: '/LoginPage');
-          }
+          // if (loginApi['pay_by_account'] != null) {
+          //   if (loginApi['pay_by_account'] == 'no') {
+          //     final prefs = await SharedPreferences.getInstance();
+          //     await prefs.clear();
+          //
+          //     Get.offAll(() => LoginPage(), routeName: '/LoginPage');
+          //
+          //     // Show dialog AFTER pushing login page
+          //     Future.delayed(Duration(milliseconds: 100), () {
+          //       showDialog<void>(
+          //         context: Get.context!,
+          //         barrierDismissible: false,
+          //         builder: (BuildContext context) {
+          //           return AlertDialog(
+          //             title: const Text(
+          //               "Sorry, you can not continue.",
+          //               style: TextStyle(
+          //                 color: Colors.black87,
+          //                 fontSize: 18,
+          //                 fontWeight: FontWeight.w800,
+          //               ),
+          //             ),
+          //             content: const Text(
+          //               "Your pay by account is disable.",
+          //               style: TextStyle(
+          //                 color: Colors.black87,
+          //                 fontSize: 16,
+          //                 fontWeight: FontWeight.w600,
+          //               ),
+          //             ),
+          //             actions: [
+          //               ElevatedButton(
+          //                 style: ElevatedButton.styleFrom(
+          //                   backgroundColor: AppColors.nakedSyrup,
+          //                   padding: const EdgeInsets.all(8),
+          //                 ),
+          //                 child: const Text(
+          //                   "Close",
+          //                   style: TextStyle(color: Colors.white, fontSize: 14),
+          //                 ),
+          //                 onPressed: () {
+          //                   Get.back();
+          //                 },
+          //               ),
+          //             ],
+          //           );
+          //         },
+          //       );
+          //     });
+          //   }
+          // } else {
+          //   final prefs = await SharedPreferences.getInstance();
+          //   await prefs.clear();
+          //   Get.offAll(() => LoginPage(), routeName: '/LoginPage');
+          // }
         }
       }
       // else {

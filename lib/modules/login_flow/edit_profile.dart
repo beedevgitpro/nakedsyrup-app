@@ -947,7 +947,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           dashboardController.deActiveAcc();
                                         },
                                         child: Text(
-                                          'Deactivate Account',
+                                          'Delete Account',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -1828,7 +1828,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                   dashboardController.deActiveAcc();
                                 },
                                 child: Text(
-                                  'Deactivate Account',
+                                  'Delete Account',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,

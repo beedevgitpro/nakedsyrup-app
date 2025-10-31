@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getT;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Resources/AppStrings.dart';
@@ -11,6 +16,7 @@ import 'Resources/AppStrings.dart';
 final Dio dio = Dio();
 bool _isRefreshing = false;
 Completer<void>? _refreshCompleter;
+late PersistCookieJar cookieJar;
 
 void setupDio() {
   FutureOr<dynamic> refreshToken() async {
@@ -131,76 +137,56 @@ dynamic afterApiFire(response, apiurl) {
   }
 }
 
-FutureOr<dynamic> dioPostApiCall(apiurl, formData) async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  try {
-    String? token = prefs.getString('token');
-    dio.options.headers['Content-Type'] = 'application/json';
-    dio.options.headers['Connection'] = 'keep-alive';
-    if (token != null && token.isNotEmpty && apiurl != 'refresh-token') {
-      dio.options.headers["Authorization"] = "Bearer $token";
-      print("Bearer $token");
-    }
-    String url = '${AppStrings.baseUrl}$apiurl';
-    print("$apiurl URL::$url");
-    // if (formData.length > 0) {
-    //   print("$apiurl map-post data::${formData.fields}");
-    // }
-    final response = await dio.post(
-      url,
-      data:
-          apiurl == 'refresh-token'
-              ? {'token': prefs.getString('token') ?? ""}
-              : formData,
-      options: Options(headers: {"Accept": "application/json"}),
-    );
-    return afterApiFire(response, apiurl);
-  } on TimeoutException catch (_) {
-    getT.Get.snackbar(
-      " TimeoutException or No Internet Connection ",
-      '',
-      colorText: Colors.red,
-      backgroundColor: Colors.white,
-    );
-  } on SocketException catch (e) {
-    print("SocketException $apiurl $e");
-    getT.Get.snackbar(
-      "SocketException",
-      '',
-      colorText: Colors.red,
-      backgroundColor: Colors.white,
-    );
-  } on DioException catch (e) {
-    print("DioException $apiurl $e");
-    if (e.type == DioExceptionType.connectionError ||
-        e.error.toString().contains("Connection reset")) {
-      await Future.delayed(Duration(seconds: 1));
-      final retryResponse = await dio.post(
-        '${AppStrings.baseUrl}$apiurl',
-        data:
-            apiurl == 'refresh-token'
-                ? {'token': prefs.getString('token') ?? ""}
-                : formData,
-        options: Options(headers: {"Accept": "application/json"}),
-      );
-      return afterApiFire(retryResponse, apiurl);
-    } else {
-      getT.Get.snackbar(
-        "Technical Error",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-    }
-  } on Exception catch (e) {
-    print("Exception : $apiurl $e");
-    getT.Get.snackbar(
-      "Error",
-      '',
-      colorText: Colors.red,
-      backgroundColor: Colors.white,
-    );
+Future<String> buildUserAgent() async {
+  final deviceInfo = DeviceInfoPlugin();
+  String appVersion = AppStrings.version;
+  String appName = "MyFlutterApp";
+
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    return '$appName/$appVersion (Android ${androidInfo.version.release}; ${androidInfo.model})';
+  } else if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    return '$appName/$appVersion (iOS ${iosInfo.systemVersion}; ${iosInfo.utsname.machine})';
+  } else if (Platform.isMacOS) {
+    final macInfo = await deviceInfo.macOsInfo;
+    return '$appName/$appVersion (macOS ${macInfo.osRelease}; ${macInfo.model})';
+  } else {
+    return '$appName/$appVersion (Unknown Platform)';
   }
+}
+
+Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
+  String? userAgent = await buildUserAgent();
+
+  final headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'User-Agent':
+        userAgent ??
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) FlutterApp/1.0',
+    'Origin': 'https://nakedsyrups.com.au',
+    'Referer': 'https://nakedsyrups.com.au/checkout',
+    if (token != null && token.isNotEmpty && apiurl != 'refresh-token')
+      'Authorization': 'Bearer $token',
+  };
+
+  final url = '${AppStrings.baseUrl}$apiurl';
+  print('🌐 POST: $url');
+
+  final response = await dio.post(
+    url,
+    data: body,
+    options: Options(headers: headers),
+  );
+
+  // ✅ Print cookies to confirm
+  final cookies = await cookieJar.loadForRequest(Uri.parse(url));
+  print('🍪 Stored Cookies: $cookies');
+
+  return afterApiFire(response, apiurl);
 }
 
 FutureOr<dynamic> dioGetApiCall(apiurl) async {
@@ -267,6 +253,16 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
 }
 
 class ApiClass {
+  ApiClass() {
+    _initCookies();
+  }
+
+  Future<void> _initCookies() async {
+    final dir = await getApplicationDocumentsDirectory();
+    cookieJar = PersistCookieJar(storage: FileStorage('${dir.path}/.cookies/'));
+    dio.interceptors.add(CookieManager(cookieJar));
+  }
+
   FutureOr<dynamic> accessPay() async {
     var decodedResponse = await dioPostApiCall('pay-by-account-access', {});
 
@@ -409,9 +405,28 @@ class ApiClass {
   }
 
   FutureOr<dynamic> orderPlaced(mapp) async {
+    print("form data : ${mapp}");
+
     FormData formData = FormData.fromMap(mapp);
     var decodedResponse = await dioPostApiCall('checkout', formData);
 
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
+  FutureOr<dynamic> getPriceDetails(mapp) async {
+    print("fees map  :$mapp ");
+
+    var decodedResponse = await dioPostApiCall('extra-fees', jsonEncode(mapp));
     if (decodedResponse['success'] == true) {
       return decodedResponse;
     } else {

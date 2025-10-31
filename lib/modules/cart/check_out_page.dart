@@ -25,6 +25,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
     // TODO: implement initState
     dashboardController.differentAddress.value = false;
     dashboardController.enableCheckOut.value = false;
+    dashboardController.getPayByAcc();
     // controler =
     //     WebViewControllerPlus()
     //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -75,6 +76,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Get.back();
+            dashboardController.shippingMethods.value = "";
+            dashboardController.selectedPaymentMethods.value = 'cod';
           },
         ),
         context,
@@ -1046,60 +1049,69 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               ),
                                               Card(
                                                 color: Colors.white,
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  itemCount:
+                                                child: Obx(() {
+                                                  final methods =
                                                       dashboardController
                                                           .shippingMethodsModel
                                                           .value
+                                                          .shippingMethods ??
+                                                      [];
+
+                                                  return RadioGroup<String>(
+                                                    groupValue:
+                                                        dashboardController
+                                                            .shippingMethods
+                                                            .value,
+                                                    onChanged: (value) {
+                                                      dashboardController
                                                           .shippingMethods
-                                                          ?.length,
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                  itemBuilder: (context, j) {
-                                                    return Obx(
-                                                      () => RadioListTile(
-                                                        activeColor:
-                                                            AppColors
-                                                                .nakedSyrup,
-                                                        value:
-                                                            dashboardController
-                                                                .shippingMethodsModel
-                                                                .value
-                                                                .shippingMethods?[j]
-                                                                .id,
-                                                        groupValue:
-                                                            dashboardController
-                                                                .shippingMethods
-                                                                .value,
-                                                        onChanged: (value) {
-                                                          dashboardController
-                                                              .shippingMethods
-                                                              .value = value!;
-                                                        },
-                                                        title: Text(
-                                                          dashboardController
-                                                                  .shippingMethodsModel
-                                                                  .value
-                                                                  .shippingMethods?[j]
-                                                                  .label ??
-                                                              "",
-                                                        ),
-                                                        subtitle: Text(
-                                                          "\$${double.parse(dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw ?? "0.0").toStringAsFixed(2)}",
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color:
-                                                                AppColors
-                                                                    .nakedSyrup,
+                                                          .value = value!;
+                                                      dashboardController
+                                                          .priceDetails();
+                                                    },
+                                                    child: ListView.builder(
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          const NeverScrollableScrollPhysics(),
+                                                      itemCount: methods.length,
+                                                      itemBuilder: (
+                                                        context,
+                                                        j,
+                                                      ) {
+                                                        final method =
+                                                            methods[j];
+                                                        final cost =
+                                                            double.tryParse(
+                                                              method.costRaw ??
+                                                                  "0.0",
+                                                            ) ??
+                                                            0.0;
+
+                                                        return RadioListTile<
+                                                          String
+                                                        >(
+                                                          value:
+                                                              method.id ?? '',
+                                                          title: Text(
+                                                            method.label ?? "",
                                                           ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
+                                                          subtitle: Text(
+                                                            "\$${cost.toStringAsFixed(2)}",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color:
+                                                                  AppColors
+                                                                      .nakedSyrup,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                }),
                                               ),
                                             ],
                                           ),
@@ -1139,19 +1151,45 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                           ),
                                           Card(
                                             color: Colors.white,
-                                            child: RadioListTile(
-                                              activeColor: AppColors.nakedSyrup,
-                                              value: 'cod',
-                                              groupValue:
+                                            child: Obx(
+                                              () => RadioGroup<String>(
+                                                groupValue:
+                                                    dashboardController
+                                                        .selectedPaymentMethods
+                                                        .value,
+                                                onChanged: (value) {
                                                   dashboardController
                                                       .selectedPaymentMethods
-                                                      .value,
-                                              onChanged: (value) {
-                                                dashboardController
-                                                    .selectedPaymentMethods
-                                                    .value = value!;
-                                              },
-                                              title: Text("Pay by account"),
+                                                      .value = value!;
+                                                  dashboardController
+                                                      .priceDetails();
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    if (dashboardController
+                                                            .isPayByAcc
+                                                            .value ==
+                                                        'yes')
+                                                      RadioListTile<String>(
+                                                        value: 'cod',
+                                                        activeColor:
+                                                            AppColors
+                                                                .nakedSyrup,
+                                                        title: const Text(
+                                                          "Pay by account",
+                                                        ),
+                                                      ),
+                                                    RadioListTile<String>(
+                                                      value: 'ppcp',
+                                                      activeColor:
+                                                          AppColors.nakedSyrup,
+                                                      title: const Text(
+                                                        "PayPal (send payment link)",
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -2178,58 +2216,62 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                         ),
                                         Card(
                                           color: Colors.white,
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount:
+                                          child: Obx(() {
+                                            final methods =
                                                 dashboardController
                                                     .shippingMethodsModel
                                                     .value
+                                                    .shippingMethods ??
+                                                [];
+
+                                            return RadioGroup<String>(
+                                              groupValue:
+                                                  dashboardController
+                                                      .shippingMethods
+                                                      .value,
+                                              onChanged: (value) {
+                                                dashboardController
                                                     .shippingMethods
-                                                    ?.length,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemBuilder: (context, j) {
-                                              return Obx(
-                                                () => RadioListTile(
-                                                  activeColor:
-                                                      AppColors.nakedSyrup,
-                                                  value:
-                                                      dashboardController
-                                                          .shippingMethodsModel
-                                                          .value
-                                                          .shippingMethods?[j]
-                                                          .id,
-                                                  groupValue:
-                                                      dashboardController
-                                                          .shippingMethods
-                                                          .value,
-                                                  onChanged: (value) {
-                                                    dashboardController
-                                                        .shippingMethods
-                                                        .value = value!;
-                                                  },
-                                                  title: Text(
-                                                    dashboardController
-                                                            .shippingMethodsModel
-                                                            .value
-                                                            .shippingMethods?[j]
-                                                            .label ??
-                                                        "",
-                                                  ),
-                                                  subtitle: Text(
-                                                    "\$${double.parse(dashboardController.shippingMethodsModel.value.shippingMethods?[j].costRaw ?? "0.0").toStringAsFixed(2)}",
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color:
-                                                          AppColors.nakedSyrup,
+                                                    .value = value!;
+                                                dashboardController
+                                                    .priceDetails();
+                                              },
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount: methods.length,
+                                                itemBuilder: (context, j) {
+                                                  final method = methods[j];
+                                                  final cost =
+                                                      double.tryParse(
+                                                        method.costRaw ?? "0.0",
+                                                      ) ??
+                                                      0.0;
+
+                                                  return RadioListTile<String>(
+                                                    value: method.id ?? '',
+                                                    activeColor:
+                                                        AppColors.nakedSyrup,
+                                                    title: Text(
+                                                      method.label ?? "",
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
+                                                    subtitle: Text(
+                                                      "\$${cost.toStringAsFixed(2)}",
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color:
+                                                            AppColors
+                                                                .nakedSyrup,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),
@@ -2239,48 +2281,362 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 }
                               }
                             }),
-                            Obx(() {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 10,
-                                  left: 8,
-                                  right: 8,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        'Payment Method',
-                                        style: TextStyle(
-                                          fontFamily: "Montserrat",
-                                          fontSize: getFontSize(context, 0),
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    'Payment Method',
+                                    style: TextStyle(
+                                      fontFamily: "Montserrat",
+                                      fontSize: getFontSize(context, 0),
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    Card(
-                                      color: Colors.white,
-                                      child: RadioListTile(
-                                        activeColor: AppColors.nakedSyrup,
-                                        value: 'cod',
-                                        groupValue:
-                                            dashboardController
-                                                .selectedPaymentMethods
-                                                .value,
-                                        onChanged: (value) {
+                                  ),
+                                ),
+                                Card(
+                                  color: Colors.white,
+                                  child: Obx(
+                                    () => RadioGroup<String>(
+                                      groupValue:
                                           dashboardController
                                               .selectedPaymentMethods
-                                              .value = value!;
-                                        },
-                                        title: Text("Pay by account"),
+                                              .value,
+                                      onChanged: (value) {
+                                        dashboardController
+                                            .selectedPaymentMethods
+                                            .value = value!;
+                                        dashboardController.priceDetails();
+                                      },
+                                      child: Column(
+                                        children: [
+                                          if (dashboardController
+                                                  .isPayByAcc
+                                                  .value ==
+                                              'yes')
+                                            RadioListTile<String>(
+                                              value: 'cod',
+                                              activeColor: AppColors.nakedSyrup,
+                                              title: const Text(
+                                                "Pay by account",
+                                              ),
+                                            ),
+                                          RadioListTile<String>(
+                                            value: 'ppcp',
+                                            activeColor: AppColors.nakedSyrup,
+                                            title: const Text(
+                                              "PayPal (send payment link)",
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              );
+                              ],
+                            ),
+                            Obx(() {
+                              if (dashboardController.getPriceDetails.value) {
+                                return Center(
+                                  child: SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.greenColor,
+                                    ),
+                                  ),
+                                );
+                              } else if (dashboardController
+                                  .shippingMethods
+                                  .value
+                                  .isEmpty) {
+                                return SizedBox();
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 10,
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 10,
+                                        ),
+                                        child: Text(
+                                          'Price Details',
+                                          style: TextStyle(
+                                            fontFamily: "Montserrat",
+                                            fontSize: getFontSize(context, 0),
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      Card(
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "Sub Total : ",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        'Euclid Circular B',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: getFontSize(
+                                                      context,
+                                                      -2,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  dashboardController
+                                                              .priceModel
+                                                              .value
+                                                              .subtotal !=
+                                                          null
+                                                      ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                      : "0.0",
+                                                  style: TextStyle(
+                                                    color: AppColors.nakedSyrup,
+                                                    fontFamily:
+                                                        'Euclid Circular B',
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: getFontSize(
+                                                      context,
+                                                      -2,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 3),
+                                            dashboardController
+                                                        .priceModel
+                                                        .value
+                                                        .gstTotal !=
+                                                    null
+                                                ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "GST : ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors
+                                                                .nakedSyrup,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                                : const SizedBox(),
+                                            SizedBox(
+                                              height:
+                                                  dashboardController
+                                                                  .priceModel
+                                                                  .value
+                                                                  .fees !=
+                                                              null &&
+                                                          dashboardController
+                                                                  .priceModel
+                                                                  .value
+                                                                  .fees
+                                                                  ?.isNotEmpty ==
+                                                              true
+                                                      ? 3
+                                                      : 0,
+                                            ),
+                                            ListView.separated(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  dashboardController
+                                                      .priceModel
+                                                      .value
+                                                      .fees
+                                                      ?.length ??
+                                                  0,
+                                              itemBuilder: (context, fee) {
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "${dashboardController.priceModel.value.fees?[fee].name} : ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      dashboardController
+                                                                  .priceModel
+                                                                  .value
+                                                                  .fees?[fee]
+                                                                  .amount !=
+                                                              null
+                                                          ? "\$${double.parse(dashboardController.priceModel.value.fees?[fee].amount.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                          : "\$${double.parse(dashboardController.priceModel.value.fees?[fee].shippingModel.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors
+                                                                .nakedSyrup,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                              separatorBuilder: (context, i) {
+                                                return SizedBox(height: 3);
+                                              },
+                                            ),
+                                            // dashboardController
+                                            //                 .priceModel
+                                            //                 .value
+                                            //                 .discountTotal !=
+                                            //             null &&
+                                            //         dashboardController
+                                            //                 .priceModel
+                                            //                 .value
+                                            //                 .discountTotal !=
+                                            //             0.0
+                                            //     ? Row(
+                                            //       mainAxisAlignment:
+                                            //           MainAxisAlignment.end,
+                                            //       children: [
+                                            //         Text(
+                                            //           "Discount : ",
+                                            //           style: TextStyle(
+                                            //             color: Colors.black,
+                                            //             fontFamily:
+                                            //                 'Euclid Circular B',
+                                            //             fontWeight:
+                                            //                 FontWeight.w600,
+                                            //             fontSize: getFontSize(
+                                            //               context,
+                                            //               -2,
+                                            //             ),
+                                            //           ),
+                                            //         ),
+                                            //         Text(
+                                            //           "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                            //           style: TextStyle(
+                                            //             color:
+                                            //                 AppColors
+                                            //                     .nakedSyrup,
+                                            //             fontFamily:
+                                            //                 'Euclid Circular B',
+                                            //             fontWeight:
+                                            //                 FontWeight.bold,
+                                            //             fontSize: getFontSize(
+                                            //               context,
+                                            //               -2,
+                                            //             ),
+                                            //           ),
+                                            //         ),
+                                            //       ],
+                                            //     )
+                                            //     : const SizedBox(),
+                                            SizedBox(height: 3),
+
+                                            dashboardController
+                                                        .priceModel
+                                                        .value
+                                                        .grandTotal !=
+                                                    null
+                                                ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      "Grant Total : ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      style: TextStyle(
+                                                        color:
+                                                            AppColors
+                                                                .nakedSyrup,
+                                                        fontFamily:
+                                                            'Euclid Circular B',
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: getFontSize(
+                                                          context,
+                                                          -2,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                                : const SizedBox(),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             }),
                             // Obx(() {
                             //   final screenWidth =

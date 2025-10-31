@@ -71,7 +71,7 @@ class _DashboardPageState extends State<DashboardPage>
       if (storePart < localPart) return false;
     }
 
-    return false; // Versions are equal
+    return false;
   }
 
   void checkVersionStatus(

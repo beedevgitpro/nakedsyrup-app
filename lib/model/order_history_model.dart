@@ -43,6 +43,8 @@ class Orders {
     String? status,
     dynamic total,
     dynamic subTotal,
+    dynamic shippingTotal,
+    dynamic feeTotal,
     dynamic discount,
     dynamic gst,
     List<Items>? items,
@@ -55,6 +57,8 @@ class Orders {
     _status = status;
     _total = total;
     _subTotal = subTotal;
+    _shippingTotal = shippingTotal;
+    _feeTotal = feeTotal;
     _discount = discount;
     _gst = gst;
     _items = items;
@@ -70,9 +74,11 @@ class Orders {
     _orderDate = json['order_date'];
     _status = json['status'];
     _total = json['total'];
-    _subTotal = json['subTotal'];
+    _subTotal = json['items_subtotal'];
     _discount = json['discount'];
-    _gst = json['gst'];
+    _gst = json['tax_total'];
+    _shippingTotal = json['shipping_total'];
+    _feeTotal = json['fee_total'];
     if (json['items'] != null) {
       _items = [];
       json['items'].forEach((v) {
@@ -89,6 +95,8 @@ class Orders {
   dynamic _total;
   dynamic _subTotal;
   dynamic _discount;
+  dynamic _shippingTotal;
+  dynamic _feeTotal;
   dynamic _gst;
   List<Items>? _items;
   Orders copyWith({
@@ -102,6 +110,8 @@ class Orders {
     dynamic gst,
     dynamic discount,
     dynamic subTotal,
+    dynamic shippingTotal,
+    dynamic feeTotal,
     List<Items>? items,
   }) => Orders(
     orderId: orderId ?? _orderId,
@@ -112,6 +122,8 @@ class Orders {
     status: status ?? _status,
     total: total ?? _total,
     gst: gst ?? _gst,
+    shippingTotal: shippingTotal ?? _shippingTotal,
+    feeTotal: feeTotal ?? _feeTotal,
     discount: discount ?? _discount,
     subTotal: subTotal ?? _subTotal,
     items: items ?? _items,
@@ -124,6 +136,8 @@ class Orders {
   String? get status => _status;
   dynamic get total => _total;
   dynamic get gst => _gst;
+  dynamic get shippingTotal => _shippingTotal;
+  dynamic get feeTotal => _feeTotal;
   dynamic get discount => _discount;
   dynamic get subTotal => _subTotal;
   List<Items>? get items => _items;
@@ -141,9 +155,11 @@ class Orders {
     map['order_date'] = _orderDate;
     map['status'] = _status;
     map['total'] = _total;
-    map['gst'] = _gst;
+    map['tax_total'] = _gst;
     map['discount'] = _discount;
-    map['subTotal'] = _subTotal;
+    map['shipping_total'] = _shippingTotal;
+    map['fee_total'] = _feeTotal;
+    map['items_subtotal'] = _subTotal;
     if (_items != null) {
       map['items'] = _items?.map((v) => v.toJson()).toList();
     }
