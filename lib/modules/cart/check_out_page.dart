@@ -531,23 +531,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 function: (value) {},
                                               ),
 
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                ),
-                                                child: textLabel(
-                                                  'Company Name (optional)',
-                                                  context,
-                                                  false,
-                                                ),
-                                              ),
-                                              AppTextFormField(
-                                                controller:
-                                                    dashboardController
-                                                        .companyName2Controller,
-                                                lable: 'Company Name',
-                                                function: (value) {},
-                                              ),
+                                              // Padding(
+                                              //   padding: const EdgeInsets.only(
+                                              //     top: 10,
+                                              //   ),
+                                              //   child: textLabel(
+                                              //     'Company Name (optional)',
+                                              //     context,
+                                              //     false,
+                                              //   ),
+                                              // ),
+                                              // AppTextFormField(
+                                              //   controller:
+                                              //       dashboardController
+                                              //           .companyName2Controller,
+                                              //   lable: 'Company Name',
+                                              //   function: (value) {},
+                                              // ),
                                             ],
                                           ),
                                         ),
@@ -1092,6 +1092,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         >(
                                                           value:
                                                               method.id ?? '',
+                                                          activeColor:
+                                                              AppColors
+                                                                  .nakedSyrup,
                                                           title: Text(
                                                             method.label ?? "",
                                                           ),
@@ -1121,107 +1124,410 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                       }
                                     }
                                   }),
-                                  Obx(() {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 8,
-                                        right: 8,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 10,
-                                            ),
-                                            child: Text(
-                                              'Payment Method',
-                                              style: TextStyle(
-                                                fontFamily: "Montserrat",
-                                                fontSize: getFontSize(
-                                                  context,
-                                                  0,
-                                                ),
-                                                color: Colors.black87,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 10,
+                                      left: 8,
+                                      right: 8,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 10,
+                                          ),
+                                          child: Text(
+                                            'Payment Method',
+                                            style: TextStyle(
+                                              fontFamily: "Montserrat",
+                                              fontSize: getFontSize(context, 0),
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                          Card(
-                                            color: Colors.white,
-                                            child: Obx(
-                                              () => RadioGroup<String>(
-                                                groupValue:
-                                                    dashboardController
-                                                        .selectedPaymentMethods
-                                                        .value,
-                                                onChanged: (value) {
+                                        ),
+                                        Card(
+                                          color: Colors.white,
+                                          child: Obx(
+                                            () => RadioGroup<String>(
+                                              groupValue:
                                                   dashboardController
                                                       .selectedPaymentMethods
-                                                      .value = value!;
-                                                  dashboardController
-                                                      .priceDetails();
-                                                },
-                                                child: Column(
-                                                  children: [
-                                                    if (dashboardController
-                                                            .isPayByAcc
-                                                            .value ==
-                                                        'yes')
-                                                      RadioListTile<String>(
-                                                        value: 'cod',
-                                                        activeColor:
-                                                            AppColors
-                                                                .nakedSyrup,
-                                                        title: const Text(
-                                                          "Pay by account",
-                                                        ),
-                                                      ),
-                                                    RadioListTile<String>(
-                                                      value: 'ppcp',
-                                                      activeColor:
-                                                          AppColors.nakedSyrup,
-                                                      title: const Text(
-                                                        "PayPal (send payment link)",
-                                                      ),
+                                                      .value,
+                                              onChanged: (value) {
+                                                dashboardController
+                                                    .selectedPaymentMethods
+                                                    .value = value!;
+                                                dashboardController
+                                                    .priceDetails();
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  // if (dashboardController
+                                                  //         .isPayByAcc
+                                                  //         .value ==
+                                                  //     'yes')
+                                                  RadioListTile<String>(
+                                                    value: 'cod',
+                                                    activeColor:
+                                                        AppColors.nakedSyrup,
+                                                    title: const Text(
+                                                      "Pay By Account",
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  // RadioListTile<String>(
+                                                  //   value: 'ppcp',
+                                                  //   activeColor:
+                                                  //       AppColors.nakedSyrup,
+                                                  //   title: const Text("Paypal"),
+                                                  // ),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
 
-                                  // Obx(() {
-                                  //   final screenWidth =
-                                  //       MediaQuery.of(context).size.width;
-                                  //   double width =
-                                  //       screenWidth >= 600
-                                  //           ? (screenWidth / 2) - 50
-                                  //           : screenWidth - 50;
-                                  //   return Padding(
-                                  //     padding: const EdgeInsets.only(
-                                  //       top: 10,
-                                  //       bottom: 10,
-                                  //     ),
-                                  //     child: SizedBox(
-                                  //       height:
-                                  //           dashboardController
-                                  //               .recaptchaHeight
-                                  //               .value,
-                                  //       width: width,
-                                  //       child: WebViewWidget(
-                                  //         key: UniqueKey(),
-                                  //         controller: controler,
-                                  //       ),
-                                  //     ),
-                                  //   );
-                                  // }),
+                                  Obx(() {
+                                    if (dashboardController
+                                        .getPriceDetails
+                                        .value) {
+                                      return Center(
+                                        child: SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.greenColor,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (dashboardController
+                                        .shippingMethods
+                                        .value
+                                        .isEmpty) {
+                                      return SizedBox();
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 10,
+                                          left: 8,
+                                          right: 8,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Padding(
+                                            //   padding: const EdgeInsets.only(
+                                            //     left: 10,
+                                            //   ),
+                                            //   child: Text(
+                                            //     'Price Details',
+                                            //     style: TextStyle(
+                                            //       fontFamily: "Montserrat",
+                                            //       fontSize: getFontSize(
+                                            //         context,
+                                            //         0,
+                                            //       ),
+                                            //       color: Colors.black87,
+                                            //       fontWeight: FontWeight.w600,
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                            Card(
+                                              color: Colors.white,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Text(
+                                                        "Sub Total : ",
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily:
+                                                              'Euclid Circular B',
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: getFontSize(
+                                                            context,
+                                                            -2,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        dashboardController
+                                                                    .priceModel
+                                                                    .value
+                                                                    .subtotal !=
+                                                                null
+                                                            ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                            : "0.0",
+                                                        style: TextStyle(
+                                                          color:
+                                                              AppColors
+                                                                  .nakedSyrup,
+                                                          fontFamily:
+                                                              'Euclid Circular B',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: getFontSize(
+                                                            context,
+                                                            -2,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 3),
+                                                  dashboardController
+                                                              .priceModel
+                                                              .value
+                                                              .gstTotal !=
+                                                          null
+                                                      ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            "GST : ",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  AppColors
+                                                                      .nakedSyrup,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                      : const SizedBox(),
+                                                  SizedBox(
+                                                    height:
+                                                        dashboardController
+                                                                        .priceModel
+                                                                        .value
+                                                                        .fees !=
+                                                                    null &&
+                                                                dashboardController
+                                                                        .priceModel
+                                                                        .value
+                                                                        .fees
+                                                                        ?.isNotEmpty ==
+                                                                    true
+                                                            ? 3
+                                                            : 0,
+                                                  ),
+                                                  ListView.separated(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        dashboardController
+                                                            .priceModel
+                                                            .value
+                                                            .fees
+                                                            ?.length ??
+                                                        0,
+                                                    itemBuilder: (
+                                                      context,
+                                                      fee,
+                                                    ) {
+                                                      return Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            "${dashboardController.priceModel.value.fees?[fee].name} : ",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            dashboardController
+                                                                        .priceModel
+                                                                        .value
+                                                                        .fees?[fee]
+                                                                        .amount !=
+                                                                    null
+                                                                ? "\$${double.parse(dashboardController.priceModel.value.fees?[fee].amount.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                                : "\$${double.parse(dashboardController.priceModel.value.fees?[fee].shippingModel.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  AppColors
+                                                                      .nakedSyrup,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                    separatorBuilder: (
+                                                      context,
+                                                      i,
+                                                    ) {
+                                                      return SizedBox(
+                                                        height: 3,
+                                                      );
+                                                    },
+                                                  ),
+                                                  // dashboardController
+                                                  //                 .priceModel
+                                                  //                 .value
+                                                  //                 .discountTotal !=
+                                                  //             null &&
+                                                  //         dashboardController
+                                                  //                 .priceModel
+                                                  //                 .value
+                                                  //                 .discountTotal !=
+                                                  //             0.0
+                                                  //     ? Row(
+                                                  //       mainAxisAlignment:
+                                                  //           MainAxisAlignment.end,
+                                                  //       children: [
+                                                  //         Text(
+                                                  //           "Discount : ",
+                                                  //           style: TextStyle(
+                                                  //             color: Colors.black,
+                                                  //             fontFamily:
+                                                  //                 'Euclid Circular B',
+                                                  //             fontWeight:
+                                                  //                 FontWeight.w600,
+                                                  //             fontSize: getFontSize(
+                                                  //               context,
+                                                  //               -2,
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //         Text(
+                                                  //           "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                  //           style: TextStyle(
+                                                  //             color:
+                                                  //                 AppColors
+                                                  //                     .nakedSyrup,
+                                                  //             fontFamily:
+                                                  //                 'Euclid Circular B',
+                                                  //             fontWeight:
+                                                  //                 FontWeight.bold,
+                                                  //             fontSize: getFontSize(
+                                                  //               context,
+                                                  //               -2,
+                                                  //             ),
+                                                  //           ),
+                                                  //         ),
+                                                  //       ],
+                                                  //     )
+                                                  //     : const SizedBox(),
+                                                  SizedBox(height: 3),
+
+                                                  dashboardController
+                                                              .priceModel
+                                                              .value
+                                                              .grandTotal !=
+                                                          null
+                                                      ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            "Grant Total : ",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  AppColors
+                                                                      .nakedSyrup,
+                                                              fontFamily:
+                                                                  'Euclid Circular B',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize:
+                                                                  getFontSize(
+                                                                    context,
+                                                                    -2,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                      : const SizedBox(),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  }),
                                   Obx(
                                     () =>
                                         dashboardController.placeOrder.value
@@ -1242,8 +1548,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               ),
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      AppColors.nakedSyrup,
+                                                  backgroundColor: Colors.green,
+                                                  minimumSize: Size(
+                                                    Get.width,
+                                                    42,
+                                                  ),
                                                   padding:
                                                       const EdgeInsets.symmetric(
                                                         horizontal: 14,
@@ -1705,23 +2014,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               function: (value) {},
                                             ),
 
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 10,
-                                              ),
-                                              child: textLabel(
-                                                'Company Name (optional)',
-                                                context,
-                                                false,
-                                              ),
-                                            ),
-                                            AppTextFormField(
-                                              controller:
-                                                  dashboardController
-                                                      .companyName2Controller,
-                                              lable: 'Company Name',
-                                              function: (value) {},
-                                            ),
+                                            // Padding(
+                                            //   padding: const EdgeInsets.only(
+                                            //     top: 10,
+                                            //   ),
+                                            //   child: textLabel(
+                                            //     'Company Name (optional)',
+                                            //     context,
+                                            //     false,
+                                            //   ),
+                                            // ),
+                                            // AppTextFormField(
+                                            //   controller:
+                                            //       dashboardController
+                                            //           .companyName2Controller,
+                                            //   lable: 'Company Name',
+                                            //   function: (value) {},
+                                            // ),
                                           ],
                                         ),
                                       ),
@@ -2245,7 +2554,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   final method = methods[j];
                                                   final cost =
                                                       double.tryParse(
-                                                        method.costRaw ?? "0.0",
+                                                        method.costRaw
+                                                                .toString() ??
+                                                            "0.0",
                                                       ) ??
                                                       0.0;
 
@@ -2296,47 +2607,53 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                     ),
                                   ),
                                 ),
-                                Card(
-                                  color: Colors.white,
-                                  child: Obx(
-                                    () => RadioGroup<String>(
-                                      groupValue:
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 0,
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Card(
+                                    color: Colors.white,
+                                    child: Obx(
+                                      () => RadioGroup<String>(
+                                        groupValue:
+                                            dashboardController
+                                                .selectedPaymentMethods
+                                                .value,
+                                        onChanged: (value) {
                                           dashboardController
                                               .selectedPaymentMethods
-                                              .value,
-                                      onChanged: (value) {
-                                        dashboardController
-                                            .selectedPaymentMethods
-                                            .value = value!;
-                                        dashboardController.priceDetails();
-                                      },
-                                      child: Column(
-                                        children: [
-                                          if (dashboardController
-                                                  .isPayByAcc
-                                                  .value ==
-                                              'yes')
+                                              .value = value!;
+                                          dashboardController.priceDetails();
+                                        },
+                                        child: Column(
+                                          children: [
+                                            // if (dashboardController
+                                            //         .isPayByAcc
+                                            //         .value ==
+                                            //     'yes')
                                             RadioListTile<String>(
                                               value: 'cod',
                                               activeColor: AppColors.nakedSyrup,
                                               title: const Text(
-                                                "Pay by account",
+                                                "Pay By Account",
                                               ),
                                             ),
-                                          RadioListTile<String>(
-                                            value: 'ppcp',
-                                            activeColor: AppColors.nakedSyrup,
-                                            title: const Text(
-                                              "PayPal (send payment link)",
-                                            ),
-                                          ),
-                                        ],
+                                            // RadioListTile<String>(
+                                            //   value: 'ppcp',
+                                            //   activeColor: AppColors.nakedSyrup,
+                                            //   title: const Text("Paypal"),
+                                            // ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
+
                             Obx(() {
                               if (dashboardController.getPriceDetails.value) {
                                 return Center(
@@ -2364,20 +2681,20 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 10,
-                                        ),
-                                        child: Text(
-                                          'Price Details',
-                                          style: TextStyle(
-                                            fontFamily: "Montserrat",
-                                            fontSize: getFontSize(context, 0),
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Price Details',
+                                      //     style: TextStyle(
+                                      //       fontFamily: "Montserrat",
+                                      //       fontSize: getFontSize(context, 0),
+                                      //       color: Colors.black87,
+                                      //       fontWeight: FontWeight.w600,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       Card(
                                         color: Colors.white,
                                         child: Column(
@@ -2638,29 +2955,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 );
                               }
                             }),
-                            // Obx(() {
-                            //   final screenWidth =
-                            //       MediaQuery.of(context).size.width;
-                            //   double width =
-                            //       screenWidth >= 600
-                            //           ? (screenWidth / 2) - 50
-                            //           : screenWidth - 50;
-                            //   return Padding(
-                            //     padding: const EdgeInsets.only(
-                            //       top: 10,
-                            //       bottom: 10,
-                            //     ),
-                            //     child: SizedBox(
-                            //       height:
-                            //           dashboardController.recaptchaHeight.value,
-                            //       width: width,
-                            //       child: WebViewWidget(
-                            //         key: UniqueKey(),
-                            //         controller: controler,
-                            //       ),
-                            //     ),
-                            //   );
-                            // }),
                             Obx(
                               () =>
                                   dashboardController.placeOrder.value
@@ -2677,8 +2971,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                AppColors.nakedSyrup,
+                                            backgroundColor: Colors.green,
+                                            minimumSize: Size(Get.width, 42),
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 14,
                                               vertical: 5,

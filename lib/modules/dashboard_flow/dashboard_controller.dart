@@ -29,6 +29,7 @@ class DashboardController extends GetxController {
   RxBool getPriceDetails = false.obs;
   RxBool deleteAccount = false.obs;
   RxBool getProduct = false.obs;
+  RxInt selectedd = 0.obs;
   RxInt cartCount = 0.obs;
   RxDouble recaptchaHeight = 500.0.obs;
   RxBool getCart = false.obs;
@@ -69,6 +70,8 @@ class DashboardController extends GetxController {
   RxBool isPasswordVisible = false.obs;
   RxBool isActive = false.obs;
   RxInt selectedGst = 2.obs;
+  RxList<Map<String, dynamic>> cartQueue = <Map<String, dynamic>>[].obs;
+  bool isProcessing = false;
   CarouselSliderController carouselController = CarouselSliderController();
   int currentIndex = 0;
   Rx<CategoryModel> categoryModel = CategoryModel().obs;
@@ -269,7 +272,7 @@ class DashboardController extends GetxController {
           "address_1": streetAddressController.text,
           "address_2": streetAddress2Controller.text,
           "city": townController.text,
-          "state": selectedState.value, //
+          "state": selectedState.value,
           "postcode": postCodeController.text,
           "country": selectedCountry.value,
           "email": emailController.text,
@@ -800,7 +803,10 @@ class DashboardController extends GetxController {
     var addedd = await ApiClass().deleteItems(productId);
     if (addedd != null) {
       if (addedd['success'] == true) {
-        findCart();
+        // findCart();
+        getCart.value = false;
+        cartModel.value = CartModel.fromJson(addedd);
+        cartCount.value = cartModel.value.cartItems?.length ?? 0;
         print("quantity update : ${addedd}");
       } else {
         getCart.value = false;
@@ -1006,32 +1012,146 @@ class DashboardController extends GetxController {
     getProduct.value = false;
   }
 
-  addToCart(productId, qty, variationId) async {
+  // addToCart(productId, qty, variationId) async {
+  //   addToBasket.value = true;
+  //   var addedd = await ApiClass().addToCart(productId, qty, variationId);
+  //   if (addedd != null) {
+  //     if (addedd['success'] == true) {
+  //       findCart();
+  //       addToBasket.value = false;
+  //     } else {
+  //       addToBasket.value = false;
+  //       Get.snackbar(
+  //         addedd['message'],
+  //         '',
+  //         colorText: Colors.red,
+  //         backgroundColor: Colors.white,
+  //       );
+  //     }
+  //   } else {
+  //     addToBasket.value = false;
+  //     Get.snackbar(
+  //       "Error..",
+  //       '',
+  //       colorText: Colors.red,
+  //       backgroundColor: Colors.white,
+  //     );
+  //   }
+  // }
+
+  Future<void> addToCart(productId, qty, variationId, index) async {
+    // If a request is already running, add to queue
+    if (isProcessing) {
+      cartQueue.add({
+        'productId': productId,
+        'qty': qty,
+        'variationId': variationId,
+        'selectedIndex': index,
+      });
+      return;
+    }
+
+    isProcessing = true;
     addToBasket.value = true;
-    var addedd = await ApiClass().addToCart(productId, qty, variationId);
-    if (addedd != null) {
-      if (addedd['success'] == true) {
-        // Get.to(CartPage());
-        findCart();
+    selectedd.value = index;
+    try {
+      var added = await ApiClass().addToCart(productId, qty, variationId);
+
+      // if (added == null) {
+      //   // No response → requeue
+      //   cartQueue.add({
+      //     'productId': productId,
+      //     'qty': qty,
+      //     'variationId': variationId,
+      //   });
+      // } else
+
+      print("product add response processs: ${added}");
+      if (added['success'] != true) {
         addToBasket.value = false;
-      } else {
-        addToBasket.value = false;
+        // API responded but failed
+
         Get.snackbar(
-          addedd['message'],
+          added['message'] ?? "Failed to add to cart",
           '',
           colorText: Colors.red,
           backgroundColor: Colors.white,
         );
+      } else {
+        print("cart updateddd : ${added['cart_items'].length}");
+        cartModel.value = CartModel.fromJson(added);
+        print("cartitem length : ${cartModel.value.cartItems?.length}");
+        cartCount.value = cartModel.value.cartItems?.length ?? 0;
+        addToBasket.value = false;
       }
-    } else {
+    } on TimeoutException catch (_) {
+      addToBasket.value = false;
+      // Timeout → queue it again
+      // cartQueue.add({
+      //   'productId': productId,
+      //   'qty': qty,
+      //   'variationId': variationId,
+      // });
+      // Get.snackbar(
+      //   "Network timeout",
+      //   "Product added to queue. Will retry automatically.",
+      //   colorText: Colors.orange,
+      //   backgroundColor: Colors.white,
+      // );
+    } catch (e) {
       addToBasket.value = false;
       Get.snackbar(
-        "Error..",
-        '',
+        "Error",
+        "Something went wrong.",
         colorText: Colors.red,
         backgroundColor: Colors.white,
       );
+    } finally {
+      addToBasket.value = false;
+      isProcessing = false;
+
+      // ✅ Start queue processing
+      await _processQueue();
     }
+  }
+
+  Future<void> _processQueue() async {
+    // Process all queued items sequentially
+    while (cartQueue.isNotEmpty) {
+      final item = cartQueue.removeAt(0);
+      isProcessing = true;
+      try {
+        selectedd.value = item['selectedIndex'];
+        addToBasket.value = true;
+        var added = await ApiClass()
+            .addToCart(item['productId'], item['qty'], item['variationId'])
+            .timeout(const Duration(seconds: 10));
+        print("product add response in processs: ${added}");
+        if (added == null || added['success'] != true) {
+          addToBasket.value = false;
+          Get.snackbar(
+            added?['message'] ?? "Retry failed",
+            '',
+            colorText: Colors.red,
+            backgroundColor: Colors.white,
+          );
+        } else {
+          cartModel.value = CartModel.fromJson(added);
+          print("cartitem length : ${cartModel.value.cartItems?.length}");
+          cartCount.value = cartModel.value.cartItems?.length ?? 0;
+        }
+      } catch (_) {
+        addToBasket.value = false;
+        // If even retry fails, you can decide whether to requeue or skip
+        continue;
+      } finally {
+        addToBasket.value = false;
+        isProcessing = false;
+      }
+    }
+
+    // ✅ When queue is completely empty, call findCart() once
+    // findCart();
   }
 
   @override

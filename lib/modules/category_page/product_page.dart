@@ -14,8 +14,9 @@ import '../../widgets/appbar_widget.dart';
 import '../../widgets/view_photo.dart';
 
 class ProductPage extends StatefulWidget {
-  ProductPage({super.key, required this.products});
+  ProductPage({super.key, required this.products, required this.index});
   Products products = Products();
+  int index = -1;
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
@@ -67,7 +68,7 @@ class _ProductPageState extends State<ProductPage> {
     // TODO: implement initState
     dashboardController.selectedVariance.value = "";
     dashboardController.selectedVariations.value = Variations();
-    dashboardController.findCart();
+    // dashboardController.findCart();
     dashboardController.currentIndex = 0;
     allImages.add(widget.products.image ?? "");
     if (widget.products.gallery?.isNotEmpty == true) {
@@ -137,6 +138,10 @@ class _ProductPageState extends State<ProductPage> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Get.back();
+            if (dashboardController.addToBasket.value) {
+            } else {
+              dashboardController.selectedd.value = -1;
+            }
           },
         ),
         context,
@@ -313,13 +318,15 @@ class _ProductPageState extends State<ProductPage> {
                                                       .products
                                                       .variations?[item]
                                                       .attributes
+                                                      ?.attributeSize
                                                       ?.isNotEmpty ==
                                                   true) {
                                             teext =
                                                 widget
                                                     .products
                                                     .variations?[item]
-                                                    .attributes ??
+                                                    .attributes
+                                                    ?.attributeSize ??
                                                 "";
                                           } else {
                                             if (widget
@@ -572,7 +579,11 @@ class _ProductPageState extends State<ProductPage> {
                               const SizedBox(height: 10),
                               Obx(
                                 () =>
-                                    dashboardController.addToBasket.value
+                                    dashboardController.addToBasket.value &&
+                                            dashboardController
+                                                    .selectedd
+                                                    .value ==
+                                                widget.index
                                         ? Center(
                                           child: SizedBox(
                                             width: 50,
@@ -601,6 +612,9 @@ class _ProductPageState extends State<ProductPage> {
                                                           .variations
                                                           ?.isNotEmpty ==
                                                       false) {
+                                                dashboardController
+                                                    .selectedd
+                                                    .value = widget.index;
                                                 dashboardController.addToCart(
                                                   widget.products.id,
                                                   widget.products.qty,
@@ -609,6 +623,7 @@ class _ProductPageState extends State<ProductPage> {
                                                           .value
                                                           .variationId ??
                                                       0,
+                                                  widget.index,
                                                 );
                                               } else {
                                                 Get.snackbar(
@@ -1002,13 +1017,15 @@ class _ProductPageState extends State<ProductPage> {
                                                     .products
                                                     .variations?[item]
                                                     .attributes
+                                                    ?.attributeSize
                                                     ?.isNotEmpty ==
                                                 true) {
                                           teext =
                                               widget
                                                   .products
                                                   .variations?[item]
-                                                  .attributes ??
+                                                  .attributes
+                                                  ?.attributeSize ??
                                               "";
                                         } else {
                                           if (widget
@@ -1258,7 +1275,9 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             Obx(
                               () =>
-                                  dashboardController.addToBasket.value
+                                  dashboardController.addToBasket.value &&
+                                          dashboardController.selectedd.value ==
+                                              widget.index
                                       ? Center(
                                         child: SizedBox(
                                           width: 50,
@@ -1287,6 +1306,9 @@ class _ProductPageState extends State<ProductPage> {
                                                         .variations
                                                         ?.isNotEmpty ==
                                                     false) {
+                                              dashboardController
+                                                  .selectedd
+                                                  .value = widget.index;
                                               dashboardController.addToCart(
                                                 widget.products.id,
                                                 widget.products.qty,
@@ -1295,6 +1317,7 @@ class _ProductPageState extends State<ProductPage> {
                                                         .value
                                                         .variationId ??
                                                     0,
+                                                widget.index,
                                               );
                                             } else {
                                               Get.snackbar(

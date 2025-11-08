@@ -25,8 +25,10 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     // TODO: implement initState
+    dashboardController.selectedd.value = -1;
     dashboardController.fetchDataForTab(widget.categories?.slug);
-    dashboardController.findCart();
+    // dashboardController.findCart();
+
     super.initState();
   }
 
@@ -138,7 +140,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
                       itemBuilder: (context, j) {
                         String price = "";
-                        int selectedd = -1;
+
                         if (dashboardController
                                 .productModel
                                 .value
@@ -189,6 +191,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                         .value
                                         .products?[j] ??
                                     Products(),
+                                index: j,
                               ),
                             );
                           },
@@ -236,7 +239,20 @@ class _ProductListPageState extends State<ProductListPage> {
                                   ),
 
                                   Text(
-                                    "${dashboardController.productModel.value.products?[j].name ?? ""} (${dashboardController.productModel.value.products?[j].sku ?? ""})",
+                                    dashboardController
+                                                .productModel
+                                                .value
+                                                .products?[j]
+                                                .sku
+                                                ?.isNotEmpty ==
+                                            true
+                                        ? "${dashboardController.productModel.value.products?[j].name ?? ""} (${dashboardController.productModel.value.products?[j].sku ?? ""})"
+                                        : dashboardController
+                                                .productModel
+                                                .value
+                                                .products?[j]
+                                                .name ??
+                                            "",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -250,7 +266,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
                                     child: Text(
-                                      "${price}",
+                                      price,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.nakedSyrup,
@@ -265,7 +281,10 @@ class _ProductListPageState extends State<ProductListPage> {
                                     () =>
                                         dashboardController.addToBasket.value ==
                                                     true &&
-                                                selectedd == j
+                                                dashboardController
+                                                        .selectedd
+                                                        .value ==
+                                                    j
                                             ? SizedBox(
                                               width: 50,
                                               height: 50,
@@ -316,10 +335,13 @@ class _ProductListPageState extends State<ProductListPage> {
                                                               .value
                                                               .products?[j] ??
                                                           Products(),
+                                                      index: j,
                                                     ),
                                                   );
                                                 } else {
-                                                  selectedd = j;
+                                                  dashboardController
+                                                      .selectedd
+                                                      .value = j;
                                                   dashboardController.addToCart(
                                                     dashboardController
                                                         .productModel
@@ -333,6 +355,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                                         .qty
                                                         ?.value,
                                                     0,
+                                                    j,
                                                   );
                                                 }
                                               },

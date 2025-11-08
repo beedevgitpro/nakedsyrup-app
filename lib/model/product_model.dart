@@ -175,7 +175,7 @@ class Variations {
     String? regularPrice,
     String? salePrice,
     String? stockStatus,
-    String? attributes,
+    Attributes? attributes,
     String? image,
   }) {
     _variationId = variationId;
@@ -188,6 +188,16 @@ class Variations {
     _image = image;
   }
 
+  int? _variationId;
+  String? _sku;
+  String? _price;
+  String? _regularPrice;
+  String? _salePrice;
+  String? _stockStatus;
+  Attributes? _attributes;
+  String? _image;
+
+  /// ✅ fromJson safely handles both String and Map types for `attributes`
   Variations.fromJson(dynamic json) {
     _variationId = json['variation_id'];
     _sku = json['sku'];
@@ -195,17 +205,20 @@ class Variations {
     _regularPrice = json['regular_price'];
     _salePrice = json['sale_price'];
     _stockStatus = json['stock_status'];
-    _attributes = json['attributes'];
+
+    final attr = json['attributes'];
+    if (attr is Map<String, dynamic>) {
+      _attributes = Attributes.fromJson(attr);
+    } else if (attr is String && attr.isNotEmpty) {
+      // gracefully handle string case
+      _attributes = Attributes(attributeSize: attr);
+    } else {
+      _attributes = null;
+    }
+
     _image = json['image'];
   }
-  int? _variationId;
-  String? _sku;
-  String? _price;
-  String? _regularPrice;
-  String? _salePrice;
-  String? _stockStatus;
-  String? _attributes;
-  String? _image;
+
   Variations copyWith({
     int? variationId,
     String? sku,
@@ -213,7 +226,7 @@ class Variations {
     String? regularPrice,
     String? salePrice,
     String? stockStatus,
-    String? attributes,
+    Attributes? attributes,
     String? image,
   }) => Variations(
     variationId: variationId ?? _variationId,
@@ -225,13 +238,14 @@ class Variations {
     attributes: attributes ?? _attributes,
     image: image ?? _image,
   );
+
   int? get variationId => _variationId;
   String? get sku => _sku;
   String? get price => _price;
   String? get regularPrice => _regularPrice;
   String? get salePrice => _salePrice;
   String? get stockStatus => _stockStatus;
-  String? get attributes => _attributes;
+  Attributes? get attributes => _attributes;
   String? get image => _image;
 
   Map<String, dynamic> toJson() {
@@ -242,8 +256,32 @@ class Variations {
     map['regular_price'] = _regularPrice;
     map['sale_price'] = _salePrice;
     map['stock_status'] = _stockStatus;
-    map['attributes'] = _attributes;
+
+    if (_attributes != null) {
+      map['attributes'] = _attributes?.toJson();
+    }
+
     map['image'] = _image;
+    return map;
+  }
+}
+
+class Attributes {
+  Attributes({String? attributeSize}) {
+    _attributeSize = attributeSize;
+  }
+
+  Attributes.fromJson(dynamic json) {
+    _attributeSize = json['attribute_size'];
+  }
+  String? _attributeSize;
+  Attributes copyWith({String? attributeSize}) =>
+      Attributes(attributeSize: attributeSize ?? _attributeSize);
+  String? get attributeSize => _attributeSize;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['attribute_size'] = _attributeSize;
     return map;
   }
 }

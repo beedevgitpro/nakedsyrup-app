@@ -140,6 +140,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                             .image,
                                     qty: 1.obs,
                                   ),
+                                  index: 0,
                                 ),
                               );
                             },

@@ -22,7 +22,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   void initState() {
-    dashboardController.findCart();
+    // dashboardController.findCart();
     // TODO: implement initState
     super.initState();
   }

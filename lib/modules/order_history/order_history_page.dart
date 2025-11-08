@@ -24,7 +24,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dashboardController.orderHistory();
-      dashboardController.findCart();
+      // dashboardController.findCart();
     });
     super.initState();
   }

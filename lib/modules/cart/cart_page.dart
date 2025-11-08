@@ -196,9 +196,9 @@ class _CartPageState extends State<CartPage> {
                                                               .cartModel
                                                               .value
                                                               .cartItems?[j]
-                                                              .regularPrice !=
+                                                              .currentPrice !=
                                                           null
-                                                      ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].regularPrice.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                      ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)}"
                                                       : "0.0",
                                                   style: TextStyle(
                                                     color: AppColors.nakedSyrup,

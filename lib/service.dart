@@ -2,21 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getT;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Resources/AppStrings.dart';
 
-final Dio dio = Dio();
+final Dio dio = Dio(
+  BaseOptions(
+    validateStatus: (_) => true, // prevent throwing 404/403
+  ),
+);
 bool _isRefreshing = false;
 Completer<void>? _refreshCompleter;
-late PersistCookieJar cookieJar;
 
 void setupDio() {
   FutureOr<dynamic> refreshToken() async {
@@ -127,6 +126,9 @@ dynamic afterApiFire(response, apiurl) {
         backgroundColor: Colors.white,
       );
     }
+  } else if (response.statusCode == 400) {
+    var decodedResponse = response.data;
+    print("$apiurl responce with code 400 : $decodedResponse");
   } else {
     getT.Get.snackbar(
       "Technical Error ${response.statusCode}",
@@ -137,43 +139,56 @@ dynamic afterApiFire(response, apiurl) {
   }
 }
 
-Future<String> buildUserAgent() async {
-  final deviceInfo = DeviceInfoPlugin();
-  String appVersion = AppStrings.version;
-  String appName = "MyFlutterApp";
-
-  if (Platform.isAndroid) {
-    final androidInfo = await deviceInfo.androidInfo;
-    return '$appName/$appVersion (Android ${androidInfo.version.release}; ${androidInfo.model})';
-  } else if (Platform.isIOS) {
-    final iosInfo = await deviceInfo.iosInfo;
-    return '$appName/$appVersion (iOS ${iosInfo.systemVersion}; ${iosInfo.utsname.machine})';
-  } else if (Platform.isMacOS) {
-    final macInfo = await deviceInfo.macOsInfo;
-    return '$appName/$appVersion (macOS ${macInfo.osRelease}; ${macInfo.model})';
-  } else {
-    return '$appName/$appVersion (Unknown Platform)';
-  }
-}
+// Future<String> buildUserAgent() async {
+//   final deviceInfo = DeviceInfoPlugin();
+//   String appVersion = AppStrings.version;
+//   String appName = "MyFlutterApp";
+//
+//   if (Platform.isAndroid) {
+//     final androidInfo = await deviceInfo.androidInfo;
+//     return '$appName/$appVersion (Android ${androidInfo.version.release}; ${androidInfo.model})';
+//   } else if (Platform.isIOS) {
+//     final iosInfo = await deviceInfo.iosInfo;
+//     return '$appName/$appVersion (iOS ${iosInfo.systemVersion}; ${iosInfo.utsname.machine})';
+//   } else if (Platform.isMacOS) {
+//     final macInfo = await deviceInfo.macOsInfo;
+//     return '$appName/$appVersion (macOS ${macInfo.osRelease}; ${macInfo.model})';
+//   } else {
+//     return '$appName/$appVersion (Unknown Platform)';
+//   }
+// }
 
 Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
-  String? userAgent = await buildUserAgent();
+
+  // if (apiurl != 'login') {
+  //   if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
+  //       jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") !=
+  //           false) {
+  //     String? cookieHash = prefs.getString('cookie_hash');
+  //     final List<dynamic>? cookieList = jsonDecode(
+  //       prefs.getString('woocommerce_session_cookie') ?? "",
+  //     );
+  //     final cookieValue = cookieList?.join('|') ?? '';
+  //     final cookieHeader = "wp_woocommerce_session_$cookieHash=$cookieValue";
+  //     dio.options.headers['Cookie'] = cookieHeader;
+  //   }
+  // }
 
   final headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'User-Agent':
-        userAgent ??
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) FlutterApp/1.0',
-    'Origin': 'https://nakedsyrups.com.au',
-    'Referer': 'https://nakedsyrups.com.au/checkout',
     if (token != null && token.isNotEmpty && apiurl != 'refresh-token')
       'Authorization': 'Bearer $token',
   };
 
-  final url = '${AppStrings.baseUrl}$apiurl';
+  final url =
+      apiurl == 'extra-fees'
+          ? '${AppStrings.extraFeesUrl}$apiurl'
+          : '${AppStrings.baseUrl}$apiurl';
   print('🌐 POST: $url');
 
   final response = await dio.post(
@@ -181,10 +196,6 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
     data: body,
     options: Options(headers: headers),
   );
-
-  // ✅ Print cookies to confirm
-  final cookies = await cookieJar.loadForRequest(Uri.parse(url));
-  print('🍪 Stored Cookies: $cookies');
 
   return afterApiFire(response, apiurl);
 }
@@ -194,10 +205,23 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
   String? token = prefs.getString('token');
   dio.options.headers['Content-Type'] = 'application/json';
   dio.options.headers['Connection'] = 'keep-alive';
+  dio.options.headers['User-Agent'] =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) FlutterApp/1.0';
   if (token != null && token.isNotEmpty) {
     dio.options.headers["Authorization"] = "Bearer $token";
     print("Bearer $token");
   }
+  // if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
+  //     jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") !=
+  //         false) {
+  //   String? cookieHash = prefs.getString('cookie_hash');
+  //   final List<dynamic>? cookieList = jsonDecode(
+  //     prefs.getString('woocommerce_session_cookie') ?? "",
+  //   );
+  //   final cookieValue = cookieList?.join('|') ?? '';
+  //   final cookieHeader = "wp_woocommerce_session_$cookieHash=$cookieValue";
+  //   dio.options.headers['Cookie'] = cookieHeader;
+  // }
   try {
     String url = '${AppStrings.baseUrl}$apiurl';
 
@@ -253,15 +277,7 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
 }
 
 class ApiClass {
-  ApiClass() {
-    _initCookies();
-  }
-
-  Future<void> _initCookies() async {
-    final dir = await getApplicationDocumentsDirectory();
-    cookieJar = PersistCookieJar(storage: FileStorage('${dir.path}/.cookies/'));
-    dio.interceptors.add(CookieManager(cookieJar));
-  }
+  ApiClass() {}
 
   FutureOr<dynamic> accessPay() async {
     var decodedResponse = await dioPostApiCall('pay-by-account-access', {});
@@ -321,6 +337,16 @@ class ApiClass {
         "has_app_access",
         decodedResponse['user']['has_app_access'],
       );
+      // if (decodedResponse['woocommerce_session_cookie'] != null &&
+      //     decodedResponse['woocommerce_session_cookie'] != false) {
+      //   await prefs.setString(
+      //     "woocommerce_session_cookie",
+      //     jsonEncode(decodedResponse['woocommerce_session_cookie']),
+      //   );
+      // }
+      // if (decodedResponse['cookie_hash'] != null) {
+      //   await prefs.setString("cookie_hash", decodedResponse['cookie_hash']);
+      // }
       return decodedResponse;
     } else {
       getT.Get.snackbar(
@@ -333,7 +359,7 @@ class ApiClass {
     }
   }
 
-  FutureOr<dynamic> addToCart(productId, qty, variationId) async {
+  Future<dynamic> addToCart(productId, qty, variationId) async {
     Map<String, dynamic> mappp = {};
     mappp = {
       "product_id": productId,

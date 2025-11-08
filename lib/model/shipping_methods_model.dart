@@ -49,10 +49,10 @@ class ShippingMethodsModel {
 
 class ShippingMethods {
   ShippingMethods({
-    String? id,
-    String? label,
-    String? costRaw,
-    String? cost,
+    dynamic id,
+    dynamic label,
+    dynamic costRaw,
+    dynamic cost,
     int? package,
   }) {
     _id = id;
@@ -69,16 +69,16 @@ class ShippingMethods {
     _cost = json['cost'];
     _package = json['package'];
   }
-  String? _id;
-  String? _label;
-  String? _costRaw;
-  String? _cost;
+  dynamic _id;
+  dynamic _label;
+  dynamic _costRaw;
+  dynamic _cost;
   int? _package;
   ShippingMethods copyWith({
-    String? id,
-    String? label,
-    String? costRaw,
-    String? cost,
+    dynamic id,
+    dynamic label,
+    dynamic costRaw,
+    dynamic cost,
     int? package,
   }) => ShippingMethods(
     id: id ?? _id,
@@ -87,10 +87,10 @@ class ShippingMethods {
     cost: cost ?? _cost,
     package: package ?? _package,
   );
-  String? get id => _id;
-  String? get label => _label;
-  String? get costRaw => _costRaw;
-  String? get cost => _cost;
+  dynamic get id => _id;
+  dynamic get label => _label;
+  dynamic get costRaw => _costRaw;
+  dynamic get cost => _cost;
   int? get package => _package;
 
   Map<String, dynamic> toJson() {
