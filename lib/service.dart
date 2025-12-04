@@ -11,7 +11,9 @@ import 'Resources/AppStrings.dart';
 
 final Dio dio = Dio(
   BaseOptions(
-    validateStatus: (_) => true, // prevent throwing 404/403
+    followRedirects: true,
+    validateStatus: (_) => true,
+    extra: {"withCredentials": true}, // prevent throwing 404/403
   ),
 );
 bool _isRefreshing = false;
@@ -179,8 +181,7 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   final headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) FlutterApp/1.0',
+    'User-Agent': "MyFlutterApp/1.0 (Android)",
     if (token != null && token.isNotEmpty && apiurl != 'refresh-token')
       'Authorization': 'Bearer $token',
   };
@@ -204,13 +205,14 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   dio.options.headers['Content-Type'] = 'application/json';
+  dio.options.headers['Accept'] = 'application/json';
   dio.options.headers['Connection'] = 'keep-alive';
-  dio.options.headers['User-Agent'] =
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) FlutterApp/1.0';
+  dio.options.headers['User-Agent'] = "MyFlutterApp/1.0 (Android)";
   if (token != null && token.isNotEmpty) {
     dio.options.headers["Authorization"] = "Bearer $token";
     print("Bearer $token");
   }
+
   // if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
   //     jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") !=
   //         false) {
@@ -585,6 +587,22 @@ class ApiClass {
     var decodedResponse = await dioGetApiCall(
       'most-viewed-products?limit=10&page=1',
     );
+
+    if (decodedResponse['success'] == true) {
+      return decodedResponse;
+    } else {
+      getT.Get.snackbar(
+        "Error $decodedResponse",
+        "",
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return null;
+    }
+  }
+
+  FutureOr<dynamic> notification() async {
+    var decodedResponse = await dioGetApiCall('holiday-notification');
 
     if (decodedResponse['success'] == true) {
       return decodedResponse;

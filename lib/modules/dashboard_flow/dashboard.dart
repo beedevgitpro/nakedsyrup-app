@@ -145,7 +145,7 @@ class _DashboardPageState extends State<DashboardPage>
                   ),
                 ),
               ),
-
+              dashboardController.holidayCard(),
               Obx(() {
                 if (dashboardController.getData.value) {
                   return Center(

@@ -66,6 +66,7 @@ class _CartPageState extends State<CartPage> {
           shrinkWrap: true,
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
+            dashboardController.holidayCard(),
             Obx(() {
               if (dashboardController.getCart.value) {
                 return Center(

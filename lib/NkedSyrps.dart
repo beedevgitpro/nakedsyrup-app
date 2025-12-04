@@ -386,9 +386,12 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             drawersRow(context, Icons.logout, 'Logout', () async {
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();
-              Get.back();
-              prefs.clear();
-              Get.offAll(LoginPage());
+              await prefs.clear().then((value) {
+                print("prefrence cleared  : $value");
+                if (value == true) {
+                  Get.offAll(() => LoginPage());
+                }
+              });
             }, false),
 
             Padding(

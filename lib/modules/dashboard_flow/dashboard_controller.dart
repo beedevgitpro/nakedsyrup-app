@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Resources/AppColors.dart';
 import '../../model/category_model.dart';
 import '../../model/dashboard_list.dart';
+import '../../model/notification_model.dart';
 import '../../model/order_history_model.dart';
 import '../../model/price_model.dart';
 import '../../model/product_model.dart';
@@ -81,6 +82,7 @@ class DashboardController extends GetxController {
   RxMap<String, dynamic> stateMapDiff = <String, dynamic>{}.obs;
   List newsletter = ['Distributor/Roaster', 'Café/Restaurant', 'Home'];
   Rx<ProductModel> productModel = ProductModel().obs;
+  Rx<NotificationModel> notificationDetail = NotificationModel().obs;
   Rx<CartModel> cartModel = CartModel().obs;
   Rx<PriceModel> priceModel = PriceModel().obs;
   Rx<OrderHistoryModel> orderHistoryModel = OrderHistoryModel().obs;
@@ -165,6 +167,7 @@ class DashboardController extends GetxController {
     });
     getName();
     viewedProduct();
+    holidayNotification();
     return completer.future.then<void>((_) {
       Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
     });
@@ -895,6 +898,16 @@ class DashboardController extends GetxController {
     getData.value = false;
   }
 
+  holidayNotification() async {
+    getData.value = true;
+    var notification = await ApiClass().notification();
+    print("notification : $notification");
+    if (notification != null) {
+      notificationDetail.value = NotificationModel.fromJson(notification);
+    }
+    getData.value = false;
+  }
+
   findCart() async {
     getCart.value = true;
     var cart = await ApiClass().getCart();
@@ -1154,10 +1167,71 @@ class DashboardController extends GetxController {
     // findCart();
   }
 
+  Widget holidayCard() {
+    String? start = notificationDetail.value.startDate;
+    String? end = notificationDetail.value.endDate;
+
+    DateTime? startDate = DateTime.tryParse(start ?? "");
+    DateTime? endDate = DateTime.tryParse(end ?? "");
+
+    if (startDate == null || endDate == null) {
+      return const SizedBox(); // Hide widget or handle UI safely
+    }
+
+    DateTime now = DateTime.now();
+    bool shouldShow =
+        notificationDetail.value.active == true &&
+        now.isAfter(startDate) &&
+        now.isBefore(endDate);
+    if (!shouldShow) {
+      return const SizedBox(); // Hidden
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+      child: Stack(
+        clipBehavior: Clip.none, // 👈 This stops clipping
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+            decoration: BoxDecoration(
+              color: AppColors.yellowColor.withOpacity(0.25),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: AppColors.nakedSyrup, width: 2),
+            ),
+            child: Center(
+              child: Text(
+                notificationDetail.value.text.toString(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ),
+
+          notificationDetail.value.image != null &&
+                  notificationDetail.value.image.toString().isNotEmpty == true
+              ? Positioned(
+                top: -20,
+                right: -15,
+                child: Image.network(
+                  notificationDetail.value.image.toString(),
+                  width: 50,
+                ),
+              )
+              : const SizedBox(),
+        ],
+      ),
+    );
+  }
+
   @override
   void onInit() {
     // TODO: implement onInit
-
+    holidayNotification();
     getName();
     super.onInit();
   }

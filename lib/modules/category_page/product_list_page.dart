@@ -95,6 +95,7 @@ class _ProductListPageState extends State<ProductListPage> {
           shrinkWrap: true,
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
+            dashboardController.holidayCard(),
             Obx(() {
               if (dashboardController.getProduct.value) {
                 return Center(

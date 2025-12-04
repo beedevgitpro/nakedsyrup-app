@@ -152,6 +152,7 @@ class _ProductPageState extends State<ProductPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(getFontSize(context, 2)),
         children: [
+          dashboardController.holidayCard(),
           Get.width >= 600
               ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
