@@ -187,7 +187,7 @@
         <entry key="flutter_svg">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.3/lib" />
             </list>
           </value>
         </entry>
@@ -208,7 +208,7 @@
         <entry key="get">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/get-4.7.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/get-4.7.3/lib" />
             </list>
           </value>
         </entry>
@@ -369,14 +369,14 @@
         <entry key="path_provider_android">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.20/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.22/lib" />
             </list>
           </value>
         </entry>
         <entry key="path_provider_foundation">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.3/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_foundation-2.5.1/lib" />
             </list>
           </value>
         </entry>
@@ -460,14 +460,14 @@
         <entry key="shared_preferences_android">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.15/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.18/lib" />
             </list>
           </value>
         </entry>
         <entry key="shared_preferences_foundation">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.5/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.6/lib" />
             </list>
           </value>
         </entry>
@@ -607,28 +607,28 @@
         <entry key="url_launcher_android">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.24/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.28/lib" />
             </list>
           </value>
         </entry>
         <entry key="url_launcher_ios">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.5/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.6/lib" />
             </list>
           </value>
         </entry>
         <entry key="url_launcher_linux">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.2/lib" />
             </list>
           </value>
         </entry>
         <entry key="url_launcher_macos">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.5/lib" />
             </list>
           </value>
         </entry>
@@ -649,7 +649,7 @@
         <entry key="url_launcher_windows">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.5/lib" />
             </list>
           </value>
         </entry>
@@ -712,7 +712,7 @@
         <entry key="webview_flutter_android">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.5/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.10/lib" />
             </list>
           </value>
         </entry>
@@ -733,7 +733,7 @@
         <entry key="webview_flutter_wkwebview">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.4/lib" />
             </list>
           </value>
         </entry>
@@ -793,8 +793,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.14.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/get-4.7.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/get-4.7.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/html-0.15.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.6.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib" />
@@ -817,8 +817,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path-1.9.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_parsing-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider-2.1.5/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.20/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.22/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_foundation-2.5.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_linux-2.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_platform_interface-2.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_windows-2.3.0/lib" />
@@ -830,8 +830,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/responsive_framework-1.5.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/rxdart-0.28.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences-2.5.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.15/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.5/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.18/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_linux-2.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_platform_interface-2.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_web-2.4.3/lib" />
@@ -850,13 +850,13 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.7/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/typed_data-1.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher-6.3.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.24/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.5/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.28/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.6/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_web-2.4.1/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/uuid-4.5.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics-1.1.19/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.13/lib" />
@@ -865,10 +865,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-15.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-1.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter-4.13.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.5/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_android-4.10.10/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_platform_interface-2.14.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_plus-0.4.19/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.15.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xml-6.6.1/lib" />

@@ -1166,24 +1166,24 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               },
                                               child: Column(
                                                 children: [
-                                                  if (dashboardController
-                                                          .isPayByAcc
-                                                          .value ==
-                                                      'yes')
-                                                    RadioListTile<String>(
-                                                      value: 'cod',
-                                                      activeColor:
-                                                          AppColors.nakedSyrup,
-                                                      title: const Text(
-                                                        "Pay By Account",
-                                                      ),
-                                                    ),
+                                                  // if (dashboardController
+                                                  //         .isPayByAcc
+                                                  //         .value ==
+                                                  //     'yes')
                                                   RadioListTile<String>(
-                                                    value: 'ppcp',
+                                                    value: 'cod',
                                                     activeColor:
                                                         AppColors.nakedSyrup,
-                                                    title: const Text("Paypal"),
+                                                    title: const Text(
+                                                      "Pay By Account",
+                                                    ),
                                                   ),
+                                                  // RadioListTile<String>(
+                                                  //   value: 'ppcp',
+                                                  //   activeColor:
+                                                  //       AppColors.nakedSyrup,
+                                                  //   title: const Text("Paypal"),
+                                                  // ),
                                                 ],
                                               ),
                                             ),
@@ -2630,23 +2630,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                         },
                                         child: Column(
                                           children: [
-                                            if (dashboardController
-                                                    .isPayByAcc
-                                                    .value ==
-                                                'yes')
-                                              RadioListTile<String>(
-                                                value: 'cod',
-                                                activeColor:
-                                                    AppColors.nakedSyrup,
-                                                title: const Text(
-                                                  "Pay By Account",
-                                                ),
-                                              ),
+                                            // if (dashboardController
+                                            //         .isPayByAcc
+                                            //         .value ==
+                                            //     'yes')
                                             RadioListTile<String>(
-                                              value: 'ppcp',
+                                              value: 'cod',
                                               activeColor: AppColors.nakedSyrup,
-                                              title: const Text("Paypal"),
+                                              title: const Text(
+                                                "Pay By Account",
+                                              ),
                                             ),
+                                            // RadioListTile<String>(
+                                            //   value: 'ppcp',
+                                            //   activeColor: AppColors.nakedSyrup,
+                                            //   title: const Text("Paypal"),
+                                            // ),
                                           ],
                                         ),
                                       ),

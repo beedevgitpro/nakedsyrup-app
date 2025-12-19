@@ -8,100 +8,129 @@ import 'package:get/get.dart' as getT;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Resources/AppStrings.dart';
+import 'modules/login_flow/login_page.dart';
 
 final Dio dio = Dio(
-  BaseOptions(
-    followRedirects: true,
-    validateStatus: (_) => true,
-    extra: {"withCredentials": true}, // prevent throwing 404/403
-  ),
+  BaseOptions(followRedirects: true, extra: {"withCredentials": true}),
 );
+
+CancelToken _cancelToken = CancelToken();
 bool _isRefreshing = false;
+bool _isLoggingOut = false;
 Completer<void>? _refreshCompleter;
+void _resetCancelToken() {
+  _cancelToken = CancelToken();
+}
 
 void setupDio() {
   FutureOr<dynamic> refreshToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-    var decodedResponse = await dioPostApiCall('refresh-token', {});
+    final url = '${AppStrings.baseUrl}refresh-token';
+    print('🌐 refresh POST: $url');
 
-    if (decodedResponse['success'] == true) {
-      if (decodedResponse['token'] != null) {
-        await prefs.setString('token', decodedResponse['token']);
-      }
-      return decodedResponse;
-    } else {
-      getT.Get.snackbar(
-        "Error $decodedResponse",
-        "",
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
+    try {
+      final response = await dio.post(
+        url,
+        cancelToken: _cancelToken,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
       );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true && data['token'] != null) {
+          await prefs.setString('token', data['token']);
+        }
+        return data;
+      }
+    } on DioException catch (e) {
+      // 🔒 Refresh token failed → logout
+      if (e.response?.statusCode == 401 && !_isLoggingOut) {
+        await _forceLogout();
+      }
     }
   }
 
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // Always attach token before every request
+        options.cancelToken = _cancelToken;
+
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('token');
-        final requestPath = options.path;
+        final path = options.path;
+
         const excludedPaths = [
           '/wp-json/ns/v1/states',
           '/wp-json/ns/v1/countries',
           '/wp-json/ns/v1/create-customer',
           '/wp-json/ns/v1/login',
         ];
-        // Skip token for excluded paths
+
         final isExcluded = excludedPaths.any(
-          (prefix) => requestPath.startsWith(prefix),
+          (prefix) => path.startsWith(prefix),
         );
 
         if (!isExcluded && token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+
         return handler.next(options);
       },
+
       onError: (DioException e, handler) async {
-        final requestPath = e.requestOptions.path;
+        final path = e.requestOptions.path;
+
         const excludedPaths = [
           '/wp-json/ns/v1/states',
           '/wp-json/ns/v1/countries',
           '/wp-json/ns/v1/create-customer',
           '/wp-json/ns/v1/login',
         ];
-        if (e.response?.statusCode == 403 &&
-            !excludedPaths.contains(requestPath)) {
-          // Token might be invalid
 
-          // Prevent multiple refreshes
+        /// 🟥 401 → FORCE LOGOUT + STOP ALL APIS
+        if (e.response?.statusCode == 401 && !_isLoggingOut) {
+          await _forceLogout();
+          return;
+        }
+
+        /// 🟧 403 → TRY REFRESH TOKEN
+        if (e.response?.statusCode == 403 &&
+            !excludedPaths.any((p) => path.startsWith(p))) {
           if (!_isRefreshing) {
             _isRefreshing = true;
             _refreshCompleter = Completer();
 
             try {
-              await refreshToken(); // custom refresh function
+              await refreshToken();
               _refreshCompleter?.complete();
-            } catch (e) {
-              _refreshCompleter?.completeError(e);
+            } catch (err) {
+              _refreshCompleter?.completeError(err);
             } finally {
               _isRefreshing = false;
             }
           } else {
-            // Wait for token refresh to complete
             await _refreshCompleter?.future;
           }
 
-          // Retry the original request with new token
+          // 🔁 Retry original request
           final token = (await SharedPreferences.getInstance()).getString(
             'token',
           );
-          final newRequest = e.requestOptions;
-          newRequest.headers['Authorization'] = 'Bearer $token';
 
-          final cloneReq = await dio.fetch(newRequest);
-          return handler.resolve(cloneReq);
+          if (token != null) {
+            final newRequest = e.requestOptions;
+            newRequest.headers['Authorization'] = 'Bearer $token';
+            return handler.resolve(await dio.fetch(newRequest));
+          }
         }
 
         return handler.next(e);
@@ -110,7 +139,27 @@ void setupDio() {
   );
 }
 
-dynamic afterApiFire(response, apiurl) {
+Future<void> _forceLogout() async {
+  if (_isLoggingOut) return;
+  _isLoggingOut = true;
+
+  print("🔒 FORCE LOGOUT → cancel all APIs");
+
+  // ⛔ Cancel ALL ongoing requests
+  _cancelToken.cancel("Session expired");
+
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+
+  // 🔁 Reset for future login requests
+  _resetCancelToken();
+
+  getT.Get.offAll(() => LoginPage());
+
+  _isLoggingOut = false;
+}
+
+dynamic afterApiFire(response, apiurl) async {
   if (response.statusCode == 200 || response.statusCode == 201) {
     var decodedResponse = response.data;
     print("$apiurl responce : $decodedResponse");

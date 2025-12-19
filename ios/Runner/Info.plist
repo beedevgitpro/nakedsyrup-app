@@ -47,6 +47,12 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>UIFileSharingEnabled</key>
+    <false/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <false/>
+    <key>NSUbiquitousContainers</key>
+    <dict/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
