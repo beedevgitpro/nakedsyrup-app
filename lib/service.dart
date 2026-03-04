@@ -632,6 +632,23 @@ class ApiClass {
     }
   }
 
+  FutureOr<dynamic> getCertificate() async {
+    var decodedResponse = await dioGetApiCall('certificate-links');
+
+    // if (decodedResponse['success'] == true) {
+    //   return decodedResponse;
+    // } else {
+    //   getT.Get.snackbar(
+    //     "Error $decodedResponse",
+    //     "",
+    //     colorText: Colors.red,
+    //     backgroundColor: Colors.white,
+    //   );
+    return decodedResponse;
+    // return null;
+    // }
+  }
+
   FutureOr<dynamic> mostViewedProduct() async {
     var decodedResponse = await dioGetApiCall(
       'most-viewed-products?limit=10&page=1',

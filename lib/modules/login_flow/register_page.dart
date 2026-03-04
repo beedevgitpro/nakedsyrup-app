@@ -107,19 +107,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
-                                child: textLabel('Phone', context, true),
+                                child: textLabel('Phone', context, false),
                               ),
                               AppTextFormField(
                                 controller: dashboardController.phoneController,
                                 keyboardType: TextInputType.number,
                                 maxLength: 10,
                                 lable: 'Phone',
-                                function: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Phone number is required!";
-                                  }
-                                  return null; // <-- must return null if valid
-                                },
+                                // function: (value) {
+                                //   if (value == null || value.trim().isEmpty) {
+                                //     return "Phone number is required!";
+                                //   }
+                                //   return null; // <-- must return null if valid
+                                // },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 0),
@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: textLabel(
                                   'Country / Region',
                                   context,
-                                  true,
+                                  false,
                                 ),
                               ),
                               AppDropDownField(
@@ -175,22 +175,22 @@ class _RegisterPageState extends State<RegisterPage> {
                                           );
                                         })
                                         .toList(),
-                                function: (value) {
-                                  if (value != null ||
-                                      value.trim().isNotEmpty) {
-                                    // dashboardController.selectedCountry.value =
-                                    //     value;
-                                    // dashboardController.selectedState.value =
-                                    //     "";
-                                    // dashboardController.getStateList(
-                                    //   value,
-                                    //   false,
-                                    // );
-                                  } else {
-                                    return "Please select country";
-                                  }
-                                  return null;
-                                },
+                                // function: (value) {
+                                //   if (value != null ||
+                                //       value.trim().isNotEmpty) {
+                                //     // dashboardController.selectedCountry.value =
+                                //     //     value;
+                                //     // dashboardController.selectedState.value =
+                                //     //     "";
+                                //     // dashboardController.getStateList(
+                                //     //   value,
+                                //     //   false,
+                                //     // );
+                                //   } else {
+                                //     return "Please select country";
+                                //   }
+                                //   return null;
+                                // },
                               ),
 
                               Padding(
@@ -198,19 +198,19 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: textLabel(
                                   'Street address',
                                   context,
-                                  true,
+                                  false,
                                 ),
                               ),
                               AppTextFormField(
                                 controller:
                                     dashboardController.streetAddressController,
                                 lable: 'Street address',
-                                function: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Add your address!";
-                                  }
-                                  return null; // <-- must return null if valid
-                                },
+                                // function: (value) {
+                                //   if (value == null || value.trim().isEmpty) {
+                                //     return "Add your address!";
+                                //   }
+                                //   return null; // <-- must return null if valid
+                                // },
                               ),
                               AppTextFormField(
                                 controller:
@@ -221,24 +221,24 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
-                                child: textLabel('Town / City', context, true),
+                                child: textLabel('Town / City', context, false),
                               ),
                               AppTextFormField(
                                 controller: dashboardController.townController,
                                 lable: 'Town / City',
-                                function: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Add town or city name!";
-                                  }
-                                  return null; // <-- must return null if valid
-                                },
+                                // function: (value) {
+                                //   if (value == null || value.trim().isEmpty) {
+                                //     return "Add town or city name!";
+                                //   }
+                                //   return null; // <-- must return null if valid
+                                // },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel(
                                   'State / County',
                                   context,
-                                  true,
+                                  false,
                                 ),
                               ),
                               Obx(
@@ -274,13 +274,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     );
                                                   })
                                                   .toList(),
-                                          function: (value) {
-                                            if (value == null ||
-                                                value.trim().isEmpty) {
-                                              return "State name is required!";
-                                            }
-                                            return null; // <-- must return null if valid
-                                          },
+                                          // function: (value) {
+                                          //   if (value == null ||
+                                          //       value.trim().isEmpty) {
+                                          //     return "State name is required!";
+                                          //   }
+                                          //   return null; // <-- must return null if valid
+                                          // },
                                         ),
                               ),
                               Padding(
@@ -288,7 +288,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: textLabel(
                                   'Postcode / ZIP',
                                   context,
-                                  true,
+                                  false,
                                 ),
                               ),
                               AppTextFormField(
@@ -296,12 +296,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                     dashboardController.postCodeController,
                                 keyboardType: TextInputType.number,
                                 lable: 'Postcode / ZIP',
-                                function: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Please add postcode!";
-                                  }
-                                  return null; // <-- must return null if valid
-                                },
+                                // function: (value) {
+                                //   if (value == null || value.trim().isEmpty) {
+                                //     return "Please add postcode!";
+                                //   }
+                                //   return null; // <-- must return null if valid
+                                // },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),

@@ -27,6 +27,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
   @override
   void initState() {
     // TODO: implement initState
+    loginFlowController.getCerti();
     super.initState();
   }
 
@@ -277,55 +278,39 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                 }, false),
               ],
             ),
-            expansionWidget(
-              titleText: 'Certifications',
-              children: <Widget>[
-                drawersRow(
-                  context,
-                  Icons.document_scanner_outlined,
-                  'Vegan Australia Certified',
-                  () async {
-                    Get.to(
-                      WebViewApp(
-                        name: 'Vegan Australia Certified',
-                        url:
-                            'https://nakedsyrups.com.au/wp-content/uploads/2025/07/Vegan-Australia-Certificate-Naked-Syrups-2025.pdf',
-                      ),
-                    );
-                  },
-                  false,
-                ),
-                drawersRow(
-                  context,
-                  Icons.document_scanner_outlined,
-                  'HACCP Certification',
-                  () async {
-                    Get.to(
-                      WebViewApp(
-                        name: 'HACCP Certification',
-                        url:
-                            'https://nakedsyrups.com.au/wp-content/uploads/2025/10/Naked-Syrups-HACCP-Certificate-Exp-2026-10-31a.pdf',
-                      ),
-                    );
-                  },
-                  false,
-                ),
-                drawersRow(
-                  context,
-                  Icons.document_scanner_outlined,
-                  'HALAL CERTIFICATE',
-                  () async {
-                    Get.to(
-                      WebViewApp(
-                        name: 'HALAL CERTIFICATE',
-                        url:
-                            'https://nakedsyrups.com.au/wp-content/uploads/2025/08/Halal-Certificate-2024.pdf',
-                      ),
-                    );
-                  },
-                  false,
-                ),
-              ],
+            Obx(
+              () => expansionWidget(
+                titleText: 'Certifications',
+                children:
+                    loginFlowController.isCerti.value
+                        ? [
+                          Center(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                color: AppColors.greenColor,
+                              ),
+                            ),
+                          ),
+                        ]
+                        : loginFlowController.certificateList.map((item) {
+                          return drawersRow(
+                            context,
+                            Icons.document_scanner_outlined,
+                            item["title"] ?? "",
+                            () async {
+                              Get.to(
+                                WebViewApp(
+                                  name: item["title"] ?? "",
+                                  url: item["url"] ?? "",
+                                ),
+                              );
+                            },
+                            false,
+                          );
+                        }).toList(),
+              ),
             ),
 
             drawersRow(

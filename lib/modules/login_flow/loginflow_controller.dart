@@ -15,8 +15,10 @@ class LoginFlowController extends GetxController {
   RxBool callLoginApi = false.obs;
   RxBool isOnline = false.obs;
   RxBool isReset = false.obs;
+  RxBool isCerti = false.obs;
   RxBool isPasswordVisible = false.obs;
   RxInt role = 0.obs;
+  RxList certificateList = [].obs;
 
   resetValidate() async {
     isReset.value = true;
@@ -60,6 +62,16 @@ class LoginFlowController extends GetxController {
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       }
     }
+  }
+
+  getCerti() async {
+    isCerti.value = true;
+    certificateList.clear();
+    var category = await ApiClass().getCertificate();
+    if (category != null) {
+      certificateList.value.addAll(category);
+    }
+    isCerti.value = false;
   }
 
   login() async {
