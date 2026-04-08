@@ -141,7 +141,6 @@ class _ProductListPageState extends State<ProductListPage> {
 
                       itemBuilder: (context, j) {
                         String price = "";
-
                         if (dashboardController
                                 .productModel
                                 .value
@@ -359,6 +358,109 @@ class _ProductListPageState extends State<ProductListPage> {
                                                     j,
                                                   );
                                                 }
+                                                // String token = "";
+                                                // SharedPreferences.getInstance().then((
+                                                //   prefs,
+                                                // ) {
+                                                //   token =
+                                                //       prefs.getString(
+                                                //         'token',
+                                                //       ) ??
+                                                //       "";
+                                                //   if (token.isNotEmpty) {
+                                                //     if (dashboardController
+                                                //             .productModel
+                                                //             .value
+                                                //             .products?[j]
+                                                //             .variations
+                                                //             ?.isNotEmpty ==
+                                                //         true) {
+                                                //       Get.to(
+                                                //         ProductPage(
+                                                //           products:
+                                                //               dashboardController
+                                                //                   .productModel
+                                                //                   .value
+                                                //                   .products?[j] ??
+                                                //               Products(),
+                                                //           index: j,
+                                                //         ),
+                                                //       );
+                                                //     } else {
+                                                //       dashboardController
+                                                //           .selectedd
+                                                //           .value = j;
+                                                //       dashboardController
+                                                //           .addToCart(
+                                                //             dashboardController
+                                                //                 .productModel
+                                                //                 .value
+                                                //                 .products?[j]
+                                                //                 .id,
+                                                //             dashboardController
+                                                //                 .productModel
+                                                //                 .value
+                                                //                 .products?[j]
+                                                //                 .qty
+                                                //                 ?.value,
+                                                //             0,
+                                                //             j,
+                                                //           );
+                                                //     }
+                                                //   } else {
+                                                //     // Trigger dialog AFTER build
+                                                //     showDialog<void>(
+                                                //       context: Get.context!,
+                                                //       barrierDismissible: true,
+                                                //       builder: (
+                                                //         BuildContext context,
+                                                //       ) {
+                                                //         return AlertDialog(
+                                                //           title: Text(
+                                                //             "Please login to add products in cart.",
+                                                //             style: TextStyle(
+                                                //               fontSize: 18,
+                                                //               fontWeight:
+                                                //                   FontWeight
+                                                //                       .w800,
+                                                //             ),
+                                                //           ),
+                                                //           actions: <Widget>[
+                                                //             ElevatedButton(
+                                                //               style: ButtonStyle(
+                                                //                 backgroundColor:
+                                                //                     WidgetStatePropertyAll<
+                                                //                       Color
+                                                //                     >(
+                                                //                       AppColors
+                                                //                           .nakedSyrup,
+                                                //                     ),
+                                                //               ),
+                                                //               child: const Text(
+                                                //                 "Login",
+                                                //                 style: TextStyle(
+                                                //                   color:
+                                                //                       Colors
+                                                //                           .white,
+                                                //                 ),
+                                                //               ),
+                                                //               onPressed: () async {
+                                                //                 final SharedPreferences
+                                                //                 prefs =
+                                                //                     await SharedPreferences.getInstance();
+                                                //                 await prefs
+                                                //                     .clear();
+                                                //                 Get.offAll(
+                                                //                   LoginPage(),
+                                                //                 );
+                                                //               },
+                                                //             ),
+                                                //           ],
+                                                //         );
+                                                //       },
+                                                //     );
+                                                //   }
+                                                // });
                                               },
                                               child: Text(
                                                 dashboardController

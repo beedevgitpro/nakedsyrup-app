@@ -19,6 +19,20 @@ class LoginFlowController extends GetxController {
   RxBool isPasswordVisible = false.obs;
   RxInt role = 0.obs;
   RxList certificateList = [].obs;
+  RxString name = "".obs;
+  RxString token = "".obs;
+  RxBool isLoading = false.obs;
+  getName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    name.value = prefs.getString('name') ?? "Guest User";
+  }
+
+  void loadToken() async {
+    isLoading.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    token.value = prefs.getString('token') ?? "";
+    isLoading.value = false;
+  }
 
   resetValidate() async {
     isReset.value = true;
@@ -90,6 +104,8 @@ class LoginFlowController extends GetxController {
       );
     }
     callLoginApi.value = true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     var loginApi = await ApiClass().loginApi(
       emailController.text.trim(),
       passwordController.text,
@@ -98,67 +114,67 @@ class LoginFlowController extends GetxController {
       if (loginApi['success'] == true) {
         if (loginApi['user'] != null) {
           if (loginApi['user']['has_app_access'] == 'yes') {
-            if (loginApi['user']['pay_by_account'] == 'yes') {
-              Get.offAll(const DashboardPage());
-            } else {
-              showDialog<void>(
-                context: Get.context!,
-                barrierDismissible: false,
-                // user must tap button!
-                builder: (BuildContext context) {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return AlertDialog(
-                        title: Text(
-                          "Sorry, you can not complete the login",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        content: const SizedBox(
-                          width: double.maxFinite,
-                          child: Text(
-                            "Your account is in review,Our team will get back to you within 48 hours.",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        actions: <Widget>[
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll<Color>(
-                                AppColors.nakedSyrup,
-                              ),
-                              padding: WidgetStateProperty.all(
-                                const EdgeInsets.all(8),
-                              ),
-                            ),
-                            child: const Text(
-                              "Close",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                            onPressed: () async {
-                              final SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              Get.back();
-                              prefs.clear();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              );
-            }
+            Get.offAll(const DashboardPage());
+            // if (loginApi['user']['pay_by_account'] == 'yes') {
+            //   Get.offAll(const DashboardPage());
+            // } else {
+            //   showDialog<void>(
+            //     context: Get.context!,
+            //     barrierDismissible: false,
+            //     builder: (BuildContext context) {
+            //       return StatefulBuilder(
+            //         builder: (context, setState) {
+            //           return AlertDialog(
+            //             title: Text(
+            //               "Sorry, you can not complete the login",
+            //               style: TextStyle(
+            //                 color: Colors.black87,
+            //                 fontSize: 18,
+            //                 fontWeight: FontWeight.w800,
+            //               ),
+            //             ),
+            //             content: const SizedBox(
+            //               width: double.maxFinite,
+            //               child: Text(
+            //                 "Your account is in review,Our team will get back to you within 48 hours.",
+            //                 style: TextStyle(
+            //                   color: Colors.black87,
+            //                   fontSize: 16,
+            //                   fontWeight: FontWeight.w600,
+            //                 ),
+            //               ),
+            //             ),
+            //             actions: <Widget>[
+            //               ElevatedButton(
+            //                 style: ButtonStyle(
+            //                   backgroundColor: WidgetStatePropertyAll<Color>(
+            //                     AppColors.nakedSyrup,
+            //                   ),
+            //                   padding: WidgetStateProperty.all(
+            //                     const EdgeInsets.all(8),
+            //                   ),
+            //                 ),
+            //                 child: const Text(
+            //                   "Close",
+            //                   style: TextStyle(
+            //                     color: Colors.white,
+            //                     fontSize: 14,
+            //                   ),
+            //                 ),
+            //                 onPressed: () async {
+            //                   final SharedPreferences prefs =
+            //                       await SharedPreferences.getInstance();
+            //                   Get.back();
+            //                   prefs.clear();
+            //                 },
+            //               ),
+            //             ],
+            //           );
+            //         },
+            //       );
+            //     },
+            //   );
+            // }
           } else {
             showDialog<void>(
               context: Get.context!,
@@ -240,7 +256,6 @@ class LoginFlowController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
-
     super.onInit();
   }
 }

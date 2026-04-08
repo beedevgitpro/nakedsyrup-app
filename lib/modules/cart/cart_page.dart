@@ -22,6 +22,7 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   DashboardController dashboardController = Get.put(DashboardController());
+  String token = "";
   @override
   void initState() {
     // TODO: implement initState
@@ -42,6 +43,7 @@ class _CartPageState extends State<CartPage> {
     } else {
       dashboardController.promoCodeFiled.value = false;
     }
+
     super.initState();
   }
 
@@ -337,158 +339,186 @@ class _CartPageState extends State<CartPage> {
                             );
                           },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: textLabel('Promo code', context, false),
-                        ),
-                        AppTextFormField(
-                          textCapitalization: TextCapitalization.words,
-                          controller: dashboardController.promoCodeController,
-                          onChanged: (value) {
-                            if (value.toString().trim().isNotEmpty) {
-                              dashboardController.promoCodeFiled.value = true;
-                            } else {
-                              dashboardController.promoCodeFiled.value = false;
-                            }
-                          },
-                          lable: 'Enter Promo code',
-                          function: (value) {},
-                        ),
-                        Obx(
-                          () =>
-                              dashboardController.promoCodeFiled.value
-                                  ? Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                AppColors.nakedSyrup,
-                                            minimumSize: Size(
-                                              (Get.width / 2) - 30,
-                                              45,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                              vertical: 5,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            dashboardController.getCart.value =
-                                                true;
-                                            var verify = await ApiClass()
-                                                .applyCoupon(
-                                                  dashboardController
-                                                      .promoCodeController
-                                                      .text,
-                                                );
-                                            dashboardController.getCart.value =
-                                                true;
-                                            if (verify != null) {
-                                              if (verify['success'] == true) {
-                                                dashboardController.findCart();
-                                              } else {
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: textLabel('Promo code', context, false),
+                            ),
+                            AppTextFormField(
+                              textCapitalization: TextCapitalization.words,
+                              controller:
+                                  dashboardController.promoCodeController,
+                              onChanged: (value) {
+                                if (value.toString().trim().isNotEmpty) {
+                                  dashboardController.promoCodeFiled.value =
+                                      true;
+                                } else {
+                                  dashboardController.promoCodeFiled.value =
+                                      false;
+                                }
+                              },
+                              lable: 'Enter Promo code',
+                              function: (value) {},
+                            ),
+                            Obx(
+                              () =>
+                                  dashboardController.promoCodeFiled.value
+                                      ? Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    AppColors.nakedSyrup,
+                                                minimumSize: Size(
+                                                  (Get.width / 2) - 30,
+                                                  45,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 5,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () async {
                                                 dashboardController
                                                     .getCart
-                                                    .value = false;
-                                              }
-                                            } else {
-                                              dashboardController
-                                                  .getCart
-                                                  .value = false;
-                                            }
-                                          },
-                                          child: Text(
-                                            "Apply",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                              vertical: 5,
-                                            ),
-                                            minimumSize: Size(
-                                              (Get.width / 2) - 30,
-                                              45,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            if (dashboardController
-                                                        .cartModel
-                                                        .value
-                                                        .discountTotal !=
-                                                    null &&
+                                                    .value = true;
+                                                var verify = await ApiClass()
+                                                    .applyCoupon(
+                                                      dashboardController
+                                                          .promoCodeController
+                                                          .text,
+                                                    );
                                                 dashboardController
-                                                        .cartModel
-                                                        .value
-                                                        .discountTotal !=
-                                                    0.0) {
-                                              dashboardController
-                                                  .getCart
-                                                  .value = true;
-                                              var verify = await ApiClass()
-                                                  .removeCoupon('');
-                                              dashboardController
-                                                  .getCart
-                                                  .value = true;
-                                              if (verify != null) {
-                                                if (verify['success'] == true) {
+                                                    .getCart
+                                                    .value = true;
+                                                if (verify != null) {
+                                                  if (verify['success'] ==
+                                                      true) {
+                                                    dashboardController
+                                                        .findCart();
+                                                  } else {
+                                                    dashboardController
+                                                        .getCart
+                                                        .value = false;
+                                                  }
+                                                } else {
                                                   dashboardController
-                                                      .findCart();
+                                                      .getCart
+                                                      .value = false;
+                                                }
+                                              },
+                                              child: Text(
+                                                "Apply",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 5,
+                                                    ),
+                                                minimumSize: Size(
+                                                  (Get.width / 2) - 30,
+                                                  45,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                if ((dashboardController
+                                                                .cartModel
+                                                                .value
+                                                                .discountTotal !=
+                                                            null &&
+                                                        dashboardController
+                                                                .cartModel
+                                                                .value
+                                                                .discountTotal !=
+                                                            0.0) ||
+                                                    (dashboardController
+                                                                .cartModel
+                                                                .value
+                                                                .coupons?[0]
+                                                                .code !=
+                                                            null &&
+                                                        dashboardController
+                                                                .cartModel
+                                                                .value
+                                                                .coupons?[0]
+                                                                .code
+                                                                .toString()
+                                                                .isNotEmpty ==
+                                                            true)) {
+                                                  dashboardController
+                                                      .getCart
+                                                      .value = true;
+                                                  var verify = await ApiClass()
+                                                      .removeCoupon('');
+                                                  dashboardController
+                                                      .getCart
+                                                      .value = true;
+                                                  if (verify != null) {
+                                                    if (verify['success'] ==
+                                                        true) {
+                                                      dashboardController
+                                                          .findCart();
+                                                      dashboardController
+                                                          .promoCodeFiled
+                                                          .value = false;
+                                                      dashboardController
+                                                          .promoCodeController
+                                                          .clear();
+                                                    } else {
+                                                      dashboardController
+                                                          .getCart
+                                                          .value = false;
+                                                    }
+                                                  } else {
+                                                    dashboardController
+                                                        .getCart
+                                                        .value = false;
+                                                  }
+                                                } else {
                                                   dashboardController
                                                       .promoCodeFiled
                                                       .value = false;
                                                   dashboardController
                                                       .promoCodeController
                                                       .clear();
-                                                } else {
-                                                  dashboardController
-                                                      .getCart
-                                                      .value = false;
                                                 }
-                                              } else {
-                                                dashboardController
-                                                    .getCart
-                                                    .value = false;
-                                              }
-                                            } else {
-                                              dashboardController
-                                                  .promoCodeFiled
-                                                  .value = false;
-                                              dashboardController
-                                                  .promoCodeController
-                                                  .clear();
-                                            }
-                                          },
-                                          child: Text(
-                                            "Remove",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
+                                              },
+                                              child: Text(
+                                                "Remove",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  )
-                                  : const SizedBox(),
+                                      )
+                                      : const SizedBox(),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -686,7 +716,9 @@ class _CartPageState extends State<CartPage> {
                       ),
                     ),
                     onPressed: () {
-                      dashboardController.getBillingDetails();
+                      if (dashboardController.token.value.isNotEmpty) {
+                        dashboardController.getBillingDetails();
+                      }
                       Get.to(CheckOutPage());
                     },
                     child: Text(

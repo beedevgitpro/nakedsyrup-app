@@ -39,9 +39,11 @@ class DashboardController extends GetxController {
   RxBool isImageChallengeLikelyVisible = false.obs;
   RxBool getShipping = false.obs;
   RxBool getCheckOut = false.obs;
+  RxBool isLoading = false.obs;
   RxBool getProfile = false.obs;
   RxBool saveProfile = false.obs;
   RxBool differentAddress = false.obs;
+  RxBool createAnAccount = false.obs;
   RxBool getHistory = false.obs;
   RxBool addToBasket = false.obs;
   RxBool showDescription = false.obs;
@@ -53,6 +55,7 @@ class DashboardController extends GetxController {
   RxBool saveInvoice = false.obs;
   RxString isPayment = 'no'.obs;
   RxString name = ''.obs;
+  RxString token = ''.obs;
   RxString isPayByAcc = ''.obs;
   RxString captchaToken = ''.obs;
   RxString selectedVariance = ''.obs;
@@ -213,8 +216,18 @@ class DashboardController extends GetxController {
 
   getShippingMethods() async {
     getShipping.value = true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     var shipping;
-    if (differentAddress.value) {
+    if (prefs.getString("guest_token") != null &&
+        prefs.getString("guest_token")?.isNotEmpty == true) {
+      shipping = await ApiClass().shippingMethods(
+        selectedCountry.value,
+        selectedState.value,
+        postCodeController.text,
+        townController.text,
+      );
+    } else if (differentAddress.value) {
       shipping = await ApiClass().shippingMethods(
         selectedCountryDiff.value,
         selectedStateDiff.value,
@@ -245,12 +258,6 @@ class DashboardController extends GetxController {
       }
     } else {
       getShipping.value = false;
-      Get.snackbar(
-        "Quantity update error",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
     }
   }
 
@@ -265,8 +272,51 @@ class DashboardController extends GetxController {
       return;
     }
     placeOrder.value = true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     Map<String, dynamic> mapp = {};
-    if (differentAddress.value) {
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+
+    if (prefs.getString("guest_token") != null &&
+        prefs.getString("guest_token")?.isNotEmpty == true) {
+      addressFormKey.currentState?.save();
+      if (addressFormKey.currentState?.validate() == false) {
+        Get.snackbar(
+          "Please fill all mandatory fields",
+          '',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+        return;
+      }
+      mapp = {
+        "billing": {
+          "first_name": firstNameController.text,
+          "last_name": lastNameController.text,
+          "company": companyNameController.text,
+          "address_1": streetAddressController.text,
+          "address_2": streetAddress2Controller.text,
+          "city": townController.text,
+          "state": selectedState.value,
+          "postcode": postCodeController.text,
+          "country": selectedCountry.value,
+          "email": emailController.text,
+          "phone": phoneController.text,
+          "po_number": pOController.text,
+        },
+        "use_shipping": "yes",
+        "create_account": createAnAccount.value ? 'yes' : 'no',
+        "payment_method": selectedPaymentMethods.value,
+        "shipping_method": shippingMethods.value,
+        "order_notes": orderNotesController.text,
+        "guest_token": guestToken,
+      };
+      mapp.addAllIf(createAnAccount.value, {
+        "username": firstNameController.text,
+        "password": passwordController.text,
+      });
+    } else if (differentAddress.value) {
       mapp = {
         "billing": {
           "first_name": firstNameController.text,
@@ -407,7 +457,19 @@ class DashboardController extends GetxController {
     getPriceDetails.value = true;
 
     Map<String, dynamic> mapp = {};
-    if (differentAddress.value) {
+    if (token.isEmpty) {
+      mapp = {
+        "billing": {
+          "address_1": streetAddressController.text,
+          "city": townController.text,
+          "state": selectedState.value,
+          "postcode": postCodeController.text,
+          "country": selectedCountry.value,
+        },
+        "payment_method": selectedPaymentMethods.value,
+        "shipping_method": shippingMethods.value,
+      };
+    } else if (differentAddress.value) {
       mapp = {
         "billing": {
           "address_1": streetAddressController.text,
@@ -443,7 +505,7 @@ class DashboardController extends GetxController {
     var shipping = await ApiClass().getPriceDetails(mapp);
     if (shipping != null) {
       if (shipping['success'] == true) {
-        priceModel.value = PriceModel();
+        // priceModel.value = PriceModel();
         print("shipping : ${shipping is Map}");
         priceModel.value = PriceModel.fromJson(shipping);
         getPriceDetails.value = false;
@@ -831,6 +893,16 @@ class DashboardController extends GetxController {
     }
   }
 
+  void loadToken() async {
+    SharedPreferences.getInstance().then((prefs) {
+      token.value = prefs.getString('token') ?? "";
+      if (token.isNotEmpty == true) {
+        orderHistory();
+        findCart();
+      }
+    });
+  }
+
   findCategory() async {
     getData.value = true;
     var category = await ApiClass().getCategory();
@@ -842,7 +914,8 @@ class DashboardController extends GetxController {
 
   getName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    name.value = prefs.getString('name') ?? "";
+    name.value = prefs.getString('name') ?? "Guest User";
+    token.value = prefs.getString('token') ?? "";
   }
 
   getPayByAcc() async {
@@ -851,13 +924,53 @@ class DashboardController extends GetxController {
   }
 
   Widget cartUI() {
-    return Obx(
-      () => Stack(
+    return Obx(() {
+      return Stack(
         children: [
           IconButton(
             icon: Icon(Icons.shopping_cart_outlined, size: 30),
             onPressed: () {
-              Get.to(CartPage()); // Navigate to cart page
+              Get.to(CartPage());
+              // String token = "";
+              // SharedPreferences.getInstance().then((prefs) {
+              //   token = prefs.getString('token') ?? "";
+              //   if (token.isNotEmpty) {
+              //     Get.to(CartPage());
+              //   } else {
+              //     // Trigger dialog AFTER build
+              //     showDialog<void>(
+              //       context: Get.context!,
+              //       barrierDismissible: true,
+              //       builder: (BuildContext context) {
+              //         return AlertDialog(
+              //           title: Text(
+              //             "Please login to add products in cart.",
+              //             style: TextStyle(
+              //               fontSize: 18,
+              //               fontWeight: FontWeight.w800,
+              //             ),
+              //           ),
+              //           actions: <Widget>[
+              //             ElevatedButton(
+              //               style: ButtonStyle(
+              //                 backgroundColor: WidgetStatePropertyAll<Color>(
+              //                   AppColors.nakedSyrup,
+              //                 ),
+              //               ),
+              //               child: const Text(
+              //                 "Login",
+              //                 style: TextStyle(color: Colors.white),
+              //               ),
+              //               onPressed: () async {
+              //                 Get.offAll(LoginPage());
+              //               },
+              //             ),
+              //           ],
+              //         );
+              //       },
+              //     );
+              //   }
+              // });
             },
           ),
           if (cartCount.value > 0)
@@ -884,8 +997,8 @@ class DashboardController extends GetxController {
               ),
             ),
         ],
-      ),
-    );
+      );
+    });
   }
 
   viewedProduct() async {
@@ -915,7 +1028,6 @@ class DashboardController extends GetxController {
       cartModel.value = CartModel.fromJson(cart);
       cartCount.value = cartModel.value.cartItems?.length ?? 0;
     }
-
     getCart.value = false;
   }
 
@@ -1112,6 +1224,7 @@ class DashboardController extends GetxController {
       //   backgroundColor: Colors.white,
       // );
     } catch (e) {
+      print("Error : $e");
       addToBasket.value = false;
       Get.snackbar(
         "Error",
@@ -1231,8 +1344,17 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
-    holidayNotification();
+
     getName();
+    print("name : ${name.value}");
+    String token = "";
+    SharedPreferences.getInstance().then((prefs) {
+      token = prefs.getString('token') ?? "";
+    });
+    if (token.isNotEmpty) {
+      holidayNotification();
+    }
+
     super.onInit();
   }
 }

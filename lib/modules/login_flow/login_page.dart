@@ -9,6 +9,7 @@ import '../../utility/responsive_text.dart';
 import '../../web_view_app.dart';
 import '../../widgets/mandtory_text_lables.dart';
 import '../../widgets/text_form_fields.dart';
+import '../dashboard_flow/dashboard.dart';
 import 'loginflow_controller.dart';
 
 class LoginPage extends StatelessWidget {
@@ -244,6 +245,60 @@ class LoginPage extends StatelessWidget {
                                                       ..onTap = () {
                                                         Get.offAll(
                                                           RegisterPage(),
+                                                        );
+                                                      },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 0,
+                                        left: 5,
+                                        right: 0,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {},
+                                        child: RichText(
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.end,
+                                          softWrap: true,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "Login as a ",
+                                                style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: getFontSize(
+                                                    context,
+                                                    -3,
+                                                  ),
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: "Guest User",
+                                                style: TextStyle(
+                                                  color: AppColors.nakedSyrup,
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: getFontSize(
+                                                    context,
+                                                    -3,
+                                                  ),
+                                                ),
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        Get.offAll(
+                                                          const DashboardPage(),
                                                         );
                                                       },
                                               ),

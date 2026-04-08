@@ -23,11 +23,12 @@ class NakedSyrupsDrawer extends StatefulWidget {
 
 class _BIADrawerState extends State<NakedSyrupsDrawer> {
   LoginFlowController loginFlowController = Get.put(LoginFlowController());
-
   @override
   void initState() {
     // TODO: implement initState
+    loginFlowController.loadToken();
     loginFlowController.getCerti();
+    loginFlowController.getName();
     super.initState();
   }
 
@@ -66,332 +67,211 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
     );
   }
 
-  Widget newBookings() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          leading: Icon(Icons.list_alt, color: AppColors.greenColor, size: 28),
-          title: Text(
-            "Jobs",
-            style: TextStyle(fontSize: getFontSize(context, 1)),
-          ),
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                  color: AppColors.lightColor.withOpacity(0.5),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.list_alt,
-                color: AppColors.greenColor,
-                size: 28,
-              ),
-              title: Text(
-                'Active Jobs',
-                style: TextStyle(fontSize: getFontSize(context, 1)),
-              ),
-              onTap: () async {
-                Get.back();
-                Get.toNamed('/managebooking');
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                  color: AppColors.lightColor.withOpacity(0.5),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.list_alt,
-                color: AppColors.greenColor,
-                size: 28,
-              ),
-              title: Text(
-                'Completed Jobs',
-                style: TextStyle(fontSize: getFontSize(context, 1)),
-              ),
-              onTap: () async {
-                Get.back();
-                Get.toNamed('/completejobs');
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                  color: AppColors.lightColor.withOpacity(0.5),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.list_alt,
-                color: AppColors.greenColor,
-                size: 28,
-              ),
-              title: Text(
-                'Cancelled Jobs',
-                style: TextStyle(fontSize: getFontSize(context, 1)),
-              ),
-              onTap: () async {
-                Get.back();
-                Get.toNamed('/canceljob');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget manageInspector() {
-    if (loginFlowController.role.value != 3) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            leading: Icon(
-              Icons.list_alt,
-              color: AppColors.greenColor,
-              size: 28,
-            ),
-            title: Text(
-              "Manage Inspectors",
-              style: TextStyle(fontSize: getFontSize(context, 1)),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    color: AppColors.lightColor.withOpacity(0.5),
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.list_alt,
-                  color: AppColors.greenColor,
-                  size: 28,
-                ),
-                title: Text(
-                  'Add',
-                  style: TextStyle(fontSize: getFontSize(context, 1)),
-                ),
-                onTap: () async {
-                  Get.back();
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    color: AppColors.lightColor.withOpacity(0.5),
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.list_alt,
-                  color: AppColors.greenColor,
-                  size: 28,
-                ),
-                title: Text(
-                  'List',
-                  style: TextStyle(fontSize: getFontSize(context, 1)),
-                ),
-                onTap: () async {
-                  Get.back();
-                  Get.toNamed('/inspectorlist');
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return const SizedBox();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        color: Colors.white,
-        width: Get.width > 700 ? Get.width * 0.5 : Get.width - 100,
-        height: Get.height,
-        child: ListView(
-          shrinkWrap: true,
-          physics: const ScrollPhysics(),
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height / 20),
-            Center(
-              child: SizedBox(
-                width:
-                    Get.width -
-                    ((Get.width > 700 ? Get.width * 0.7 : Get.width - 100) -
-                        120),
-                child: Image.asset("assets/images/Logo.png"),
-              ),
-            ),
-            const SizedBox(height: 50),
-            drawersRow(
-              context,
-              Icons.dashboard_outlined,
-              'Dashboard',
-              () async {
-                Get.back();
-                Get.offAll(const DashboardPage());
-              },
-              true,
-            ),
-            Column(
-              children: [
-                drawersRow(
-                  context,
-                  Icons.shopping_cart_outlined,
-                  'Cart',
-                  () async {
-                    Get.to(CartPage());
-                  },
-                  false,
+    return Container(
+      width: Get.width > 700 ? Get.width * 0.5 : Get.width - 100,
+      color: Colors.white,
+      height: double.infinity,
+      child: SafeArea(
+        child: SizedBox(
+          child: Obx(() {
+            if (loginFlowController.isLoading.value) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(
+                      color: AppColors.greenColor,
+                    ),
+                  ),
                 ),
-                drawersRow(context, Icons.history, 'Order History', () async {
-                  Get.to(OrderHistoryPage());
-                }, false),
-              ],
-            ),
-            Obx(
-              () => expansionWidget(
-                titleText: 'Certifications',
-                children:
-                    loginFlowController.isCerti.value
-                        ? [
-                          Center(
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator(
-                                color: AppColors.greenColor,
-                              ),
-                            ),
-                          ),
-                        ]
-                        : loginFlowController.certificateList.map((item) {
-                          return drawersRow(
+              );
+            } else {
+              return ListView(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height / 20),
+                  Center(
+                    child: SizedBox(
+                      width:
+                          Get.width -
+                          ((Get.width > 700
+                                  ? Get.width * 0.7
+                                  : Get.width - 100) -
+                              120),
+                      child: Image.asset("assets/images/Logo.png"),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  drawersRow(
+                    context,
+                    Icons.dashboard_outlined,
+                    'Dashboard',
+                    () async {
+                      Get.back();
+                      Get.offAll(const DashboardPage());
+                    },
+                    true,
+                  ),
+                  loginFlowController.token.isNotEmpty
+                      ? Column(
+                        children: [
+                          drawersRow(
                             context,
-                            Icons.document_scanner_outlined,
-                            item["title"] ?? "",
+                            Icons.shopping_cart_outlined,
+                            'Cart',
                             () async {
-                              Get.to(
-                                WebViewApp(
-                                  name: item["title"] ?? "",
-                                  url: item["url"] ?? "",
-                                ),
-                              );
+                              Get.to(CartPage());
                             },
                             false,
-                          );
-                        }).toList(),
-              ),
-            ),
+                          ),
+                          drawersRow(
+                            context,
+                            Icons.history,
+                            'Order History',
+                            () async {
+                              Get.to(OrderHistoryPage());
+                            },
+                            false,
+                          ),
+                        ],
+                      )
+                      : const SizedBox(),
+                  Obx(
+                    () => expansionWidget(
+                      titleText: 'Certifications',
+                      children:
+                          loginFlowController.isCerti.value
+                              ? [
+                                Center(
+                                  child: SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.greenColor,
+                                    ),
+                                  ),
+                                ),
+                              ]
+                              : loginFlowController.certificateList.map((item) {
+                                return drawersRow(
+                                  context,
+                                  Icons.document_scanner_outlined,
+                                  item["title"] ?? "",
+                                  () async {
+                                    Get.to(
+                                      WebViewApp(
+                                        name: item["title"] ?? "",
+                                        url: item["url"] ?? "",
+                                      ),
+                                    );
+                                  },
+                                  false,
+                                );
+                              }).toList(),
+                    ),
+                  ),
 
-            drawersRow(
-              context,
-              Icons.document_scanner_outlined,
-              'Privacy Policy',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'Privacy Policy',
-                    url: 'https://nakedsyrups.com.au/privacy-policy/',
+                  drawersRow(
+                    context,
+                    Icons.document_scanner_outlined,
+                    'Privacy Policy',
+                    () async {
+                      Get.to(
+                        WebViewApp(
+                          name: 'Privacy Policy',
+                          url: 'https://nakedsyrups.com.au/privacy-policy/',
+                        ),
+                      );
+                    },
+                    false,
                   ),
-                );
-              },
-              false,
-            ),
-            drawersRow(
-              context,
-              Icons.local_shipping_outlined,
-              'Deliveries and Returns',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'Deliveries and Returns',
-                    url: 'https://nakedsyrups.com.au/deliveries-returns/',
+                  drawersRow(
+                    context,
+                    Icons.local_shipping_outlined,
+                    'Deliveries and Returns',
+                    () async {
+                      Get.to(
+                        WebViewApp(
+                          name: 'Deliveries and Returns',
+                          url: 'https://nakedsyrups.com.au/deliveries-returns/',
+                        ),
+                      );
+                    },
+                    false,
                   ),
-                );
-              },
-              false,
-            ),
-            drawersRow(
-              context,
-              Icons.local_shipping_outlined,
-              'Contact Us',
-              () async {
-                Get.to(
-                  WebViewApp(
-                    name: 'Contact Us',
-                    url: 'https://nakedsyrups.com.au/contact/',
+                  drawersRow(
+                    context,
+                    Icons.local_shipping_outlined,
+                    'Contact Us',
+                    () async {
+                      Get.to(
+                        WebViewApp(
+                          name: 'Contact Us',
+                          url: 'https://nakedsyrups.com.au/contact/',
+                        ),
+                      );
+                    },
+                    false,
                   ),
-                );
-              },
-              false,
-            ),
-            drawersRow(context, Icons.edit_outlined, 'Edit Profile', () async {
-              Get.to(EditProfilePage());
-            }, false),
-            drawersRow(
-              context,
-              Icons.lock_reset_outlined,
-              'Reset Password',
-              () async {
-                Get.to(ResetPassword());
-              },
-              false,
-            ),
+                  loginFlowController.token.isNotEmpty
+                      ? Column(
+                        children: [
+                          drawersRow(
+                            context,
+                            Icons.edit_outlined,
+                            'Edit Profile',
+                            () async {
+                              Get.to(EditProfilePage());
+                            },
+                            false,
+                          ),
+                          drawersRow(
+                            context,
+                            Icons.lock_reset_outlined,
+                            'Reset Password',
+                            () async {
+                              Get.to(ResetPassword());
+                            },
+                            false,
+                          ),
+                          drawersRow(context, Icons.logout, 'Logout', () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.clear().then((value) {
+                              print("prefrence cleared  : $value");
+                              if (value == true) {
+                                Get.offAll(() => LoginPage());
+                              }
+                            });
+                          }, false),
+                        ],
+                      )
+                      : drawersRow(context, Icons.login, 'Login', () async {
+                        Get.offAll(() => LoginPage());
+                      }, false),
 
-            drawersRow(context, Icons.logout, 'Logout', () async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              await prefs.clear().then((value) {
-                print("prefrence cleared  : $value");
-                if (value == true) {
-                  Get.offAll(() => LoginPage());
-                }
-              });
-            }, false),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 50),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Center(
-                  child: Text(
-                    AppStrings.version,
-                    style: const TextStyle(color: Colors.black87),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Center(
+                        child: Text(
+                          AppStrings.version,
+                          style: const TextStyle(color: Colors.black87),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ],
+                ],
+              );
+            }
+          }),
         ),
       ),
     );

@@ -163,10 +163,7 @@ dynamic afterApiFire(response, apiurl) async {
   if (response.statusCode == 200 || response.statusCode == 201) {
     var decodedResponse = response.data;
     print("$apiurl responce : $decodedResponse");
-    // if (apiurl == 'get-cart') {
-    //   print("$apiurl responce header: ${decodedResponse['headers']['cookie']}");
-    //   print("$apiurl responce cokkie: ${decodedResponse['cookies']}");
-    // }
+
     if (decodedResponse != null) {
       return decodedResponse;
     } else {
@@ -246,7 +243,7 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
     data: body,
     options: Options(headers: headers),
   );
-
+  print("$apiurl responce : $response");
   return afterApiFire(response, apiurl);
 }
 
@@ -420,8 +417,14 @@ class ApiClass {
     print("Mapp add-to cart :${mappp}");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('add-to-cart', formData);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (decodedResponse['success'] == true) {
+      if ((decodedResponse).containsKey('guest_token') &&
+          decodedResponse['guest_token'] != null) {
+        await prefs.setString("guest_token", decodedResponse['guest_token']);
+        print("Found guest_token");
+      }
       return decodedResponse;
     } else {
       getT.Get.snackbar(
@@ -436,6 +439,16 @@ class ApiClass {
 
   FutureOr<dynamic> updateQuantity(productId, qty, variationId) async {
     Map<String, dynamic> mappp = {};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
     mappp = {
       "product_id": productId,
       "quantity": qty,
@@ -458,6 +471,9 @@ class ApiClass {
   }
 
   FutureOr<dynamic> shippingMethods(country, state, postcode, city) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
     Map<String, dynamic> mappp = {};
     mappp = {
       "country": country,
@@ -465,6 +481,13 @@ class ApiClass {
       "postcode": postcode,
       "city": city,
     };
+
+    print("mapp : ${mappp}");
+    if (token == null || token.isEmpty) {
+      String? guestToken = "";
+      guestToken = prefs.getString("guest_token");
+      mappp.addIf(guestToken?.isNotEmpty, 'guest_token', guestToken);
+    }
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('shipping-methods', formData);
 
@@ -500,9 +523,16 @@ class ApiClass {
     }
   }
 
-  FutureOr<dynamic> getPriceDetails(mapp) async {
-    print("fees map  :$mapp ");
+  FutureOr<dynamic> getPriceDetails(Map<String, dynamic> mapp) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
+    if (token == null || token.isEmpty) {
+      String? guestToken = "";
+      guestToken = prefs.getString("guest_token");
+      mapp.addIf(guestToken?.isNotEmpty, 'guest_token', guestToken);
+    }
+    print("fees map  :$mapp ");
     var decodedResponse = await dioPostApiCall('extra-fees', jsonEncode(mapp));
     if (decodedResponse['success'] == true) {
       return decodedResponse;
@@ -537,6 +567,17 @@ class ApiClass {
   FutureOr<dynamic> applyCoupon(coupon) async {
     Map<String, dynamic> mappp = {};
     mappp = {'coupon_code': coupon};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
+    print("Apply Coupon mapp : ${mappp}");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('apply-coupon', formData);
 
@@ -556,6 +597,16 @@ class ApiClass {
   FutureOr<dynamic> removeCoupon(coupon) async {
     Map<String, dynamic> mappp = {};
     mappp = {'coupon_code': coupon};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('remove-coupon', formData);
 
@@ -684,7 +735,22 @@ class ApiClass {
   }
 
   FutureOr<dynamic> getCart() async {
-    var decodedResponse = await dioPostApiCall('get-cart', {});
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    Map<String, dynamic> mappp = {};
+
+    if (token == null || token.isEmpty) {
+      String? guestToken = "";
+      guestToken = prefs.getString("guest_token");
+      mappp = {'guest_token': guestToken};
+      print("Found guest_token : $guestToken");
+    }
+    FormData formData = FormData.fromMap(mappp);
+    print("Mapp : ${mappp.isNotEmpty}");
+    var decodedResponse = await dioPostApiCall(
+      'get-cart',
+      mappp.isNotEmpty ? formData : {},
+    );
 
     if (decodedResponse['success'] == true) {
       return decodedResponse;
@@ -839,7 +905,7 @@ class ApiClass {
   FutureOr verifyCaptchaToken(String token) async {
     try {
       String url = 'https://www.nakedsyrups.com.au/verify-recaptcha.php';
-      print("verify captch URL::$url :: $token");
+      print("verify URL::$url :: $token");
       FormData formData = FormData.fromMap({'token': token});
       final response = await dio.post(
         url,

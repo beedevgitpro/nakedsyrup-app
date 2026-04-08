@@ -4,6 +4,7 @@ class PriceModel {
     List<CartItems>? cartItems,
     dynamic cartCount,
     dynamic subtotal,
+    dynamic discountTotal,
     String? subtotalFormatted,
     List<Fees>? fees,
     String? totalFeesFormatted,
@@ -20,6 +21,7 @@ class PriceModel {
     _cartItems = cartItems;
     _cartCount = cartCount;
     _subtotal = subtotal;
+    _discountTotal = discountTotal;
     _subtotalFormatted = subtotalFormatted;
     _fees = fees;
     _totalFeesFormatted = totalFeesFormatted;
@@ -42,6 +44,7 @@ class PriceModel {
       });
     }
     _cartCount = json['cart_count'];
+    _discountTotal = json['discount_total'];
     _subtotal = json['subtotal'];
     _subtotalFormatted = json['subtotal_formatted'];
     if (json['fees'] != null) {
@@ -63,6 +66,7 @@ class PriceModel {
   bool? _success;
   List<CartItems>? _cartItems;
   dynamic _cartCount;
+  dynamic _discountTotal;
   dynamic _subtotal;
   String? _subtotalFormatted;
   List<Fees>? _fees;
@@ -80,6 +84,7 @@ class PriceModel {
     List<CartItems>? cartItems,
     dynamic cartCount,
     dynamic subtotal,
+    dynamic discountTotal,
     String? subtotalFormatted,
     List<Fees>? fees,
     String? totalFeesFormatted,
@@ -96,6 +101,7 @@ class PriceModel {
     cartItems: cartItems ?? _cartItems,
     cartCount: cartCount ?? _cartCount,
     subtotal: subtotal ?? _subtotal,
+    discountTotal: discountTotal ?? _discountTotal,
     subtotalFormatted: subtotalFormatted ?? _subtotalFormatted,
     fees: fees ?? _fees,
     totalFeesFormatted: totalFeesFormatted ?? _totalFeesFormatted,
@@ -111,6 +117,7 @@ class PriceModel {
   bool? get success => _success;
   List<CartItems>? get cartItems => _cartItems;
   dynamic get cartCount => _cartCount;
+  dynamic get discountTotal => _discountTotal;
   dynamic get subtotal => _subtotal;
   String? get subtotalFormatted => _subtotalFormatted;
   List<Fees>? get fees => _fees;
@@ -138,6 +145,7 @@ class PriceModel {
     }
     map['total_fees_formatted'] = _totalFeesFormatted;
     map['gst_total'] = _gstTotal;
+    map['discount_total'] = _discountTotal;
     map['gst_total_formatted'] = _gstTotalFormatted;
     map['grand_total'] = _grandTotal;
     map['grand_total_formatted'] = _grandTotalFormatted;
