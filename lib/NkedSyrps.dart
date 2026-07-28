@@ -294,13 +294,16 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             ),
         Padding(
           padding: const EdgeInsets.only(top: 0, left: 10),
-          child: ListTile(
-            leading: Icon(icon, color: AppColors.nakedSyrup, size: 28),
-            title: Text(
-              text,
-              style: TextStyle(fontSize: getFontSize(context, 1)),
+          child: ColoredBox(
+            color: Colors.white,
+            child: ListTile(
+              leading: Icon(icon, color: AppColors.nakedSyrup, size: 28),
+              title: Text(
+                text,
+                style: TextStyle(fontSize: getFontSize(context, 1)),
+              ),
+              onTap: function,
             ),
-            onTap: function,
           ),
         ),
       ],

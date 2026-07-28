@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Resources/AppStrings.dart';
 import 'modules/login_flow/login_page.dart';
+import 'network_helper.dart';
 
 final Dio dio = Dio(
   BaseOptions(followRedirects: true, extra: {"withCredentials": true}),
@@ -17,29 +18,109 @@ final Dio dio = Dio(
 CancelToken _cancelToken = CancelToken();
 bool _isRefreshing = false;
 bool _isLoggingOut = false;
+bool _sessionActive = false;
+bool _sessionExpiredSnackShown = false;
 Completer<void>? _refreshCompleter;
+
+const String _sessionExpiredTitle = 'Session expired';
+const String _sessionExpiredSubtitle =
+    'Please sign in again to continue.';
+
 void _resetCancelToken() {
   _cancelToken = CancelToken();
 }
 
+/// Paths that must never trigger refresh or force-logout (login, refresh, public).
+bool _isAuthFreePath(String path) {
+  const markers = [
+    '/login',
+    '/refresh-token',
+    '/reset-password-request',
+    '/states',
+    '/countries',
+    '/create-customer',
+  ];
+  return markers.any((m) => path.contains(m));
+}
+
+bool _hasValidSessionToken(String? token) =>
+    token != null && token.isNotEmpty;
+
+void _logAuth(String message) {
+  print('[Auth] $message');
+}
+
+void _showSessionExpiredSnackbar() {
+  if (_sessionExpiredSnackShown) return;
+  _sessionExpiredSnackShown = true;
+  getT.Get.snackbar(
+    _sessionExpiredTitle,
+    _sessionExpiredSubtitle,
+    colorText: Colors.red,
+    backgroundColor: Colors.white,
+    duration: const Duration(seconds: 4),
+  );
+  _logAuth('session expired snackbar shown');
+}
+
+void _resetSessionExpiredSnackbarFlag() {
+  _sessionExpiredSnackShown = false;
+}
+
+bool _isSessionExpiryError(DioException e) {
+  if (e.response?.statusCode == 401) return true;
+  if (e.type == DioExceptionType.cancel) {
+    final msg = e.message ?? '';
+    return msg.contains('Session expired');
+  }
+  return false;
+}
+
+void _clearDioAuthHeader() {
+  dio.options.headers.remove('Authorization');
+}
+
+Future<void> _markSessionActive(bool active) async {
+  _sessionActive = active;
+  _logAuth('sessionActive=$active');
+}
+
+Future<void> initAuthSessionFromPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  await _markSessionActive(_hasValidSessionToken(token));
+}
+
 void setupDio() {
+  initAuthSessionFromPrefs();
+
   FutureOr<dynamic> refreshToken() async {
+    if (_isLoggingOut || !_sessionActive) {
+      _logAuth(
+        'refresh skipped (loggingOut=$_isLoggingOut sessionActive=$_sessionActive)',
+      );
+      return null;
+    }
+
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
+    if (!_hasValidSessionToken(token)) {
+      _logAuth('refresh skipped (no token in prefs)');
+      return null;
+    }
+
     final url = '${AppStrings.baseUrl}refresh-token';
-    print('🌐 refresh POST: $url');
+    _logAuth('refresh POST start: $url');
 
     try {
       final response = await dio.post(
         url,
-        cancelToken: _cancelToken,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            if (token != null && token.isNotEmpty)
-              'Authorization': 'Bearer $token',
+            'Authorization': 'Bearer $token',
           },
         ),
       );
@@ -48,63 +129,105 @@ void setupDio() {
         final data = response.data;
         if (data['success'] == true && data['token'] != null) {
           await prefs.setString('token', data['token']);
+          _logAuth('refresh succeeded, token updated');
+        } else {
+          _logAuth('refresh response not successful: $data');
         }
         return data;
       }
+      _logAuth('refresh unexpected status: ${response.statusCode}');
     } on DioException catch (e) {
-      // 🔒 Refresh token failed → logout
-      if (e.response?.statusCode == 401 && !_isLoggingOut) {
-        await _forceLogout();
+      _logAuth(
+        'refresh failed status=${e.response?.statusCode} type=${e.type} message=${e.message}',
+      );
+      if (e.response?.statusCode == 401 &&
+          !_isLoggingOut &&
+          _sessionActive) {
+        await _forceLogout(reason: 'refresh-token returned 401');
       }
     }
+    return null;
   }
 
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
-        options.cancelToken = _cancelToken;
+        final path = options.uri.path;
+        final isAuthFree = _isAuthFreePath(path);
+
+        /// Only authenticated traffic shares the session cancel token.
+        if (!isAuthFree) {
+          options.cancelToken = _cancelToken;
+        }
 
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('token');
-        final path = options.path;
 
-        const excludedPaths = [
-          '/wp-json/ns/v1/states',
-          '/wp-json/ns/v1/countries',
-          '/wp-json/ns/v1/create-customer',
-          '/wp-json/ns/v1/login',
-        ];
-
-        final isExcluded = excludedPaths.any(
-          (prefix) => path.startsWith(prefix),
-        );
-
-        if (!isExcluded && token != null) {
+        options.headers.remove('Authorization');
+        if (!isAuthFree && _hasValidSessionToken(token)) {
           options.headers['Authorization'] = 'Bearer $token';
         }
 
+        _logAuth(
+          'onRequest ${options.method} $path authFree=$isAuthFree hasToken=${_hasValidSessionToken(token)} sessionActive=$_sessionActive',
+        );
+
+        /// ✅ Check REAL internet connection
+        final hasInternet = await NetworkHelper.hasInternet();
+
+        if (!hasInternet) {
+          /// ✅ Show dialog
+          NetworkHelper.showNoInternetDialog();
+
+          /// ❌ Stop API call
+          return handler.reject(
+            DioException(
+              requestOptions: options,
+              type: DioExceptionType.connectionError,
+              error: 'No Internet Connection',
+            ),
+          );
+        }
+
+        /// ✅ Continue request
         return handler.next(options);
       },
 
       onError: (DioException e, handler) async {
-        final path = e.requestOptions.path;
+        final path = e.requestOptions.uri.path;
+        final isAuthFree = _isAuthFreePath(path);
+        final status = e.response?.statusCode;
 
-        const excludedPaths = [
-          '/wp-json/ns/v1/states',
-          '/wp-json/ns/v1/countries',
-          '/wp-json/ns/v1/create-customer',
-          '/wp-json/ns/v1/login',
-        ];
+        _logAuth(
+          'onError ${e.requestOptions.method} $path status=$status type=${e.type} authFree=$isAuthFree sessionActive=$_sessionActive',
+        );
 
-        /// 🟥 401 → FORCE LOGOUT + STOP ALL APIS
-        if (e.response?.statusCode == 401 && !_isLoggingOut) {
-          await _forceLogout();
+        if (e.type == DioExceptionType.cancel) {
+          _logAuth('request cancelled: ${e.message}');
+          return handler.next(e);
+        }
+
+        /// 401 on protected routes → logout (never on login/refresh/public).
+        if (status == 401 &&
+            !_isLoggingOut &&
+            _sessionActive &&
+            !isAuthFree) {
+          await _forceLogout(reason: '401 on $path');
           return;
         }
 
-        /// 🟧 403 → TRY REFRESH TOKEN
-        if (e.response?.statusCode == 403 &&
-            !excludedPaths.any((p) => path.startsWith(p))) {
+        /// 403 → refresh only for an active session with a stored token.
+        if (status == 403 &&
+            !isAuthFree &&
+            _sessionActive &&
+            !_isLoggingOut) {
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString('token');
+          if (!_hasValidSessionToken(token)) {
+            _logAuth('403 refresh skipped (no token)');
+            return handler.next(e);
+          }
+
           if (!_isRefreshing) {
             _isRefreshing = true;
             _refreshCompleter = Completer();
@@ -121,16 +244,17 @@ void setupDio() {
             await _refreshCompleter?.future;
           }
 
-          // 🔁 Retry original request
-          final token = (await SharedPreferences.getInstance()).getString(
+          final newToken = (await SharedPreferences.getInstance()).getString(
             'token',
           );
 
-          if (token != null) {
+          if (_hasValidSessionToken(newToken) && _sessionActive) {
+            _logAuth('retrying after refresh: $path');
             final newRequest = e.requestOptions;
-            newRequest.headers['Authorization'] = 'Bearer $token';
+            newRequest.headers['Authorization'] = 'Bearer $newToken';
             return handler.resolve(await dio.fetch(newRequest));
           }
+          _logAuth('retry skipped after refresh (no valid token)');
         }
 
         return handler.next(e);
@@ -139,24 +263,29 @@ void setupDio() {
   );
 }
 
-Future<void> _forceLogout() async {
-  if (_isLoggingOut) return;
+Future<void> _forceLogout({String reason = 'unknown'}) async {
+  if (_isLoggingOut) {
+    _logAuth('forceLogout ignored (already in progress) reason=$reason');
+    return;
+  }
   _isLoggingOut = true;
+  await _markSessionActive(false);
 
-  print("🔒 FORCE LOGOUT → cancel all APIs");
+  _logAuth('FORCE LOGOUT start → cancel session APIs reason=$reason');
 
-  // ⛔ Cancel ALL ongoing requests
-  _cancelToken.cancel("Session expired");
+  _showSessionExpiredSnackbar();
+
+  _cancelToken.cancel('Session expired: $reason');
 
   final prefs = await SharedPreferences.getInstance();
   await prefs.clear();
-
-  // 🔁 Reset for future login requests
+  _clearDioAuthHeader();
   _resetCancelToken();
 
   getT.Get.offAll(() => LoginPage());
 
   _isLoggingOut = false;
+  _logAuth('FORCE LOGOUT complete');
 }
 
 dynamic afterApiFire(response, apiurl) async {
@@ -177,6 +306,9 @@ dynamic afterApiFire(response, apiurl) async {
   } else if (response.statusCode == 400) {
     var decodedResponse = response.data;
     print("$apiurl responce with code 400 : $decodedResponse");
+  } else if (response.statusCode == 401) {
+    _logAuth('afterApiFire 401 on $apiurl (handled by session logout)');
+    return null;
   } else {
     getT.Get.snackbar(
       "Technical Error ${response.statusCode}",
@@ -209,6 +341,7 @@ dynamic afterApiFire(response, apiurl) async {
 Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
+  final isLogin = apiurl == 'login';
 
   // if (apiurl != 'login') {
   //   if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
@@ -228,7 +361,9 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'User-Agent': "MyFlutterApp/1.0 (Android)",
-    if (token != null && token.isNotEmpty && apiurl != 'refresh-token')
+    if (!isLogin &&
+        apiurl != 'refresh-token' &&
+        _hasValidSessionToken(token))
       'Authorization': 'Bearer $token',
   };
 
@@ -236,15 +371,32 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
       apiurl == 'extra-fees'
           ? '${AppStrings.extraFeesUrl}$apiurl'
           : '${AppStrings.baseUrl}$apiurl';
-  print('🌐 POST: $url');
+  _logAuth('dioPostApiCall $apiurl (login=$isLogin hasToken=${_hasValidSessionToken(token)})');
 
-  final response = await dio.post(
-    url,
-    data: body,
-    options: Options(headers: headers),
-  );
-  print("$apiurl responce : $response");
-  return afterApiFire(response, apiurl);
+  try {
+    final response = await dio.post(
+      url,
+      data: body,
+      options: Options(headers: headers),
+    );
+    print("$apiurl responce : $response");
+    return afterApiFire(response, apiurl);
+  } on DioException catch (e) {
+    if (_isSessionExpiryError(e) || _isLoggingOut) {
+      _logAuth('dioPostApiCall session ended: $apiurl');
+      return null;
+    }
+    _logAuth(
+      'dioPostApiCall DioException: $apiurl type=${e.type} status=${e.response?.statusCode}',
+    );
+    getT.Get.snackbar(
+      "Technical Error",
+      "",
+      colorText: Colors.red,
+      backgroundColor: Colors.white,
+    );
+    return null;
+  }
 }
 
 FutureOr<dynamic> dioGetApiCall(apiurl) async {
@@ -254,7 +406,8 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
   dio.options.headers['Accept'] = 'application/json';
   dio.options.headers['Connection'] = 'keep-alive';
   dio.options.headers['User-Agent'] = "MyFlutterApp/1.0 (Android)";
-  if (token != null && token.isNotEmpty) {
+  _clearDioAuthHeader();
+  if (_hasValidSessionToken(token)) {
     dio.options.headers["Authorization"] = "Bearer $token";
     print("Bearer $token");
   }
@@ -296,6 +449,10 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
     );
   } on DioException catch (e) {
     print("DioException $apiurl $e");
+    if (_isSessionExpiryError(e) || _isLoggingOut) {
+      _logAuth('dioGetApiCall session ended: $apiurl');
+      return null;
+    }
     if (e.type == DioExceptionType.connectionError ||
         e.error.toString().contains("Connection reset")) {
       // Retry once after 1 second
@@ -373,8 +530,16 @@ class ApiClass {
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('login', formData);
 
+    if (decodedResponse == null) {
+      _logAuth('login aborted (request cancelled or failed)');
+      return null;
+    }
+
     if (decodedResponse['success'] == true) {
       await prefs.setString("token", decodedResponse['token']);
+      await _markSessionActive(true);
+      _resetSessionExpiredSnackbarFlag();
+      _logAuth('login succeeded, session marked active');
       await prefs.setString("name", decodedResponse['user']['name']);
       await prefs.setInt("user_id", decodedResponse['user']['id']);
       await prefs.setString(
@@ -409,19 +574,30 @@ class ApiClass {
 
   Future<dynamic> addToCart(productId, qty, variationId) async {
     Map<String, dynamic> mappp = {};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     mappp = {
       "product_id": productId,
       "quantity": qty,
       'variation_id': variationId,
     };
     print("Mapp add-to cart :${mappp}");
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
+
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('add-to-cart', formData);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (decodedResponse['success'] == true) {
       if ((decodedResponse).containsKey('guest_token') &&
           decodedResponse['guest_token'] != null) {
+
         await prefs.setString("guest_token", decodedResponse['guest_token']);
         print("Found guest_token");
       }
@@ -468,6 +644,68 @@ class ApiClass {
       );
       return null;
     }
+  }
+
+  FutureOr<dynamic> capturePaypal(String orderID) async {
+    Map<String, dynamic> mappp = {};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
+    mappp = {"orderID": orderID};
+    print("map : $mappp");
+    FormData formData = FormData.fromMap(mappp);
+    var decodedResponse = await dioPostApiCall('capture-order', formData);
+    final transactionId =
+        decodedResponse['purchase_units']?[0]?['payments']?['captures']?[0]?['id'];
+    print("decodedResponse capture-order : ${decodedResponse}");
+    return {
+      "status": decodedResponse['status'],
+      "transactionId": transactionId,
+      "raw": decodedResponse,
+    };
+  }
+
+  // Future createPaypalOrder(int orderId, String total) async {
+  //   final res = await http.post(
+  //     Uri.parse("https://nakedsyrups.com.au/wp-json/ns/v1/create-paypal-order"),
+  //     headers: {"Content-Type": "application/json"},
+  //     body: jsonEncode({"order_id": orderId, "total": total}),
+  //   );
+  //
+  //   return jsonDecode(res.body);
+  // }
+
+  FutureOr<dynamic> createPaypalOrder(int orderId, String total) async {
+    Map<String, dynamic> mappp = {};
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? guestToken = "";
+    guestToken = prefs.getString("guest_token");
+    mappp.addIf(
+      prefs.getString("guest_token") != null &&
+          prefs.getString("guest_token")?.isNotEmpty == true,
+      'guest_token',
+      guestToken,
+    );
+    mappp = {"order_id": orderId, "total": total};
+    FormData formData = FormData.fromMap(mappp);
+    var decodedResponse = await dioPostApiCall('create-paypal-order', formData);
+    final transactionId =
+        decodedResponse['purchase_units']?[0]?['payments']?['captures']?[0]?['id'];
+    print("create-paypal-order decodedResponse : ${decodedResponse}");
+    // return {
+    //   "status": decodedResponse['status'],
+    //   "transactionId": transactionId,
+    //   "raw": decodedResponse,
+    // };
+    return decodedResponse;
   }
 
   FutureOr<dynamic> shippingMethods(country, state, postcode, city) async {
@@ -585,7 +823,7 @@ class ApiClass {
       return decodedResponse;
     } else {
       getT.Get.snackbar(
-        "Error $decodedResponse",
+        decodedResponse.toString().contains('message')  ? "${decodedResponse['message']}":"Error $decodedResponse",
         "",
         colorText: Colors.red,
         backgroundColor: Colors.white,

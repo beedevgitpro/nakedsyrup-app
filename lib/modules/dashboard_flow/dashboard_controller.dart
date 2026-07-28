@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/model/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +19,7 @@ import '../../model/product_model.dart';
 import '../../model/shipping_methods_model.dart';
 import '../../service.dart';
 import '../cart/cart_page.dart';
+import '../cart/paypal_payment.dart';
 import '../login_flow/login_page.dart';
 import 'dashboard.dart';
 
@@ -214,82 +217,249 @@ class DashboardController extends GetxController {
     }
   }
 
-  getShippingMethods() async {
+  // getShippingMethods() async {
+  //   getShipping.value = true;
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   var shipping;
+  //   if (prefs.getString("guest_token") != null &&
+  //       prefs.getString("guest_token")?.isNotEmpty == true) {
+  //     shipping = await ApiClass().shippingMethods(
+  //       selectedCountry.value,
+  //       selectedState.value,
+  //       postCodeController.text,
+  //       townController.text,
+  //     );
+  //   } else if (differentAddress.value) {
+  //     shipping = await ApiClass().shippingMethods(
+  //       selectedCountryDiff.value,
+  //       selectedStateDiff.value,
+  //       postCodeDiffController.text,
+  //       townDiffController.text,
+  //     );
+  //   } else {
+  //     shipping = await ApiClass().shippingMethods(
+  //       selectedCountry.value,
+  //       selectedState.value,
+  //       postCodeController.text,
+  //       townController.text,
+  //     );
+  //   }
+  //   if (shipping != null) {
+  //     if (shipping['success'] == true) {
+  //       shippingMethodsModel.value = ShippingMethodsModel.fromJson(shipping);
+  //       // Get.to(ShippingDetailsPage());
+  //       getShipping.value = false;
+  //     } else {
+  //       getShipping.value = false;
+  //       Get.snackbar(
+  //         shipping['message'],
+  //         '',
+  //         colorText: Colors.red,
+  //         backgroundColor: Colors.white,
+  //       );
+  //     }
+  //   } else {
+  //     getShipping.value = false;
+  //   }
+  // }
+
+getShippingMethods() async {
     getShipping.value = true;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isGuest = prefs.getString("guest_token") != null && prefs.getString("guest_token")!.isNotEmpty; String country; String state; String postcode; String town;
+    if (isGuest) {
+      country = selectedCountry.value;
+      state = selectedState.value;
+      postcode = postCodeController.text.trim();
+      town = townController.text.trim(); } else if (differentAddress.value)
+      { country = selectedCountryDiff.value;
+        state = selectedStateDiff.value;
+        postcode = postCodeDiffController.text.trim();
+        town = townDiffController.text.trim(); } else {
+      country = selectedCountry.value;
+      state = selectedState.value;
+      postcode = postCodeController.text.trim();
+      town = townController.text.trim(); } /// Validation
+if (country.isEmpty || state.isEmpty || postcode.isEmpty || town.isEmpty)
+{ getShipping.value = false;
+  Get.snackbar( 'Validation Error', 'Please fill all required shipping fields.', colorText: Colors.red, backgroundColor: Colors.white, ); return; }
+    final hasInternet = await hasStableInternet();
 
-    var shipping;
-    if (prefs.getString("guest_token") != null &&
-        prefs.getString("guest_token")?.isNotEmpty == true) {
-      shipping = await ApiClass().shippingMethods(
-        selectedCountry.value,
-        selectedState.value,
-        postCodeController.text,
-        townController.text,
-      );
-    } else if (differentAddress.value) {
-      shipping = await ApiClass().shippingMethods(
-        selectedCountryDiff.value,
-        selectedStateDiff.value,
-        postCodeDiffController.text,
-        townDiffController.text,
-      );
-    } else {
-      shipping = await ApiClass().shippingMethods(
-        selectedCountry.value,
-        selectedState.value,
-        postCodeController.text,
-        townController.text,
-      );
-    }
-    if (shipping != null) {
-      if (shipping['success'] == true) {
-        shippingMethodsModel.value = ShippingMethodsModel.fromJson(shipping);
-        // Get.to(ShippingDetailsPage());
-        getShipping.value = false;
-      } else {
-        getShipping.value = false;
-        Get.snackbar(
-          shipping['message'],
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
-      }
-    } else {
-      getShipping.value = false;
-    }
-  }
-
-  placeOrderApi() async {
-    if (shippingMethods.value.isEmpty) {
-      Get.snackbar(
-        "Please select shipping method",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
+    if (!hasInternet) {
+      Get.defaultDialog(
+        title: 'Network Issue',
+        middleText:
+        'Your internet connection appears to be unstable. Please check your connection and try again.',
+        textConfirm: 'OK',
+        onConfirm: () => Get.back(),
       );
       return;
     }
+
+
+var shipping = await ApiClass().shippingMethods( country, state, postcode, town, );
+if (shipping != null) {
+  if (shipping['success'] == true)
+  { shippingMethodsModel.value = ShippingMethodsModel.fromJson(shipping); }
+  else { Get.snackbar( shipping['message'] ?? 'Error', '', colorText: Colors.red, backgroundColor: Colors.white, ); } }
+getShipping.value = false; }
+
+  double calculateShipping() {
+    double totalShipping = 0.0;
+
+    final fees = priceModel.value.fees ?? [];
+
+    for (var fee in fees) {
+      double value = 0.0;
+
+      if (fee.amount != null) {
+        value = double.tryParse(fee.amount.toString()) ?? 0.0;
+      } else if (fee.shippingModel != null) {
+        value = double.tryParse(fee.shippingModel.toString()) ?? 0.0;
+      }
+
+      totalShipping += value;
+    }
+
+    return totalShipping;
+  }
+
+  List<Map<String, dynamic>> getPaypalItems() {
+    final cartItems = cartModel.value.cartItems ?? [];
+
+    return cartItems.map((item) {
+      return {
+        "name": item.productName ?? "",
+        "quantity": int.parse(item.quantity.toString()).toString(),
+        "price": double.parse(
+          item.currentPrice?.toString() ?? "0",
+        ).toStringAsFixed(2),
+        "currency": "AUD",
+      };
+    }).toList();
+  }
+
+  double calculatePaypalSubtotal() {
+    double total = 0.0;
+
+    final items = getPaypalItems();
+
+    for (var item in items) {
+      double price = double.tryParse(item['price']) ?? 0.0;
+      int qty = int.tryParse(item['quantity']) ?? 0;
+
+      total += price * qty;
+    }
+
+    return total;
+  }
+
+  Future<bool> hasStableInternet() async {
+    final connectivity = await Connectivity().checkConnectivity();
+
+    if (connectivity == ConnectivityResult.none) {
+      return false;
+    }
+
+    final hasInternet = await InternetConnection().hasInternetAccess;
+
+    return hasInternet;
+  }
+
+  placeOrderApi() async {
+    if (emailController.text == null || emailController.text.trim().isEmpty) {
+      return "Email address is required!";
+    }
+    if (!GetUtils.isEmail(emailController.text.trim())) {
+      return "Please enter a valid email address!";
+    }
+
+    if (phoneController.text.isEmpty) {
+      return "Phone number is required!";
+    }
+
+    if (phoneController.text.length < 8) {
+      return "Please enter a valid phone number!";
+    }
+    if (postCodeController.text.isEmpty) {
+      return "Please add postcode!";
+    }
+
+    if (!RegExp(r'^\d{4}$').hasMatch(postCodeController.text)) {
+      return "Please enter a valid 4 digit postcode!";
+    }
+    if (selectedPaymentMethods.value.isEmpty) {
+      Get.snackbar(
+        'Checkout Error',
+        'Please select a payment method.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    if (shippingMethods.value.isEmpty) {
+      Get.snackbar(
+        'Checkout Error',
+        'Please select a shipping method.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     placeOrder.value = true;
+    FocusScope.of(Get.context!).unfocus();
+    final hasInternet = await hasStableInternet();
+
+    if (!hasInternet) {
+      Get.defaultDialog(
+        title: 'Network Issue',
+        middleText:
+            'Your internet connection appears to be unstable. Please check your connection and try again.',
+        textConfirm: 'OK',
+        onConfirm: () => Get.back(),
+      );
+      return;
+    }
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Map<String, dynamic> mapp = {};
-    String? guestToken = "";
-    guestToken = prefs.getString("guest_token");
+    String? guestToken = prefs.getString("guest_token");
 
-    if (prefs.getString("guest_token") != null &&
-        prefs.getString("guest_token")?.isNotEmpty == true) {
+    // -------------------------------
+    // BUILD REQUEST MAP (NO CHANGE)
+    // -------------------------------
+    if (guestToken != null && guestToken.isNotEmpty) {
       addressFormKey.currentState?.save();
-      if (addressFormKey.currentState?.validate() == false) {
-        Get.snackbar(
-          "Please fill all mandatory fields",
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
-        return;
-      }
+      final billingValid = addressFormKey.currentState?.validate() ?? false;
+
+      final shippingValid =
+          differentAddress.value
+              ? (shippingAddressFormKey.currentState?.validate() ?? false)
+              : true;
+print("valid: billingValid : $billingValid --- shippingValid : ${shippingValid} differentAddress.value : ${differentAddress.value}");
+if(differentAddress.value && token.value.isNotEmpty) {
+  if (!billingValid || !shippingValid) {
+    Get.snackbar(
+      'Checkout Error',
+      'Please complete all required checkout fiPlease login to apply this coupoelds.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    placeOrder.value= false;
+    return;
+  }
+}else {
+  if (!billingValid) {
+    Get.snackbar(
+      'Checkout Error',
+      'Please complete all required checkout fields.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    placeOrder.value= false;
+    return;
+  }
+}
+
       mapp = {
         "billing": {
           "first_name": firstNameController.text,
@@ -312,10 +482,13 @@ class DashboardController extends GetxController {
         "order_notes": orderNotesController.text,
         "guest_token": guestToken,
       };
-      mapp.addAllIf(createAnAccount.value, {
-        "username": firstNameController.text,
-        "password": passwordController.text,
-      });
+
+      if (createAnAccount.value) {
+        mapp.addAll({
+          "username": firstNameController.text,
+          "password": passwordController.text,
+        });
+      }
     } else if (differentAddress.value) {
       mapp = {
         "billing": {
@@ -371,15 +544,59 @@ class DashboardController extends GetxController {
       };
     }
 
+    // -------------------------------
+    // API CALL
+    // -------------------------------
     var shipping = await ApiClass().orderPlaced(mapp);
-    if (shipping != null) {
-      if (shipping['success'] == true) {
-        // Get.snackbar(
-        //   shipping['message'],
-        //   '',
-        //   colorText: Colors.red,
-        //   backgroundColor: Colors.white,
-        // );
+
+    if (shipping == null) {
+      placeOrder.value = false;
+      Get.snackbar(
+        "Error in placing order",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return;
+    }
+
+    if (shipping['success'] != true) {
+      placeOrder.value = false;
+      Get.snackbar(
+        shipping['message'],
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+      return;
+    }
+
+    // -------------------------------
+    // PAYPAL FLOW
+    // -------------------------------
+    if (selectedPaymentMethods.value == 'ppcp') {
+      final orderId = shipping['order_id'];
+      final total = shipping['total'].toString();
+
+      // 1. Create PayPal order
+      final paypal = await ApiClass().createPaypalOrder(orderId, total);
+
+      // 2. Open PayPal screen
+      final result = await Navigator.push(
+        Get.context!,
+        MaterialPageRoute(
+          builder:
+              (_) => PaypalWebView(
+                approvalUrl: paypal['approveUrl'],
+                orderID: paypal['orderID'],
+              ),
+        ),
+      );
+
+      placeOrder.value = false;
+      print("Open PayPal screen result : $result");
+      // 3. Handle result
+      if (result != null && result['status'] == "success") {
         showDialog<void>(
           context: Get.context!,
           barrierDismissible: false,
@@ -431,26 +648,17 @@ class DashboardController extends GetxController {
             );
           },
         );
-        // Get.to(OrderHistoryPage());
-        placeOrder.value = false;
       } else {
-        placeOrder.value = false;
-        Get.snackbar(
-          shipping['message'],
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
+        Get.snackbar("Error", "Payment failed or cancelled");
       }
-    } else {
-      placeOrder.value = false;
-      Get.snackbar(
-        "Error in placing order",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
+
+      return;
     }
+
+    // -------------------------------
+    // NON-PAYPAL SUCCESS
+    // -------------------------------
+    placeOrder.value = false;
   }
 
   priceDetails() async {
@@ -728,6 +936,9 @@ class DashboardController extends GetxController {
         townDiffController.text = profile['data']['shipping'][5];
         postCodeDiffController.text = profile['data']['shipping'][6];
         selectedCountryDiff.value = profile['data']['shipping'][7];
+        print(
+          "shipping country selectedCountryDiff: ${profile['data']['shipping'][7].isEmpty} ",
+        );
         if (selectedCountryDiff.value.isNotEmpty) {
           getStateList(selectedCountryDiff.value, true);
         }
@@ -1047,33 +1258,39 @@ class DashboardController extends GetxController {
 
   getStateList(code, isDiff) async {
     getCheckOut.value = true;
-    var respose = await ApiClass().getState(code);
+    print("get statess : ${code}");
+    if (code.toString().isNotEmpty) {
+      var respose = await ApiClass().getState(code);
 
-    Map<String, dynamic> jsonResponse = respose;
-    Map<String, String> parsedCountries = {};
-    if (jsonResponse['states'] == false) {
-    } else {
-      if (jsonResponse['states'].isNotEmpty) {
-        parsedCountries = (jsonResponse['states'] as Map<String, dynamic>).map(
-          (key, value) => MapEntry(key, value.toString()),
-        );
-      } else {}
-      if (isDiff != null) {
-        if (isDiff) {
-          stateMapDiff.clear();
-          stateMapDiff.addAll(parsedCountries);
+      Map<String, dynamic> jsonResponse = respose;
+      Map<String, String> parsedCountries = {};
+      if (jsonResponse['states'] == false) {
+        getCheckOut.value= false;
+
+      } else {
+        if (jsonResponse['states'].isNotEmpty) {
+          parsedCountries = (jsonResponse['states'] as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value.toString()));
+        } else {}
+        if (isDiff != null) {
+          if (isDiff) {
+            stateMapDiff.clear();
+            stateMapDiff.addAll(parsedCountries);
+          } else {
+            stateMap.clear();
+            stateMap.addAll(parsedCountries);
+          }
         } else {
           stateMap.clear();
+          stateMapDiff.clear();
           stateMap.addAll(parsedCountries);
+          stateMapDiff.addAll(parsedCountries);
         }
-      } else {
-        stateMap.clear();
-        stateMapDiff.clear();
-        stateMap.addAll(parsedCountries);
-        stateMapDiff.addAll(parsedCountries);
+        getCheckOut.value= false;
       }
+    } else {
+      getCheckOut.value = false;
     }
-    getCheckOut.value = false;
   }
 
   getBillingDetails() async {
@@ -1120,10 +1337,12 @@ class DashboardController extends GetxController {
 
   orderHistory() async {
     getHistory.value = true;
-
-    var history = await ApiClass().getOrderHistory();
-    if (history != null) {
-      orderHistoryModel.value = OrderHistoryModel.fromJson(history);
+    getName();
+    if(token.isNotEmpty) {
+      var history = await ApiClass().getOrderHistory();
+      if (history != null) {
+        orderHistoryModel.value = OrderHistoryModel.fromJson(history);
+      }
     }
     getHistory.value = false;
   }
@@ -1348,6 +1567,7 @@ class DashboardController extends GetxController {
     getName();
     print("name : ${name.value}");
     String token = "";
+
     SharedPreferences.getInstance().then((prefs) {
       token = prefs.getString('token') ?? "";
     });
