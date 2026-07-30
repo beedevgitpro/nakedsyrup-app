@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../Resources/AppColors.dart';
 import '../../service.dart';
 import '../dashboard_flow/dashboard.dart';
 import 'login_page.dart';
@@ -44,23 +42,6 @@ class LoginFlowController extends GetxController {
         backgroundColor: Colors.white,
       );
     }
-    // if (confirmPassWordController.text.trim().isEmpty) {
-    //   isReset.value = false;
-    //
-    //   return Get.snackbar(
-    //     'Please enter confirm password',
-    //     "",
-    //     backgroundColor: Colors.white,
-    //   );
-    // }
-    // if (newPassWordController.text != confirmPassWordController.text) {
-    //   isReset.value = false;
-    //   return Get.snackbar(
-    //     'Passwords Mismatch',
-    //     "",
-    //     backgroundColor: Colors.white,
-    //   );
-    // }
     var data = await ApiClass().resetPass(emailController.text);
     print("data : $data :: ${data is String}");
     isReset.value = false;

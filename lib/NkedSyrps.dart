@@ -47,20 +47,23 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10),
-          child: ExpansionTile(
-            leading: Icon(
-              Icons.library_books,
-              color: AppColors.nakedSyrup,
-              size: 28,
-            ),
-            title: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                titleText,
-                style: TextStyle(fontSize: getFontSize(context, 1)),
+          child: Material(
+            color: Colors.white,
+            child: ExpansionTile(
+              leading: Icon(
+                Icons.library_books,
+                color: AppColors.nakedSyrup,
+                size: 28,
               ),
+              title: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  titleText,
+                  style: TextStyle(fontSize: getFontSize(context, 1)),
+                ),
+              ),
+              children: children,
             ),
-            children: children,
           ),
         ),
       ],
@@ -294,18 +297,24 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             ),
         Padding(
           padding: const EdgeInsets.only(top: 0, left: 10),
-          child: ColoredBox(
+          child: Material(
             color: Colors.white,
             child: ListTile(
-              leading: Icon(icon, color: AppColors.nakedSyrup, size: 28),
+              leading: Icon(
+                icon,
+                color: AppColors.nakedSyrup,
+                size: 28,
+              ),
               title: Text(
                 text,
-                style: TextStyle(fontSize: getFontSize(context, 1)),
+                style: TextStyle(
+                  fontSize: getFontSize(context, 1),
+                ),
               ),
               onTap: function,
             ),
           ),
-        ),
+        )
       ],
     );
   }

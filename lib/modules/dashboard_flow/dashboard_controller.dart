@@ -20,6 +20,7 @@ import '../../model/shipping_methods_model.dart';
 import '../../service.dart';
 import '../cart/cart_page.dart';
 import '../cart/paypal_payment.dart';
+import '../cart/thankyou_page.dart';
 import '../login_flow/login_page.dart';
 import 'dashboard.dart';
 
@@ -411,6 +412,7 @@ getShipping.value = false; }
     final hasInternet = await hasStableInternet();
 
     if (!hasInternet) {
+      placeOrder.value = false;
       Get.defaultDialog(
         title: 'Network Issue',
         middleText:
@@ -543,12 +545,12 @@ if(differentAddress.value && token.value.isNotEmpty) {
         "order_notes": orderNotesController.text,
       };
     }
-
+print("Mapp at orderplace : ${mapp}");
     // -------------------------------
     // API CALL
     // -------------------------------
     var shipping = await ApiClass().orderPlaced(mapp);
-
+print("shipping response of orderPlaced:$shipping ");
     if (shipping == null) {
       placeOrder.value = false;
       Get.snackbar(
@@ -574,87 +576,237 @@ if(differentAddress.value && token.value.isNotEmpty) {
     // -------------------------------
     // PAYPAL FLOW
     // -------------------------------
-    if (selectedPaymentMethods.value == 'ppcp') {
-      final orderId = shipping['order_id'];
-      final total = shipping['total'].toString();
+// -------------------------------
+// PAYPAL FLOW
+// -------------------------------
+    if (
+    selectedPaymentMethods.value ==
+        'ppcp'
+    ) {
+      final int? wooCommerceOrderId =
+      int.tryParse(
+        shipping['order_id'].toString(),
+      );
 
-      // 1. Create PayPal order
-      final paypal = await ApiClass().createPaypalOrder(orderId, total);
+      if (wooCommerceOrderId == null) {
+        placeOrder.value = false;
 
-      // 2. Open PayPal screen
-      final result = await Navigator.push(
+        Get.snackbar(
+          'PayPal Error',
+          'The WooCommerce order ID was not returned.',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      /*
+   * The backend calculates the total from the WooCommerce order.
+   * Do not send shipping['total'] to PayPal.
+   */
+      final Map<String, dynamic>? paypal =
+      await ApiClass().createPaypalOrder(
+        wooCommerceOrderId,
+      );
+
+      if (paypal == null) {
+        placeOrder.value = false;
+
+        Get.snackbar(
+          'PayPal Error',
+          'Unable to initialise PayPal payment.',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      if (paypal['success'] != true) {
+        placeOrder.value = false;
+
+        Get.snackbar(
+          'PayPal Error',
+          paypal['message']?.toString() ??
+              'PayPal order creation failed.',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      final String approvalUrl =
+          paypal['approveUrl']
+              ?.toString()
+              .trim() ??
+              '';
+
+      final String paypalOrderId =
+          paypal['orderID']
+              ?.toString()
+              .trim() ??
+              '';
+
+      if (
+      approvalUrl.isEmpty ||
+          paypalOrderId.isEmpty
+      ) {
+        placeOrder.value = false;
+
+        Get.snackbar(
+          'PayPal Error',
+          'PayPal did not return a valid approval URL.',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      final dynamic result =
+      await Navigator.of(
         Get.context!,
+      ).push(
         MaterialPageRoute(
-          builder:
-              (_) => PaypalWebView(
-                approvalUrl: paypal['approveUrl'],
-                orderID: paypal['orderID'],
-              ),
+          builder: (_) => PaypalWebView(
+            approvalUrl: approvalUrl,
+            paypalOrderId: paypalOrderId,
+            wooCommerceOrderId:
+            wooCommerceOrderId,
+          ),
         ),
       );
 
-      placeOrder.value = false;
-      print("Open PayPal screen result : $result");
-      // 3. Handle result
-      if (result != null && result['status'] == "success") {
-        showDialog<void>(
-          context: Get.context!,
+
+
+      debugPrint(
+        'PayPal screen result: $result',
+      );
+
+      if (
+      result is Map &&
+          result['status'] == 'success'
+      ) {
+        /*
+     * Refresh cart and order history after backend payment_complete().
+     */
+        cartCount.value = 0;
+        cartModel.value = CartModel();
+
+        if (token.value.isNotEmpty) {
+          await orderHistory();
+        }
+
+        if (Get.context == null) {
+          return;
+        }
+        placeOrder.value = false;
+        Get.to(ThankYouPage());
+        return;
+      }
+
+      if (
+      result is Map &&
+          result['status'] ==
+              'review_required'
+      ) {
+        placeOrder.value = false;
+        Get.defaultDialog(
+          title: 'Payment received',
+          middleText:
+          result['message']?.toString() ??
+              'Your PayPal payment was received and the order is being reviewed. Please do not submit another payment.',
+          textConfirm: 'OK',
           barrierDismissible: false,
-          // user must tap button!
-          builder: (BuildContext context) {
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return AlertDialog(
-                  title: Text(
-                    "Thank you for your order!",
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  content: const SizedBox(
-                    width: double.maxFinite,
-                    child: Text(
-                      "Your order has been successfully placed. We’ll notify you once it’s on the way.",
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll<Color>(
-                          AppColors.nakedSyrup,
-                        ),
-                        padding: WidgetStateProperty.all(
-                          const EdgeInsets.all(8),
-                        ),
-                      ),
-                      child: const Text(
-                        "Close",
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                      onPressed: () async {
-                        Get.offAll(const DashboardPage());
-                      },
-                    ),
-                  ],
-                );
-              },
+          onConfirm: () {
+            Get.offAll(
+              const DashboardPage(),
             );
           },
         );
-      } else {
-        Get.snackbar("Error", "Payment failed or cancelled");
+
+        return;
       }
 
-      return;
-    }
+      if (
+      result is Map &&
+          result['status'] == 'cancelled'
+      ) {
+        placeOrder.value = false;
+        Get.snackbar(
+          'Payment cancelled',
+          'Your order remains unpaid and your cart has been retained. You can try PayPal again.',
+          colorText: Colors.black87,
+          backgroundColor: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
 
+        return;
+      }
+
+      if (
+      result is Map &&
+          result['status'] ==
+              'confirmation_unknown'
+      ) {
+        placeOrder.value = false;
+        Get.defaultDialog(
+          title:
+          'Payment confirmation pending',
+          middleText:
+          'The PayPal response could not be confirmed. Please check your order history before trying to pay again.',
+          textConfirm: 'OK',
+          barrierDismissible: false,
+          onConfirm: () {
+            Get.offAll(
+              const DashboardPage(),
+            );
+          },
+        );
+
+        return;
+      }
+
+      final String failureMessage =
+      result is Map
+          ? result['message']?.toString() ??
+          'Payment could not be confirmed.'
+          : 'Payment could not be confirmed.';
+
+      Get.snackbar(
+        'PayPal payment not completed',
+        failureMessage,
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }else {
+      if(shipping['success'] == true){
+
+        cartCount.value = 0;
+        cartModel.value = CartModel();
+
+        if (token.value.isNotEmpty) {
+          await orderHistory();
+        }
+
+        if (Get.context == null) {
+          return;
+        }
+        placeOrder.value = false;
+        Get.to(ThankYouPage());
+
+        return;
+      }
+    }
     // -------------------------------
     // NON-PAYPAL SUCCESS
     // -------------------------------
@@ -1142,6 +1294,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
             icon: Icon(Icons.shopping_cart_outlined, size: 30),
             onPressed: () {
               Get.to(CartPage());
+
               // String token = "";
               // SharedPreferences.getInstance().then((prefs) {
               //   token = prefs.getString('token') ?? "";

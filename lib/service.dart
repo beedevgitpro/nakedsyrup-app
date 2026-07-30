@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getT;
@@ -60,7 +59,7 @@ void _showSessionExpiredSnackbar() {
     backgroundColor: Colors.white,
     duration: const Duration(seconds: 4),
   );
-  _logAuth('session expired snackbar shown');
+  _logAuth('session expired snack bar shown');
 }
 
 void _resetSessionExpiredSnackbarFlag() {
@@ -309,7 +308,20 @@ dynamic afterApiFire(response, apiurl) async {
   } else if (response.statusCode == 401) {
     _logAuth('afterApiFire 401 on $apiurl (handled by session logout)');
     return null;
-  } else {
+  } else if (
+  response.statusCode == 400
+  ) {
+    var decodedResponse =
+        response.data;
+
+    print("status code 400 : error msg : ${decodedResponse}");
+    getT.Get.snackbar(
+      "Technical Error ${response.statusCode}",
+      "Error : $decodedResponse",
+      colorText: Colors.red,
+      backgroundColor: Colors.white,
+    );
+  }  else {
     getT.Get.snackbar(
       "Technical Error ${response.statusCode}",
       "",
@@ -356,7 +368,7 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   //     dio.options.headers['Cookie'] = cookieHeader;
   //   }
   // }
-
+print("token $token");
   final headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -396,6 +408,208 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
       backgroundColor: Colors.white,
     );
     return null;
+  }
+}
+
+Future<Map<String, dynamic>?> dioPaypalPostApiCall(
+    String apiurl,
+    Map<String, dynamic> body,
+    ) async {
+  final SharedPreferences prefs =
+  await SharedPreferences.getInstance();
+
+  final String? token = prefs.getString('token');
+  final String guestToken =
+      prefs.getString('guest_token') ?? '';
+
+  final Map<String, dynamic> requestBody =
+  Map<String, dynamic>.from(body);
+
+  /*
+   * The WordPress backend uses the same guest token that was
+   * established for the app cart and checkout.
+   */
+  if (guestToken.isNotEmpty) {
+    requestBody['guest_token'] = guestToken;
+  }
+
+  final Map<String, dynamic> headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'User-Agent': 'MyFlutterApp/1.0 (Android)',
+  };
+
+  /*
+   * The existing Dio interceptor will also apply the token.
+   * Setting it here makes the PayPal request explicit and safe
+   * even if this helper is called before an interceptor refresh.
+   */
+  if (_hasValidSessionToken(token)) {
+    headers['Authorization'] = 'Bearer $token';
+  }
+
+  final String url =
+      '${AppStrings.baseUrl}$apiurl';
+
+  _logAuth(
+    'dioPaypalPostApiCall $apiurl '
+        'hasToken=${_hasValidSessionToken(token)} '
+        'hasGuestToken=${guestToken.isNotEmpty}',
+  );
+
+  try {
+    final Response<dynamic> response =
+    await dio
+        .post(
+      url,
+      data: requestBody,
+      options: Options(
+        headers: headers,
+
+        /*
+                 * PayPal endpoints intentionally return responses such as:
+                 *
+                 * 409 PAYPAL_ORDER_NOT_APPROVED
+                 * 409 PAYPAL_CAPTURE_AMOUNT_MISMATCH
+                 *
+                 * These must reach the controller rather than being
+                 * converted into a generic Dio exception.
+                 */
+        validateStatus: (status) {
+          return status != null &&
+              status >= 200 &&
+              status < 500;
+        },
+      ),
+    )
+        .timeout(
+      const Duration(seconds: 45),
+    );
+
+    final dynamic responseData = response.data;
+
+    Map<String, dynamic> decodedResponse;
+
+    if (responseData is Map<String, dynamic>) {
+      decodedResponse =
+      Map<String, dynamic>.from(responseData);
+    } else if (responseData is Map) {
+      decodedResponse =
+      Map<String, dynamic>.from(responseData);
+    } else if (responseData is String) {
+      final dynamic decoded =
+      jsonDecode(responseData);
+
+      if (decoded is Map) {
+        decodedResponse =
+        Map<String, dynamic>.from(decoded);
+      } else {
+        return {
+          'success': false,
+          'message':
+          'Invalid response from the payment server.',
+          'http_status': response.statusCode,
+        };
+      }
+    } else {
+      return {
+        'success': false,
+        'message':
+        'Invalid response from the payment server.',
+        'http_status': response.statusCode,
+      };
+    }
+
+    decodedResponse['http_status'] =
+        response.statusCode;
+
+    print(
+      '$apiurl response: $decodedResponse',
+    );
+
+    return decodedResponse;
+  } on TimeoutException {
+    _logAuth(
+      'PayPal request timed out: $apiurl',
+    );
+
+    return {
+      'success': false,
+      'code': 'PAYPAL_REQUEST_TIMEOUT',
+      'message':
+      'The PayPal request took too long to complete.',
+    };
+  } on DioException catch (e) {
+    if (
+    _isSessionExpiryError(e) ||
+        _isLoggingOut
+    ) {
+      _logAuth(
+        'PayPal request ended with session expiry: $apiurl',
+      );
+
+      return {
+        'success': false,
+        'code': 'SESSION_EXPIRED',
+        'message':
+        'Your session has expired. Please sign in again.',
+      };
+    }
+
+    _logAuth(
+      'PayPal DioException: '
+          '$apiurl '
+          'status=${e.response?.statusCode} '
+          'type=${e.type} '
+          'message=${e.message}',
+    );
+
+    final dynamic errorData =
+        e.response?.data;
+
+    if (errorData is Map) {
+      final Map<String, dynamic> response =
+      Map<String, dynamic>.from(errorData);
+
+      response['success'] =
+          response['success'] == true;
+
+      response['http_status'] =
+          e.response?.statusCode;
+
+      return response;
+    }
+
+    return {
+      'success': false,
+      'code': 'PAYPAL_CONNECTION_ERROR',
+      'message':
+      'Unable to connect to the PayPal payment service.',
+      'http_status':
+      e.response?.statusCode,
+    };
+  } on FormatException catch (e) {
+    _logAuth(
+      'PayPal invalid JSON: $apiurl $e',
+    );
+
+    return {
+      'success': false,
+      'code': 'PAYPAL_INVALID_RESPONSE',
+      'message':
+      'The payment server returned an invalid response.',
+    };
+  } catch (e) {
+    _logAuth(
+      'PayPal unexpected error: $apiurl $e',
+    );
+
+    return {
+      'success': false,
+      'code': 'PAYPAL_UNKNOWN_ERROR',
+      'message':
+      'Unable to process the PayPal request.',
+    };
   }
 }
 
@@ -614,22 +828,20 @@ class ApiClass {
   }
 
   FutureOr<dynamic> updateQuantity(productId, qty, variationId) async {
-    Map<String, dynamic> mappp = {};
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? guestToken = "";
     guestToken = prefs.getString("guest_token");
-    mappp.addIf(
-      prefs.getString("guest_token") != null &&
-          prefs.getString("guest_token")?.isNotEmpty == true,
-      'guest_token',
-      guestToken,
-    );
-    mappp = {
-      "product_id": productId,
-      "quantity": qty,
+    Map<String, dynamic> mappp = {
+      'product_id': productId,
+      'quantity': qty,
       'variation_id': variationId,
     };
+
+    if (guestToken != null &&
+        guestToken.isNotEmpty) {
+      mappp['guest_token'] = guestToken;
+    }
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('cart/update', formData);
 
@@ -646,30 +858,70 @@ class ApiClass {
     }
   }
 
-  FutureOr<dynamic> capturePaypal(String orderID) async {
-    Map<String, dynamic> mappp = {};
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<Map<String, dynamic>?>
+  capturePaypalOrder({
+    required int wooCommerceOrderId,
+    required String paypalOrderId,
+  }) async {
+    if (wooCommerceOrderId <= 0) {
+      return {
+        'success': false,
+        'code': 'INVALID_WC_ORDER_ID',
+        'message':
+        'A valid WooCommerce order ID is required.',
+      };
+    }
 
-    String? guestToken = "";
-    guestToken = prefs.getString("guest_token");
-    mappp.addIf(
-      prefs.getString("guest_token") != null &&
-          prefs.getString("guest_token")?.isNotEmpty == true,
-      'guest_token',
-      guestToken,
-    );
-    mappp = {"orderID": orderID};
-    print("map : $mappp");
-    FormData formData = FormData.fromMap(mappp);
-    var decodedResponse = await dioPostApiCall('capture-order', formData);
-    final transactionId =
-        decodedResponse['purchase_units']?[0]?['payments']?['captures']?[0]?['id'];
-    print("decodedResponse capture-order : ${decodedResponse}");
-    return {
-      "status": decodedResponse['status'],
-      "transactionId": transactionId,
-      "raw": decodedResponse,
+    final String cleanPaypalOrderId =
+    paypalOrderId.trim();
+
+    if (cleanPaypalOrderId.isEmpty) {
+      return {
+        'success': false,
+        'code': 'INVALID_PAYPAL_ORDER_ID',
+        'message':
+        'A valid PayPal order ID is required.',
+      };
+    }
+
+    final Map<String, dynamic> request = {
+      'wc_order_id': wooCommerceOrderId,
+      'orderID': cleanPaypalOrderId,
     };
+
+    final Map<String, dynamic>? response =
+    await dioPaypalPostApiCall(
+      'capture-order',
+      request,
+    );
+
+    if (response == null) {
+      return {
+        'success': false,
+        'code': 'CAPTURE_NO_RESPONSE',
+        'message':
+        'No response was received while confirming the PayPal payment.',
+      };
+    }
+
+    print(
+      'capture-order response: $response',
+    );
+
+    /*
+   * Do not turn backend 409 responses into null.
+   *
+   * The WebView/controller must inspect:
+   *
+   * response['success']
+   * response['status']
+   * response['code']
+   * response['message']
+   * response['transaction_id']
+   * response['already_paid']
+   * response['already_captured']
+   */
+    return response;
   }
 
   // Future createPaypalOrder(int orderId, String total) async {
@@ -682,32 +934,72 @@ class ApiClass {
   //   return jsonDecode(res.body);
   // }
 
-  FutureOr<dynamic> createPaypalOrder(int orderId, String total) async {
-    Map<String, dynamic> mappp = {};
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<Map<String, dynamic>?>
+  createPaypalOrder(
+      int wooCommerceOrderId,
+      ) async {
+    if (wooCommerceOrderId <= 0) {
+      return {
+        'success': false,
+        'code': 'INVALID_WC_ORDER_ID',
+        'message':
+        'A valid WooCommerce order ID is required.',
+      };
+    }
 
-    String? guestToken = "";
-    guestToken = prefs.getString("guest_token");
-    mappp.addIf(
-      prefs.getString("guest_token") != null &&
-          prefs.getString("guest_token")?.isNotEmpty == true,
-      'guest_token',
-      guestToken,
+    final Map<String, dynamic> request = {
+      'order_id': wooCommerceOrderId,
+    };
+
+    final Map<String, dynamic>? response =
+    await dioPaypalPostApiCall(
+      'create-paypal-order',
+      request,
     );
-    mappp = {"order_id": orderId, "total": total};
-    FormData formData = FormData.fromMap(mappp);
-    var decodedResponse = await dioPostApiCall('create-paypal-order', formData);
-    final transactionId =
-        decodedResponse['purchase_units']?[0]?['payments']?['captures']?[0]?['id'];
-    print("create-paypal-order decodedResponse : ${decodedResponse}");
-    // return {
-    //   "status": decodedResponse['status'],
-    //   "transactionId": transactionId,
-    //   "raw": decodedResponse,
-    // };
-    return decodedResponse;
-  }
 
+    if (response == null) {
+      return {
+        'success': false,
+        'message':
+        'No response was received while creating the PayPal order.',
+      };
+    }
+
+    print(
+      'create-paypal-order response: $response',
+    );
+
+    if (response['success'] != true) {
+      return response;
+    }
+
+    final String paypalOrderId =
+        response['orderID']
+            ?.toString()
+            .trim() ??
+            '';
+
+    final String approvalUrl =
+        response['approveUrl']
+            ?.toString()
+            .trim() ??
+            '';
+
+    if (
+    paypalOrderId.isEmpty ||
+        approvalUrl.isEmpty
+    ) {
+      return {
+        ...response,
+        'success': false,
+        'code': 'PAYPAL_CREATE_RESPONSE_INVALID',
+        'message':
+        'PayPal did not return a valid order ID and approval URL.',
+      };
+    }
+
+    return response;
+  }
   FutureOr<dynamic> shippingMethods(country, state, postcode, city) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
