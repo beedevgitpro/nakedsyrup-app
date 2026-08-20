@@ -29,6 +29,8 @@ void _resetCancelToken() {
   _cancelToken = CancelToken();
 }
 
+String getErrorMessage(int? statusCode) { switch (statusCode) { case 400: return "Invalid request. Please check your input."; case 401: return "Your session has expired. Please sign in again."; case 403: return "You don't have permission to perform this action."; case 404: return "The requested resource was not found."; case 408: return "The request timed out. Please try again."; case 409: return "A conflict occurred. Please try again."; case 422: return "The submitted data is invalid."; case 429: return "Too many requests. Please try again later."; case 500: return "An unexpected server error occurred. Please try again later."; case 502: return "The server is temporarily unavailable."; case 503: return "The service is currently unavailable. Please try again later."; case 504: return "The server took too long to respond. Please try again."; default: return "Something went wrong. Please try again."; } }
+
 /// Paths that must never trigger refresh or force-logout (login, refresh, public).
 bool _isAuthFreePath(String path) {
   const markers = [
@@ -322,12 +324,7 @@ dynamic afterApiFire(response, apiurl) async {
       backgroundColor: Colors.white,
     );
   }  else {
-    getT.Get.snackbar(
-      "Technical Error ${response.statusCode}",
-      "",
-      colorText: Colors.red,
-      backgroundColor: Colors.white,
-    );
+    getT.Get.snackbar( "Error", getErrorMessage(response?.statusCode), colorText: Colors.red, backgroundColor: Colors.white, );
   }
 }
 
@@ -355,20 +352,8 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   String? token = prefs.getString('token');
   final isLogin = apiurl == 'login';
 
-  // if (apiurl != 'login') {
-  //   if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
-  //       jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") !=
-  //           false) {
-  //     String? cookieHash = prefs.getString('cookie_hash');
-  //     final List<dynamic>? cookieList = jsonDecode(
-  //       prefs.getString('woocommerce_session_cookie') ?? "",
-  //     );
-  //     final cookieValue = cookieList?.join('|') ?? '';
-  //     final cookieHeader = "wp_woocommerce_session_$cookieHash=$cookieValue";
-  //     dio.options.headers['Cookie'] = cookieHeader;
-  //   }
-  // }
 print("token $token");
+
   final headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -402,8 +387,8 @@ print("token $token");
       'dioPostApiCall DioException: $apiurl type=${e.type} status=${e.response?.statusCode}',
     );
     getT.Get.snackbar(
-      "Technical Error",
-      "",
+      "Error",
+      getErrorMessage(e.response?.statusCode),
       colorText: Colors.red,
       backgroundColor: Colors.white,
     );
@@ -678,8 +663,8 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
       return afterApiFire(retryResponse, apiurl);
     } else {
       getT.Get.snackbar(
-        "Technical Error",
-        '',
+        "Error",
+        getErrorMessage(e.response?.statusCode),
         colorText: Colors.red,
         backgroundColor: Colors.white,
       );
@@ -688,7 +673,7 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
     print("Exception : $apiurl $e");
     getT.Get.snackbar(
       "Error",
-      '',
+      e.toString(),
       colorText: Colors.red,
       backgroundColor: Colors.white,
     );
@@ -741,6 +726,7 @@ class ApiClass {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> mappp = {};
     mappp = {"username": email, "password": password};
+    print("body  $mappp");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('login', formData);
 
@@ -1331,6 +1317,7 @@ class ApiClass {
     var decodedResponse = await dioGetApiCall('get-profile');
 
     if (decodedResponse['success'] == true) {
+      print("get-profile response: $decodedResponse");
       return decodedResponse;
     } else {
       getT.Get.snackbar(

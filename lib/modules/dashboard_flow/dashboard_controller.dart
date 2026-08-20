@@ -197,7 +197,6 @@ class DashboardController extends GetxController {
     if (addedd != null) {
       if (addedd['success'] == true) {
         findCart();
-        print("quantity update : ${addedd}");
       } else {
         getCart.value = false;
         Get.snackbar(
@@ -359,7 +358,7 @@ getShipping.value = false; }
   Future<bool> hasStableInternet() async {
     final connectivity = await Connectivity().checkConnectivity();
 
-    if (connectivity == ConnectivityResult.none) {
+    if (connectivity.contains(ConnectivityResult.none)) {
       return false;
     }
 
@@ -439,7 +438,6 @@ getShipping.value = false; }
           differentAddress.value
               ? (shippingAddressFormKey.currentState?.validate() ?? false)
               : true;
-print("valid: billingValid : $billingValid --- shippingValid : ${shippingValid} differentAddress.value : ${differentAddress.value}");
 if(differentAddress.value && token.value.isNotEmpty) {
   if (!billingValid || !shippingValid) {
     Get.snackbar(
@@ -545,12 +543,8 @@ if(differentAddress.value && token.value.isNotEmpty) {
         "order_notes": orderNotesController.text,
       };
     }
-print("Mapp at orderplace : ${mapp}");
-    // -------------------------------
-    // API CALL
-    // -------------------------------
+
     var shipping = await ApiClass().orderPlaced(mapp);
-print("shipping response of orderPlaced:$shipping ");
     if (shipping == null) {
       placeOrder.value = false;
       Get.snackbar(
@@ -865,8 +859,6 @@ print("shipping response of orderPlaced:$shipping ");
     var shipping = await ApiClass().getPriceDetails(mapp);
     if (shipping != null) {
       if (shipping['success'] == true) {
-        // priceModel.value = PriceModel();
-        print("shipping : ${shipping is Map}");
         priceModel.value = PriceModel.fromJson(shipping);
         getPriceDetails.value = false;
       } else {
@@ -981,12 +973,6 @@ print("shipping response of orderPlaced:$shipping ");
   updateProfile() async {
     if (addressFormKey.currentState?.validate() == true) {
       saveProfile.value = true;
-      print(
-        "addressFormKey validation : ${addressFormKey.currentState?.validate()}",
-      );
-      // print(
-      //   "addressFormKey validation : ${shippingAddressFormKey.currentState?.validate()}",
-      // );
 
       Map<String, dynamic> mapp = {};
       mapp = {
@@ -1064,8 +1050,6 @@ print("shipping response of orderPlaced:$shipping ");
         lastNormalController.text = profile['data']['last_name'];
         userNameController.text = profile['data']['display_name'];
         emailNormalController.text = profile['data']['email'];
-        print("billing is List : ${profile['data']['billing']}");
-        print("shipping is List : ${profile['data']['shipping'] is List}");
         firstNameController.text = profile['data']['billing'][0];
         lastNameController.text = profile['data']['billing'][1];
         companyNameController.text = profile['data']['billing'][2];
@@ -1088,9 +1072,6 @@ print("shipping response of orderPlaced:$shipping ");
         townDiffController.text = profile['data']['shipping'][5];
         postCodeDiffController.text = profile['data']['shipping'][6];
         selectedCountryDiff.value = profile['data']['shipping'][7];
-        print(
-          "shipping country selectedCountryDiff: ${profile['data']['shipping'][7].isEmpty} ",
-        );
         if (selectedCountryDiff.value.isNotEmpty) {
           getStateList(selectedCountryDiff.value, true);
         }
@@ -1109,7 +1090,7 @@ print("shipping response of orderPlaced:$shipping ");
     } else {
       getProfile.value = false;
       Get.snackbar(
-        "Quantity update error",
+        "Profile data cannot fetch",
         '',
         colorText: Colors.red,
         backgroundColor: Colors.white,
@@ -1231,11 +1212,9 @@ print("shipping response of orderPlaced:$shipping ");
     var addedd = await ApiClass().deleteItems(productId);
     if (addedd != null) {
       if (addedd['success'] == true) {
-        // findCart();
         getCart.value = false;
         cartModel.value = CartModel.fromJson(addedd);
         cartCount.value = cartModel.value.cartItems?.length ?? 0;
-        print("quantity update : ${addedd}");
       } else {
         getCart.value = false;
         Get.snackbar(
@@ -1283,7 +1262,34 @@ print("shipping response of orderPlaced:$shipping ");
 
   getPayByAcc() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    isPayByAcc.value = prefs.getString('pay_by_account') ?? "";
+    getData.value= true;
+    var profile = await ApiClass().getProfileDetails();
+    if (profile != null) {
+      if (profile['success'] == true) {
+        isPayByAcc.value = profile['data']['pay_by_account'];
+        getData.value= false;
+        await prefs.setString(
+          "pay_by_account",
+          profile['data']['pay_by_account'],
+        );
+      } else {
+        getData.value= false;
+        Get.snackbar(
+          profile['message'],
+          '',
+          colorText: Colors.red,
+          backgroundColor: Colors.white,
+        );
+      }
+    } else {
+      getData.value= false;
+      Get.snackbar(
+        "Profile data cannot fetch",
+        '',
+        colorText: Colors.red,
+        backgroundColor: Colors.white,
+      );
+    }
   }
 
   Widget cartUI() {
@@ -1368,7 +1374,6 @@ print("shipping response of orderPlaced:$shipping ");
   viewedProduct() async {
     getData.value = true;
     var dashboard = await ApiClass().mostViewedProduct();
-    print("dashboard : $dashboard");
     if (dashboard != null) {
       dashboardList.value = DashboardList.fromJson(dashboard);
     }
@@ -1378,7 +1383,6 @@ print("shipping response of orderPlaced:$shipping ");
   holidayNotification() async {
     getData.value = true;
     var notification = await ApiClass().notification();
-    print("notification : $notification");
     if (notification != null) {
       notificationDetail.value = NotificationModel.fromJson(notification);
     }
@@ -1411,7 +1415,6 @@ print("shipping response of orderPlaced:$shipping ");
 
   getStateList(code, isDiff) async {
     getCheckOut.value = true;
-    print("get statess : ${code}");
     if (code.toString().isNotEmpty) {
       var respose = await ApiClass().getState(code);
 
@@ -1563,7 +1566,6 @@ print("shipping response of orderPlaced:$shipping ");
       //   });
       // } else
 
-      print("product add response processs: ${added}");
       if (added['success'] != true) {
         addToBasket.value = false;
         // API responded but failed
@@ -1575,9 +1577,7 @@ print("shipping response of orderPlaced:$shipping ");
           backgroundColor: Colors.white,
         );
       } else {
-        print("cart updateddd : ${added['cart_items'].length}");
         cartModel.value = CartModel.fromJson(added);
-        print("cartitem length : ${cartModel.value.cartItems?.length}");
         cartCount.value = cartModel.value.cartItems?.length ?? 0;
         addToBasket.value = false;
       }
@@ -1596,7 +1596,6 @@ print("shipping response of orderPlaced:$shipping ");
       //   backgroundColor: Colors.white,
       // );
     } catch (e) {
-      print("Error : $e");
       addToBasket.value = false;
       Get.snackbar(
         "Error",
@@ -1607,8 +1606,6 @@ print("shipping response of orderPlaced:$shipping ");
     } finally {
       addToBasket.value = false;
       isProcessing = false;
-
-      // ✅ Start queue processing
       await _processQueue();
     }
   }
@@ -1624,7 +1621,6 @@ print("shipping response of orderPlaced:$shipping ");
         var added = await ApiClass()
             .addToCart(item['productId'], item['qty'], item['variationId'])
             .timeout(const Duration(seconds: 10));
-        print("product add response in processs: ${added}");
         if (added == null || added['success'] != true) {
           addToBasket.value = false;
           Get.snackbar(
@@ -1635,7 +1631,6 @@ print("shipping response of orderPlaced:$shipping ");
           );
         } else {
           cartModel.value = CartModel.fromJson(added);
-          print("cartitem length : ${cartModel.value.cartItems?.length}");
           cartCount.value = cartModel.value.cartItems?.length ?? 0;
         }
       } catch (_) {
@@ -1718,7 +1713,6 @@ print("shipping response of orderPlaced:$shipping ");
     // TODO: implement onInit
 
     getName();
-    print("name : ${name.value}");
     String token = "";
 
     SharedPreferences.getInstance().then((prefs) {

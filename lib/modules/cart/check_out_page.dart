@@ -1311,7 +1311,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 children: [
                                                   if (dashboardController
                                                           .isPayByAcc
-                                                          .value ==
+                                                          .value.toLowerCase() ==
                                                       'yes')
                                                     RadioListTile<String>(
                                                       value: 'cod',
@@ -2952,7 +2952,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                           children: [
                                             if (dashboardController
                                                     .isPayByAcc
-                                                    .value ==
+                                                    .value.toLowerCase() ==
                                                 'yes')
                                               RadioListTile<String>(
                                                 value: 'cod',

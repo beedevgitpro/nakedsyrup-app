@@ -173,7 +173,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/jalpa/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "flutter_cache_manager",
@@ -203,13 +203,13 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/jalpa/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///Users/jalpa/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "get",
@@ -219,7 +219,7 @@
     },
     {
       "name": "hooks",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/hooks-2.0.2",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/hooks-2.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -261,7 +261,7 @@
     },
     {
       "name": "jni",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/jni-1.0.2",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/jni-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -321,9 +321,9 @@
     },
     {
       "name": "matcher",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/matcher-0.12.19",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/matcher-0.12.20",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.10"
     },
     {
       "name": "material_color_utilities",
@@ -333,7 +333,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/meta-1.18.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/meta-1.19.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -471,7 +471,7 @@
     },
     {
       "name": "record_use",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/record_use-0.6.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/record_use-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -533,7 +533,7 @@
       "name": "sky_engine",
       "rootUri": "file:///Users/jalpa/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.11"
     },
     {
       "name": "source_span",
@@ -591,7 +591,7 @@
     },
     {
       "name": "synchronized",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/synchronized-3.4.1+1",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/synchronized-3.4.1+2",
       "packageUri": "lib/",
       "languageVersion": "3.12"
     },
@@ -603,9 +603,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/test_api-0.7.11",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/test_api-0.7.12",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.10"
     },
     {
       "name": "typed_data",
@@ -669,9 +669,9 @@
     },
     {
       "name": "vector_graphics",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_graphics-1.2.2",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_graphics-1.2.3",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "vector_graphics_codec",
@@ -687,9 +687,9 @@
     },
     {
       "name": "vector_math",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_math-2.2.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vector_math-2.4.2",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.10"
     },
     {
       "name": "vm_service",
@@ -711,7 +711,7 @@
     },
     {
       "name": "webview_flutter_android",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.13.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/webview_flutter_android-4.14.0",
       "packageUri": "lib/",
       "languageVersion": "3.12"
     },
@@ -771,8 +771,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.12.2",
+  "generatorVersion": "3.13.0",
   "flutterRoot": "file:///Users/jalpa/flutter",
-  "flutterVersion": "3.44.7",
+  "flutterVersion": "3.47.0",
   "pubCache": "file:///Users/jalpa/.pub-cache"
 }
