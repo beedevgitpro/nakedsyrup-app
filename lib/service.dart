@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getT;
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Resources/AppStrings.dart';
@@ -11,8 +12,44 @@ import 'modules/login_flow/login_page.dart';
 import 'network_helper.dart';
 
 final Dio dio = Dio(
-  BaseOptions(followRedirects: true, extra: {"withCredentials": true}),
+  BaseOptions(
+    followRedirects: true,
+    connectTimeout:
+    const Duration(seconds: 15),
+    receiveTimeout:
+    const Duration(seconds: 30),
+    sendTimeout:
+    const Duration(seconds: 30),
+    headers: const {
+      'Accept': 'application/json',
+    },
+  ),
 );
+
+String getDioErrorMessage(
+    DioException exception,
+    ) {
+  switch (exception.type) {
+    case DioExceptionType.connectionTimeout:
+    case DioExceptionType.sendTimeout:
+    case DioExceptionType.receiveTimeout:
+      return 'The request took too long. Please try again.';
+
+    case DioExceptionType.connectionError:
+      return 'Unable to connect. Please check your internet connection.';
+
+    case DioExceptionType.cancel:
+      return 'The request was cancelled.';
+
+    case DioExceptionType.badResponse:
+      return getErrorMessage(
+        exception.response?.statusCode,
+      );
+
+    default:
+      return 'Something went wrong. Please try again.';
+  }
+}
 
 CancelToken _cancelToken = CancelToken();
 bool _isRefreshing = false;
@@ -48,7 +85,10 @@ bool _hasValidSessionToken(String? token) =>
     token != null && token.isNotEmpty;
 
 void _logAuth(String message) {
-  print('[Auth] $message');
+  assert(() {
+    debugPrint('[Auth] $message');
+    return true;
+  }());
 }
 
 void _showSessionExpiredSnackbar() {
@@ -93,7 +133,6 @@ Future<void> initAuthSessionFromPrefs() async {
 }
 
 void setupDio() {
-  initAuthSessionFromPrefs();
 
   FutureOr<dynamic> refreshToken() async {
     if (_isLoggingOut || !_sessionActive) {
@@ -149,6 +188,7 @@ void setupDio() {
     }
     return null;
   }
+  dio.interceptors.clear();
 
   dio.interceptors.add(
     InterceptorsWrapper(
@@ -174,7 +214,8 @@ void setupDio() {
         );
 
         /// ✅ Check REAL internet connection
-        final hasInternet = await NetworkHelper.hasInternet();
+        InternetAddress.lookup('google.com');
+        final hasInternet = await InternetConnection().hasInternetAccess;
 
         if (!hasInternet) {
           /// ✅ Show dialog
@@ -263,6 +304,12 @@ void setupDio() {
     ),
   );
 }
+void debugApiLog(String message) {
+  assert(() {
+    debugPrint(message);
+    return true;
+  }());
+}
 
 Future<void> _forceLogout({String reason = 'unknown'}) async {
   if (_isLoggingOut) {
@@ -279,7 +326,11 @@ Future<void> _forceLogout({String reason = 'unknown'}) async {
   _cancelToken.cancel('Session expired: $reason');
 
   final prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
+  await Future.wait([
+    prefs.remove('token'),
+    prefs.remove('user_id'),
+    prefs.remove('name'),
+  ]);
   _clearDioAuthHeader();
   _resetCancelToken();
 
@@ -289,70 +340,55 @@ Future<void> _forceLogout({String reason = 'unknown'}) async {
   _logAuth('FORCE LOGOUT complete');
 }
 
-dynamic afterApiFire(response, apiurl) async {
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    var decodedResponse = response.data;
-    print("$apiurl responce : $decodedResponse");
+dynamic afterApiFire(
+    Response<dynamic> response,
+    String apiUrl,
+    ) {
+  final statusCode = response.statusCode;
+  final data = response.data;
 
-    if (decodedResponse != null) {
-      return decodedResponse;
-    } else {
-      getT.Get.snackbar(
-        "Could not get a valid response.",
-        "",
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-    }
-  } else if (response.statusCode == 400) {
-    var decodedResponse = response.data;
-    print("$apiurl responce with code 400 : $decodedResponse");
-  } else if (response.statusCode == 401) {
-    _logAuth('afterApiFire 401 on $apiurl (handled by session logout)');
-    return null;
-  } else if (
-  response.statusCode == 400
-  ) {
-    var decodedResponse =
-        response.data;
-
-    print("status code 400 : error msg : ${decodedResponse}");
-    getT.Get.snackbar(
-      "Technical Error ${response.statusCode}",
-      "Error : $decodedResponse",
-      colorText: Colors.red,
-      backgroundColor: Colors.white,
+  if (statusCode == 200 || statusCode == 201) {
+  debugApiLog(
+      '$apiUrl completed successfully.',
     );
-  }  else {
-    getT.Get.snackbar( "Error", getErrorMessage(response?.statusCode), colorText: Colors.red, backgroundColor: Colors.white, );
+
+    if (data != null) {
+      return data;
+    }
+
+    getT.Get.snackbar(
+      'Unable to complete request',
+      'The server returned an empty response.',
+      backgroundColor: Colors.white,
+      colorText: Colors.red,
+    );
+
+    return null;
   }
+
+  if (statusCode == 401) {
+    _logAuth(
+      '401 received from $apiUrl',
+    );
+
+    return null;
+  }
+
+  getT.Get.snackbar(
+    'Unable to complete request',
+    getErrorMessage(statusCode),
+    backgroundColor: Colors.white,
+    colorText: Colors.red,
+  );
+
+  return null;
 }
 
-// Future<String> buildUserAgent() async {
-//   final deviceInfo = DeviceInfoPlugin();
-//   String appVersion = AppStrings.version;
-//   String appName = "MyFlutterApp";
-//
-//   if (Platform.isAndroid) {
-//     final androidInfo = await deviceInfo.androidInfo;
-//     return '$appName/$appVersion (Android ${androidInfo.version.release}; ${androidInfo.model})';
-//   } else if (Platform.isIOS) {
-//     final iosInfo = await deviceInfo.iosInfo;
-//     return '$appName/$appVersion (iOS ${iosInfo.systemVersion}; ${iosInfo.utsname.machine})';
-//   } else if (Platform.isMacOS) {
-//     final macInfo = await deviceInfo.macOsInfo;
-//     return '$appName/$appVersion (macOS ${macInfo.osRelease}; ${macInfo.model})';
-//   } else {
-//     return '$appName/$appVersion (Unknown Platform)';
-//   }
-// }
 
 Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
   final isLogin = apiurl == 'login';
-
-print("token $token");
 
   final headers = {
     'Content-Type': 'application/json',
@@ -410,10 +446,6 @@ Future<Map<String, dynamic>?> dioPaypalPostApiCall(
   final Map<String, dynamic> requestBody =
   Map<String, dynamic>.from(body);
 
-  /*
-   * The WordPress backend uses the same guest token that was
-   * established for the app cart and checkout.
-   */
   if (guestToken.isNotEmpty) {
     requestBody['guest_token'] = guestToken;
   }
@@ -423,12 +455,6 @@ Future<Map<String, dynamic>?> dioPaypalPostApiCall(
     'Accept': 'application/json',
     'User-Agent': 'MyFlutterApp/1.0 (Android)',
   };
-
-  /*
-   * The existing Dio interceptor will also apply the token.
-   * Setting it here makes the PayPal request explicit and safe
-   * even if this helper is called before an interceptor refresh.
-   */
   if (_hasValidSessionToken(token)) {
     headers['Authorization'] = 'Bearer $token';
   }
@@ -451,15 +477,6 @@ Future<Map<String, dynamic>?> dioPaypalPostApiCall(
       options: Options(
         headers: headers,
 
-        /*
-                 * PayPal endpoints intentionally return responses such as:
-                 *
-                 * 409 PAYPAL_ORDER_NOT_APPROVED
-                 * 409 PAYPAL_CAPTURE_AMOUNT_MISMATCH
-                 *
-                 * These must reach the controller rather than being
-                 * converted into a generic Dio exception.
-                 */
         validateStatus: (status) {
           return status != null &&
               status >= 200 &&
@@ -608,7 +625,6 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
   _clearDioAuthHeader();
   if (_hasValidSessionToken(token)) {
     dio.options.headers["Authorization"] = "Bearer $token";
-    print("Bearer $token");
   }
 
   // if (jsonDecode(prefs.getString('woocommerce_session_cookie') ?? "") != "" &&
@@ -625,7 +641,6 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
   try {
     String url = '${AppStrings.baseUrl}$apiurl';
 
-    print("$apiurl URL::$url");
     final response = await dio.get(
       url,
       options: Options(headers: {"Accept": "application/json"}),
@@ -639,7 +654,6 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
       backgroundColor: Colors.white,
     );
   } on SocketException catch (e) {
-    print("SocketException $apiurl $e");
     getT.Get.snackbar(
       "SocketException",
       '',
@@ -647,7 +661,6 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
       backgroundColor: Colors.white,
     );
   } on DioException catch (e) {
-    print("DioException $apiurl $e");
     if (_isSessionExpiryError(e) || _isLoggingOut) {
       _logAuth('dioGetApiCall session ended: $apiurl');
       return null;
@@ -670,7 +683,6 @@ FutureOr<dynamic> dioGetApiCall(apiurl) async {
       );
     }
   } on Exception catch (e) {
-    print("Exception : $apiurl $e");
     getT.Get.snackbar(
       "Error",
       e.toString(),
@@ -726,7 +738,6 @@ class ApiClass {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> mappp = {};
     mappp = {"username": email, "password": password};
-    print("body  $mappp");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('login', formData);
 
@@ -781,7 +792,6 @@ class ApiClass {
       "quantity": qty,
       'variation_id': variationId,
     };
-    print("Mapp add-to cart :${mappp}");
     String? guestToken = "";
     guestToken = prefs.getString("guest_token");
     mappp.addIf(
@@ -799,7 +809,6 @@ class ApiClass {
           decodedResponse['guest_token'] != null) {
 
         await prefs.setString("guest_token", decodedResponse['guest_token']);
-        print("Found guest_token");
       }
       return decodedResponse;
     } else {
@@ -889,36 +898,8 @@ class ApiClass {
         'No response was received while confirming the PayPal payment.',
       };
     }
-
-    print(
-      'capture-order response: $response',
-    );
-
-    /*
-   * Do not turn backend 409 responses into null.
-   *
-   * The WebView/controller must inspect:
-   *
-   * response['success']
-   * response['status']
-   * response['code']
-   * response['message']
-   * response['transaction_id']
-   * response['already_paid']
-   * response['already_captured']
-   */
     return response;
   }
-
-  // Future createPaypalOrder(int orderId, String total) async {
-  //   final res = await http.post(
-  //     Uri.parse("https://nakedsyrups.com.au/wp-json/ns/v1/create-paypal-order"),
-  //     headers: {"Content-Type": "application/json"},
-  //     body: jsonEncode({"order_id": orderId, "total": total}),
-  //   );
-  //
-  //   return jsonDecode(res.body);
-  // }
 
   Future<Map<String, dynamic>?>
   createPaypalOrder(
@@ -998,7 +979,6 @@ class ApiClass {
       "city": city,
     };
 
-    print("mapp : ${mappp}");
     if (token == null || token.isEmpty) {
       String? guestToken = "";
       guestToken = prefs.getString("guest_token");
@@ -1021,8 +1001,6 @@ class ApiClass {
   }
 
   FutureOr<dynamic> orderPlaced(mapp) async {
-    print("form data : ${mapp}");
-
     FormData formData = FormData.fromMap(mapp);
     var decodedResponse = await dioPostApiCall('checkout', formData);
 
@@ -1048,7 +1026,6 @@ class ApiClass {
       guestToken = prefs.getString("guest_token");
       mapp.addIf(guestToken?.isNotEmpty, 'guest_token', guestToken);
     }
-    print("fees map  :$mapp ");
     var decodedResponse = await dioPostApiCall('extra-fees', jsonEncode(mapp));
     if (decodedResponse['success'] == true) {
       return decodedResponse;
@@ -1093,7 +1070,6 @@ class ApiClass {
       'guest_token',
       guestToken,
     );
-    print("Apply Coupon mapp : ${mappp}");
     FormData formData = FormData.fromMap(mappp);
     var decodedResponse = await dioPostApiCall('apply-coupon', formData);
 
@@ -1259,10 +1235,8 @@ class ApiClass {
       String? guestToken = "";
       guestToken = prefs.getString("guest_token");
       mappp = {'guest_token': guestToken};
-      print("Found guest_token : $guestToken");
     }
     FormData formData = FormData.fromMap(mappp);
-    print("Mapp : ${mappp.isNotEmpty}");
     var decodedResponse = await dioPostApiCall(
       'get-cart',
       mappp.isNotEmpty ? formData : {},
@@ -1317,7 +1291,6 @@ class ApiClass {
     var decodedResponse = await dioGetApiCall('get-profile');
 
     if (decodedResponse['success'] == true) {
-      print("get-profile response: $decodedResponse");
       return decodedResponse;
     } else {
       getT.Get.snackbar(
@@ -1394,87 +1367,4 @@ class ApiClass {
     }
   }
 
-  Future<void> verifyCaptcha(String token) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final response = await dio.post(
-      "https://www.nakedsyrups.com.au/verify-recaptcha.php",
-      options: Options(
-        headers: {
-          "Accept": "application/json",
-          'Authorization': 'Bearer ${prefs.getString('token')}',
-        },
-      ),
-      data: {'token': token},
-    );
-
-    if (response.statusCode == 200) {
-      final json = response.data;
-      if (json['success']) {
-        print("CAPTCHA verified ✅");
-      } else {
-        print("CAPTCHA failed ❌");
-      }
-    } else {
-      print("Server error");
-    }
-  }
-
-  FutureOr verifyCaptchaToken(String token) async {
-    try {
-      String url = 'https://www.nakedsyrups.com.au/verify-recaptcha.php';
-      print("verify URL::$url :: $token");
-      FormData formData = FormData.fromMap({'token': token});
-      final response = await dio.post(
-        url,
-        data: formData,
-        options: Options(headers: {"Accept": "application/json"}),
-      );
-      print("verify captcha : ${response}");
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        var decodedResponse = response.data;
-        print("verify captcha responce : $decodedResponse");
-        return decodedResponse;
-      } else {
-        getT.Get.snackbar(
-          "Technical Error",
-          "",
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
-      }
-    } on TimeoutException catch (_) {
-      getT.Get.snackbar(
-        "No Internet Connection",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-    } on SocketException catch (e) {
-      print(e);
-      getT.Get.snackbar(
-        "SocketException",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-    } on DioException catch (e) {
-      print("$e");
-      getT.Get.snackbar(
-        "Technical Error $e",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-
-      print("DioError:$e");
-    } on Exception catch (e) {
-      print("Error : $e");
-      getT.Get.snackbar(
-        "Technical Error",
-        '',
-        colorText: Colors.red,
-        backgroundColor: Colors.white,
-      );
-    }
-  }
 }

@@ -140,55 +140,33 @@ class DashboardController extends GetxController {
   TextEditingController userNameController = TextEditingController();
   TextEditingController pOController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  Future<void> handleRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 3), () {
-      completer.complete();
-    });
-    getName();
+  Future<void> handleRefresh() async  {
+
+ await    getName();
     getPayByAcc();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderHistory();
     });
 
-    return completer.future.then<void>((_) {
-      Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
-    });
   }
 
-  Future<void> historyRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 3), () {
-      completer.complete();
-    });
-    orderHistory();
-    return completer.future.then<void>((_) {
-      Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
-    });
+  Future<void> historyRefresh()async  {
+
+   await  orderHistory();
+
   }
 
-  Future<void> dashBoardRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 3), () {
-      completer.complete();
-    });
-    getName();
-    viewedProduct();
-    holidayNotification();
-    return completer.future.then<void>((_) {
-      Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
-    });
+  Future<void> dashBoardRefresh() async {
+    await Future.wait<void>([
+      getName().catchError((_) {}),
+      viewedProduct().catchError((_) {}),
+      holidayNotification().catchError((_) {}),
+    ]);
   }
+  Future<void> cartRefresh() async {
 
-  Future<void> cartRefresh() {
-    final Completer<void> completer = Completer<void>();
-    Timer(const Duration(seconds: 2), () {
-      completer.complete();
-    });
-    findCart();
-    return completer.future.then<void>((_) {
-      Get.snackbar('Refresh complete', "", snackPosition: SnackPosition.BOTTOM);
-    });
+   await findCart();
+
   }
 
   cartQuantityUpdate(productId, qty, variationId) async {
@@ -217,93 +195,94 @@ class DashboardController extends GetxController {
     }
   }
 
-  // getShippingMethods() async {
-  //   getShipping.value = true;
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   var shipping;
-  //   if (prefs.getString("guest_token") != null &&
-  //       prefs.getString("guest_token")?.isNotEmpty == true) {
-  //     shipping = await ApiClass().shippingMethods(
-  //       selectedCountry.value,
-  //       selectedState.value,
-  //       postCodeController.text,
-  //       townController.text,
-  //     );
-  //   } else if (differentAddress.value) {
-  //     shipping = await ApiClass().shippingMethods(
-  //       selectedCountryDiff.value,
-  //       selectedStateDiff.value,
-  //       postCodeDiffController.text,
-  //       townDiffController.text,
-  //     );
-  //   } else {
-  //     shipping = await ApiClass().shippingMethods(
-  //       selectedCountry.value,
-  //       selectedState.value,
-  //       postCodeController.text,
-  //       townController.text,
-  //     );
-  //   }
-  //   if (shipping != null) {
-  //     if (shipping['success'] == true) {
-  //       shippingMethodsModel.value = ShippingMethodsModel.fromJson(shipping);
-  //       // Get.to(ShippingDetailsPage());
-  //       getShipping.value = false;
-  //     } else {
-  //       getShipping.value = false;
-  //       Get.snackbar(
-  //         shipping['message'],
-  //         '',
-  //         colorText: Colors.red,
-  //         backgroundColor: Colors.white,
-  //       );
-  //     }
-  //   } else {
-  //     getShipping.value = false;
-  //   }
-  // }
-
-getShippingMethods() async {
-    getShipping.value = true;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isGuest = prefs.getString("guest_token") != null && prefs.getString("guest_token")!.isNotEmpty; String country; String state; String postcode; String town;
-    if (isGuest) {
-      country = selectedCountry.value;
-      state = selectedState.value;
-      postcode = postCodeController.text.trim();
-      town = townController.text.trim(); } else if (differentAddress.value)
-      { country = selectedCountryDiff.value;
-        state = selectedStateDiff.value;
-        postcode = postCodeDiffController.text.trim();
-        town = townDiffController.text.trim(); } else {
-      country = selectedCountry.value;
-      state = selectedState.value;
-      postcode = postCodeController.text.trim();
-      town = townController.text.trim(); } /// Validation
-if (country.isEmpty || state.isEmpty || postcode.isEmpty || town.isEmpty)
-{ getShipping.value = false;
-  Get.snackbar( 'Validation Error', 'Please fill all required shipping fields.', colorText: Colors.red, backgroundColor: Colors.white, ); return; }
-    final hasInternet = await hasStableInternet();
-
-    if (!hasInternet) {
-      Get.defaultDialog(
-        title: 'Network Issue',
-        middleText:
-        'Your internet connection appears to be unstable. Please check your connection and try again.',
-        textConfirm: 'OK',
-        onConfirm: () => Get.back(),
-      );
+  Future<void> getShippingMethods() async {
+    if (getShipping.value) {
       return;
     }
 
+    getShipping.value = true;
 
-var shipping = await ApiClass().shippingMethods( country, state, postcode, town, );
-if (shipping != null) {
-  if (shipping['success'] == true)
-  { shippingMethodsModel.value = ShippingMethodsModel.fromJson(shipping); }
-  else { Get.snackbar( shipping['message'] ?? 'Error', '', colorText: Colors.red, backgroundColor: Colors.white, ); } }
-getShipping.value = false; }
+    try {
+      final prefs =
+      await SharedPreferences.getInstance();
+
+      final guestToken =
+          prefs.getString('guest_token')?.trim() ?? '';
+
+      final bool isGuest =
+          guestToken.isNotEmpty;
+
+      late final String country;
+      late final String state;
+      late final String postcode;
+      late final String town;
+
+      if (isGuest) {
+        country = selectedCountry.value;
+        state = selectedState.value;
+        postcode = postCodeController.text.trim();
+        town = townController.text.trim();
+      } else if (differentAddress.value) {
+        country = selectedCountryDiff.value;
+        state = selectedStateDiff.value;
+        postcode =
+            postCodeDiffController.text.trim();
+        town = townDiffController.text.trim();
+      } else {
+        country = selectedCountry.value;
+        state = selectedState.value;
+        postcode = postCodeController.text.trim();
+        town = townController.text.trim();
+      }
+
+      if (country.isEmpty ||
+          state.isEmpty ||
+          postcode.isEmpty ||
+          town.isEmpty) {
+        Get.snackbar(
+          'Shipping Details',
+          'Please complete all required shipping fields.',
+          backgroundColor: Colors.white,
+          colorText: Colors.red,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      final response =
+      await ApiClass().shippingMethods(
+        country,
+        state,
+        postcode,
+        town,
+      );
+
+      if (response == null) {
+        return;
+      }
+
+      if (response['success'] == true) {
+        shippingMethodsModel.value =
+            ShippingMethodsModel.fromJson(
+              response,
+            );
+
+        return;
+      }
+
+      Get.snackbar(
+        'Shipping unavailable',
+        response['message']?.toString() ??
+            'Unable to calculate shipping for this address.',
+        backgroundColor: Colors.white,
+        colorText: Colors.red,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      getShipping.value = false;
+    }
+  }
 
   double calculateShipping() {
     double totalShipping = 0.0;
@@ -355,19 +334,11 @@ getShipping.value = false; }
     return total;
   }
 
-  Future<bool> hasStableInternet() async {
-    final connectivity = await Connectivity().checkConnectivity();
-
-    if (connectivity.contains(ConnectivityResult.none)) {
-      return false;
-    }
-
-    final hasInternet = await InternetConnection().hasInternetAccess;
-
-    return hasInternet;
-  }
 
   placeOrderApi() async {
+    if (placeOrder.value) {
+      return;
+    }
     if (emailController.text == null || emailController.text.trim().isEmpty) {
       return "Email address is required!";
     }
@@ -408,19 +379,6 @@ getShipping.value = false; }
 
     placeOrder.value = true;
     FocusScope.of(Get.context!).unfocus();
-    final hasInternet = await hasStableInternet();
-
-    if (!hasInternet) {
-      placeOrder.value = false;
-      Get.defaultDialog(
-        title: 'Network Issue',
-        middleText:
-            'Your internet connection appears to be unstable. Please check your connection and try again.',
-        textConfirm: 'OK',
-        onConfirm: () => Get.back(),
-      );
-      return;
-    }
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -442,7 +400,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
   if (!billingValid || !shippingValid) {
     Get.snackbar(
       'Checkout Error',
-      'Please complete all required checkout fiPlease login to apply this coupoelds.',
+      'Please complete all required checkout fields.',
       snackPosition: SnackPosition.BOTTOM,
     );
     placeOrder.value= false;
@@ -941,7 +899,11 @@ if(differentAddress.value && token.value.isNotEmpty) {
                                 final SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 Get.back();
-                                prefs.clear();
+                                await Future.wait([
+                                  prefs.remove('token'),
+                                  prefs.remove('user_id'),
+                                  prefs.remove('name'),
+                                ]);
                                 Get.offAll(LoginPage());
                               }
                             },
@@ -1168,7 +1130,11 @@ if(differentAddress.value && token.value.isNotEmpty) {
                           final SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           Get.back();
-                          prefs.clear();
+                          await Future.wait([
+                            prefs.remove('token'),
+                            prefs.remove('user_id'),
+                            prefs.remove('name'),
+                          ]);
                           Get.offAll(LoginPage());
                         },
                       ),

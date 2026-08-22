@@ -3,7 +3,7 @@
   "packages": [
     {
       "name": "archive",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/archive-4.0.9",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/archive-4.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -75,7 +75,7 @@
     },
     {
       "name": "code_assets",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/code_assets-1.2.1",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/code_assets-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -117,7 +117,7 @@
     },
     {
       "name": "dbus",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/dbus-0.7.13",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/dbus-0.7.15",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -219,7 +219,7 @@
     },
     {
       "name": "hooks",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/hooks-2.1.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/hooks-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -243,7 +243,7 @@
     },
     {
       "name": "image",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/image-4.9.1",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/image-4.9.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -357,7 +357,7 @@
     },
     {
       "name": "objective_c",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/objective_c-9.5.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/objective_c-9.6.0",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -471,7 +471,7 @@
     },
     {
       "name": "record_use",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/record_use-1.1.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/record_use-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -693,7 +693,7 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vm_service-15.2.0",
+      "rootUri": "file:///Users/jalpa/.pub-cache/hosted/pub.dev/vm_service-15.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -771,8 +771,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.13.0",
+  "generatorVersion": "3.13.1",
   "flutterRoot": "file:///Users/jalpa/flutter",
-  "flutterVersion": "3.47.0",
+  "flutterVersion": "3.47.1",
   "pubCache": "file:///Users/jalpa/.pub-cache"
 }

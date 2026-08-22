@@ -173,9 +173,9 @@ class _ProductListPageState extends State<ProductListPage> {
                                   .toStringAsFixed(2)
                                   .toString();
                           if (highPrice == lowPrice) {
-                            price = "\$${lowPrice}";
+                            price = "\$$lowPrice";
                           } else {
-                            price = "\$${lowPrice} - \$${highPrice}";
+                            price = "\$$lowPrice - \$$highPrice";
                           }
                         } else {
                           price =

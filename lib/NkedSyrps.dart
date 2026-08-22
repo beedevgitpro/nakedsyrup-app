@@ -246,7 +246,11 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                           drawersRow(context, Icons.logout, 'Logout', () async {
                             final SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
-                            await prefs.clear().then((value) {
+                            await Future.wait([
+                              prefs.remove('token'),
+                              prefs.remove('user_id'),
+                              prefs.remove('name'),
+                            ]).then((value) {
                               print("prefrence cleared  : $value");
                               if (value == true) {
                                 Get.offAll(() => LoginPage());

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,35 +5,29 @@ import '../dashboard_flow/dashboard.dart';
 import '../login_flow/login_page.dart';
 
 class SplashController extends GetxController {
-  void validateUser() async {
-    var savedData = await checkToken();
-    Timer(const Duration(seconds: 3), () async {
-      if (savedData != null && savedData == true) {
-        Get.offAll(DashboardPage());
-      } else {
-        Get.offAll(LoginPage());
-      }
-    });
-  }
-
-  checkToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getInt('user_id') != null) {
-      var type = prefs.getInt('user_id');
-      if (type != null) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
   @override
-  void onInit() {
+  void onReady() {
+    super.onReady();
     validateUser();
+  }
 
-    super.onInit();
+  Future<void> validateUser() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token')?.trim() ?? '';
+    final userId = prefs.getInt('user_id');
+
+    // Keep a very short splash delay for branding,
+    // not the current forced three-second delay.
+    await Future.delayed(
+      const Duration(milliseconds: 700),
+    );
+
+    if (token.isNotEmpty && userId != null) {
+      Get.offAll(() => const DashboardPage());
+      return;
+    }
+
+    Get.offAll(() => LoginPage());
   }
 }

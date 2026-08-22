@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -6,69 +6,94 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class NetworkHelper {
+  NetworkHelper._();
+
   static final Connectivity _connectivity = Connectivity();
+
+  static StreamSubscription<List<ConnectivityResult>>? _subscription;
+
   static DateTime? _lastDialogTime;
 
-  /// ✅ Only checks internet (NO dialog here)
+  static bool _dialogScheduled = false;
+
   static Future<bool> hasInternet() async {
     try {
-      final List<ConnectivityResult> connectivityResult =
-          await _connectivity.checkConnectivity();
+      final connectivity = await _connectivity.checkConnectivity();
 
-      // ❌ No network at all
-      if (connectivityResult == ConnectivityResult.none) {
+      if (connectivity.isEmpty ||
+          connectivity.contains(ConnectivityResult.none)) {
         return false;
       }
 
-      // ✅ Verify actual internet
-      final result = await InternetAddress.lookup('google.com');
-      final hasInternet = await InternetConnection().hasInternetAccess;
-
-      return result.isNotEmpty &&
-          result[0].rawAddress.isNotEmpty &&
-          hasInternet;
-    } on SocketException {
-      return false;
-    } catch (e) {
+      return await InternetConnection().hasInternetAccess;
+    } catch (_) {
       return false;
     }
   }
 
-  /// ✅ Global listener (optional but recommended)
   static void init() {
-    _connectivity.onConnectivityChanged.contains((ConnectivityResult result) {
-      if (result == ConnectivityResult.none) {
-        showNoInternetDialog();
+    _subscription?.cancel();
+
+    _subscription =
+        _connectivity.onConnectivityChanged.listen((results) async {
+          if (results.isEmpty ||
+              results.contains(ConnectivityResult.none)) {
+            showNoInternetDialog();
+            return;
+          }
+        });
+  }
+
+  static void showNoInternetDialog() {
+    if (_dialogScheduled) {
+      return;
+    }
+
+    if (Get.isDialogOpen == true) {
+      return;
+    }
+
+    final now = DateTime.now();
+
+    if (_lastDialogTime != null &&
+        now.difference(_lastDialogTime!).inSeconds < 10) {
+      return;
+    }
+
+    if (Get.context == null) {
+      return;
+    }
+
+    _lastDialogTime = now;
+    _dialogScheduled = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dialogScheduled = false;
+
+      if (Get.context == null || Get.isDialogOpen == true) {
+        return;
       }
+
+      Get.dialog(
+        AlertDialog(
+          title: const Text('No Internet Connection'),
+          content: const Text(
+            'Please check your internet connection and try again.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: Get.back,
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+        barrierDismissible: true,
+      );
     });
   }
 
-  /// ✅ Dialog logic
-  static void showNoInternetDialog() {
-    if (Get.isDialogOpen == true) return;
-
-    if (_lastDialogTime != null) {
-      final diff = DateTime.now().difference(_lastDialogTime!);
-      if (diff.inSeconds < 30) return;
-    }
-
-    _lastDialogTime = DateTime.now();
-
-    showDialog(
-      context: Get.context!,
-      barrierDismissible: false,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text("No Internet Connection"),
-          content: const Text("Please check your connection."),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Get.back(),
-              child: const Text("Close"),
-            ),
-          ],
-        );
-      },
-    );
+  static Future<void> dispose() async {
+    await _subscription?.cancel();
+    _subscription = null;
   }
 }

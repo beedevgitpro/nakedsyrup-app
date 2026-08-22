@@ -49,7 +49,11 @@ class LoginFlowController extends GetxController {
       if (data['success'] == true) {
         emailController.clear();
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.clear();
+        await Future.wait([
+          prefs.remove('token'),
+          prefs.remove('user_id'),
+          prefs.remove('name'),
+        ]);
         Get.offAll(LoginPage());
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       } else {
@@ -69,51 +73,111 @@ class LoginFlowController extends GetxController {
     isCerti.value = false;
   }
 
-  login() async {
-    if (emailController.text.trim().isEmpty) {
-      return Get.snackbar(
-        "Email field is empty",
-        '',
-        backgroundColor: Colors.white,
-      );
+  Future<void> login() async {
+    if (callLoginApi.value) {
+      return;
     }
-    if (passwordController.text.trim().isEmpty) {
-      return Get.snackbar(
-        "Password field is empty",
-        "",
-        backgroundColor: Colors.white,
-      );
-    }
-    callLoginApi.value = true;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    var loginApi = await ApiClass().loginApi(
-      emailController.text.trim(),
-      passwordController.text,
-    );
-    if (loginApi != null) {
-      if (loginApi['success'] == true) {
-        if (loginApi['user'] != null) {
-            Get.offAll(const DashboardPage());
 
-        } else {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.clear();
-          Get.offAll(LoginPage());
-        }
-        callLoginApi.value = false;
-        emailController.clear();
-        passwordController.clear();
-      } else {
-        callLoginApi.value = false;
-        Get.snackbar(
-          loginApi['message'],
-          '',
-          colorText: Colors.red,
-          backgroundColor: Colors.white,
-        );
+    final email =
+    emailController.text.trim();
+
+    final password =
+        passwordController.text;
+
+    if (email.isEmpty) {
+      Get.snackbar(
+        'Email required',
+        'Please enter your email address.',
+        backgroundColor: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar(
+        'Invalid email',
+        'Please enter a valid email address.',
+        backgroundColor: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
+    if (password.isEmpty) {
+      Get.snackbar(
+        'Password required',
+        'Please enter your password.',
+        backgroundColor: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
+    callLoginApi.value = true;
+
+    try {
+      final prefs =
+      await SharedPreferences.getInstance();
+
+      await Future.wait([
+        prefs.remove('token'),
+        prefs.remove('user_id'),
+        prefs.remove('name'),
+      ]);
+
+      final response =
+      await ApiClass().loginApi(
+        email,
+        password,
+      );
+
+      if (response == null) {
+        return;
       }
-    } else {
+
+      if (response['success'] != true) {
+        Get.snackbar(
+          'Unable to sign in',
+          response['message']?.toString() ??
+              'Please check your email and password.',
+          backgroundColor: Colors.white,
+          colorText: Colors.red,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        return;
+      }
+
+      if (response['user'] == null) {
+        await Future.wait([
+          prefs.remove('token'),
+          prefs.remove('user_id'),
+          prefs.remove('name'),
+        ]);
+
+        Get.snackbar(
+          'Unable to sign in',
+          'The account information could not be loaded.',
+          backgroundColor: Colors.white,
+          colorText: Colors.red,
+        );
+
+        return;
+      }
+
+      emailController.clear();
+      passwordController.clear();
+
+      await initAuthSessionFromPrefs();
+
+      Get.offAll(
+            () => const DashboardPage(),
+      );
+    } finally {
       callLoginApi.value = false;
     }
   }
@@ -123,4 +187,14 @@ class LoginFlowController extends GetxController {
     // TODO: implement onInit
     super.onInit();
   }
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    newPassWordController.dispose();
+    confirmPassWordController.dispose();
+
+    super.onClose();
+  }
+
 }
