@@ -49,11 +49,7 @@ class LoginFlowController extends GetxController {
       if (data['success'] == true) {
         emailController.clear();
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await Future.wait([
-          prefs.remove('token'),
-          prefs.remove('user_id'),
-          prefs.remove('name'),
-        ]);
+        prefs.clear();
         Get.offAll(LoginPage());
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       } else {
@@ -123,11 +119,7 @@ class LoginFlowController extends GetxController {
       final prefs =
       await SharedPreferences.getInstance();
 
-      await Future.wait([
-        prefs.remove('token'),
-        prefs.remove('user_id'),
-        prefs.remove('name'),
-      ]);
+      prefs.clear();
 
       final response =
       await ApiClass().loginApi(
@@ -153,12 +145,7 @@ class LoginFlowController extends GetxController {
       }
 
       if (response['user'] == null) {
-        await Future.wait([
-          prefs.remove('token'),
-          prefs.remove('user_id'),
-          prefs.remove('name'),
-        ]);
-
+        prefs.clear();
         Get.snackbar(
           'Unable to sign in',
           'The account information could not be loaded.',
@@ -187,14 +174,6 @@ class LoginFlowController extends GetxController {
     // TODO: implement onInit
     super.onInit();
   }
-  @override
-  void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
-    newPassWordController.dispose();
-    confirmPassWordController.dispose();
 
-    super.onClose();
-  }
 
 }

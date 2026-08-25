@@ -12,9 +12,9 @@ class AppStrings {
 
   static const String version = '1.7.0';
 
-  static const String termsAndCondition =
-      'REPLACE_WITH_NAKED_SYRUPS_TERMS_URL';
+  static const String returnPolicy = 'https://nakedsyrups.com.au/deliveries-returns/';
+  static const String contactUrl ='https://nakedsyrups.com.au/contact/';
 
   static const String privacyPolicy =
-      'REPLACE_WITH_NAKED_SYRUPS_PRIVACY_URL';
+      'https://nakedsyrups.com.au/privacy-policy/';
 }

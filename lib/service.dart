@@ -326,11 +326,7 @@ Future<void> _forceLogout({String reason = 'unknown'}) async {
   _cancelToken.cancel('Session expired: $reason');
 
   final prefs = await SharedPreferences.getInstance();
-  await Future.wait([
-    prefs.remove('token'),
-    prefs.remove('user_id'),
-    prefs.remove('name'),
-  ]);
+  prefs.clear();
   _clearDioAuthHeader();
   _resetCancelToken();
 

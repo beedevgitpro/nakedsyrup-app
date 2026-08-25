@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_controller.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/model/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -339,7 +337,7 @@ class DashboardController extends GetxController {
     if (placeOrder.value) {
       return;
     }
-    if (emailController.text == null || emailController.text.trim().isEmpty) {
+    if (emailController.text.trim().isEmpty) {
       return "Email address is required!";
     }
     if (!GetUtils.isEmail(emailController.text.trim())) {
@@ -385,9 +383,6 @@ class DashboardController extends GetxController {
     Map<String, dynamic> mapp = {};
     String? guestToken = prefs.getString("guest_token");
 
-    // -------------------------------
-    // BUILD REQUEST MAP (NO CHANGE)
-    // -------------------------------
     if (guestToken != null && guestToken.isNotEmpty) {
       addressFormKey.currentState?.save();
       final billingValid = addressFormKey.currentState?.validate() ?? false;
@@ -525,12 +520,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
       return;
     }
 
-    // -------------------------------
-    // PAYPAL FLOW
-    // -------------------------------
-// -------------------------------
-// PAYPAL FLOW
-// -------------------------------
     if (
     selectedPaymentMethods.value ==
         'ppcp'
@@ -553,11 +542,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
 
         return;
       }
-
-      /*
-   * The backend calculates the total from the WooCommerce order.
-   * Do not send shipping['total'] to PayPal.
-   */
       final Map<String, dynamic>? paypal =
       await ApiClass().createPaypalOrder(
         wooCommerceOrderId,
@@ -634,27 +618,19 @@ if(differentAddress.value && token.value.isNotEmpty) {
           ),
         ),
       );
-
-
-
       debugPrint(
         'PayPal screen result: $result',
       );
-
       if (
       result is Map &&
           result['status'] == 'success'
       ) {
-        /*
-     * Refresh cart and order history after backend payment_complete().
-     */
         cartCount.value = 0;
         cartModel.value = CartModel();
 
         if (token.value.isNotEmpty) {
           await orderHistory();
         }
-
         if (Get.context == null) {
           return;
         }
@@ -662,7 +638,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
         Get.to(ThankYouPage());
         return;
       }
-
       if (
       result is Map &&
           result['status'] ==
@@ -682,10 +657,8 @@ if(differentAddress.value && token.value.isNotEmpty) {
             );
           },
         );
-
         return;
       }
-
       if (
       result is Map &&
           result['status'] == 'cancelled'
@@ -698,7 +671,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
           backgroundColor: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-
         return;
       }
 
@@ -721,7 +693,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
             );
           },
         );
-
         return;
       }
 
@@ -759,9 +730,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
         return;
       }
     }
-    // -------------------------------
-    // NON-PAYPAL SUCCESS
-    // -------------------------------
     placeOrder.value = false;
   }
 
@@ -899,11 +867,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
                                 final SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 Get.back();
-                                await Future.wait([
-                                  prefs.remove('token'),
-                                  prefs.remove('user_id'),
-                                  prefs.remove('name'),
-                                ]);
+                                prefs.clear();
                                 Get.offAll(LoginPage());
                               }
                             },
@@ -1088,7 +1052,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
           showDialog<void>(
             context: Get.context!,
             barrierDismissible: false,
-            // user must tap button!
             builder: (BuildContext context) {
               return StatefulBuilder(
                 builder: (context, setState) {
@@ -1130,11 +1093,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
                           final SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           Get.back();
-                          await Future.wait([
-                            prefs.remove('token'),
-                            prefs.remove('user_id'),
-                            prefs.remove('name'),
-                          ]);
+                          prefs.clear();
                           Get.offAll(LoginPage());
                         },
                       ),
@@ -1266,47 +1225,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
             icon: Icon(Icons.shopping_cart_outlined, size: 30),
             onPressed: () {
               Get.to(CartPage());
-
-              // String token = "";
-              // SharedPreferences.getInstance().then((prefs) {
-              //   token = prefs.getString('token') ?? "";
-              //   if (token.isNotEmpty) {
-              //     Get.to(CartPage());
-              //   } else {
-              //     // Trigger dialog AFTER build
-              //     showDialog<void>(
-              //       context: Get.context!,
-              //       barrierDismissible: true,
-              //       builder: (BuildContext context) {
-              //         return AlertDialog(
-              //           title: Text(
-              //             "Please login to add products in cart.",
-              //             style: TextStyle(
-              //               fontSize: 18,
-              //               fontWeight: FontWeight.w800,
-              //             ),
-              //           ),
-              //           actions: <Widget>[
-              //             ElevatedButton(
-              //               style: ButtonStyle(
-              //                 backgroundColor: WidgetStatePropertyAll<Color>(
-              //                   AppColors.nakedSyrup,
-              //                 ),
-              //               ),
-              //               child: const Text(
-              //                 "Login",
-              //                 style: TextStyle(color: Colors.white),
-              //               ),
-              //               onPressed: () async {
-              //                 Get.offAll(LoginPage());
-              //               },
-              //             ),
-              //           ],
-              //         );
-              //       },
-              //     );
-              //   }
-              // });
             },
           ),
           if (cartCount.value > 0)
@@ -1478,35 +1396,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
     getProduct.value = false;
   }
 
-  // addToCart(productId, qty, variationId) async {
-  //   addToBasket.value = true;
-  //   var addedd = await ApiClass().addToCart(productId, qty, variationId);
-  //   if (addedd != null) {
-  //     if (addedd['success'] == true) {
-  //       findCart();
-  //       addToBasket.value = false;
-  //     } else {
-  //       addToBasket.value = false;
-  //       Get.snackbar(
-  //         addedd['message'],
-  //         '',
-  //         colorText: Colors.red,
-  //         backgroundColor: Colors.white,
-  //       );
-  //     }
-  //   } else {
-  //     addToBasket.value = false;
-  //     Get.snackbar(
-  //       "Error..",
-  //       '',
-  //       colorText: Colors.red,
-  //       backgroundColor: Colors.white,
-  //     );
-  //   }
-  // }
-
   Future<void> addToCart(productId, qty, variationId, index) async {
-    // If a request is already running, add to queue
     if (isProcessing) {
       cartQueue.add({
         'productId': productId,
@@ -1522,19 +1412,8 @@ if(differentAddress.value && token.value.isNotEmpty) {
     selectedd.value = index;
     try {
       var added = await ApiClass().addToCart(productId, qty, variationId);
-
-      // if (added == null) {
-      //   // No response → requeue
-      //   cartQueue.add({
-      //     'productId': productId,
-      //     'qty': qty,
-      //     'variationId': variationId,
-      //   });
-      // } else
-
       if (added['success'] != true) {
         addToBasket.value = false;
-        // API responded but failed
 
         Get.snackbar(
           added['message'] ?? "Failed to add to cart",
@@ -1549,18 +1428,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
       }
     } on TimeoutException catch (_) {
       addToBasket.value = false;
-      // Timeout → queue it again
-      // cartQueue.add({
-      //   'productId': productId,
-      //   'qty': qty,
-      //   'variationId': variationId,
-      // });
-      // Get.snackbar(
-      //   "Network timeout",
-      //   "Product added to queue. Will retry automatically.",
-      //   colorText: Colors.orange,
-      //   backgroundColor: Colors.white,
-      // );
     } catch (e) {
       addToBasket.value = false;
       Get.snackbar(
@@ -1601,16 +1468,12 @@ if(differentAddress.value && token.value.isNotEmpty) {
         }
       } catch (_) {
         addToBasket.value = false;
-        // If even retry fails, you can decide whether to requeue or skip
         continue;
       } finally {
         addToBasket.value = false;
         isProcessing = false;
       }
     }
-
-    // ✅ When queue is completely empty, call findCart() once
-    // findCart();
   }
 
   Widget holidayCard() {
@@ -1621,7 +1484,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
     DateTime? endDate = DateTime.tryParse(end ?? "");
 
     if (startDate == null || endDate == null) {
-      return const SizedBox(); // Hide widget or handle UI safely
+      return const SizedBox();
     }
 
     DateTime now = DateTime.now();

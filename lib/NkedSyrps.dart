@@ -188,7 +188,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                       Get.to(
                         WebViewApp(
                           name: 'Privacy Policy',
-                          url: 'https://nakedsyrups.com.au/privacy-policy/',
+                          url: AppStrings.privacyPolicy,
                         ),
                       );
                     },
@@ -202,7 +202,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                       Get.to(
                         WebViewApp(
                           name: 'Deliveries and Returns',
-                          url: 'https://nakedsyrups.com.au/deliveries-returns/',
+                          url: AppStrings.returnPolicy,
                         ),
                       );
                     },
@@ -216,7 +216,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                       Get.to(
                         WebViewApp(
                           name: 'Contact Us',
-                          url: 'https://nakedsyrups.com.au/contact/',
+                          url: AppStrings.contactUrl,
                         ),
                       );
                     },
@@ -246,11 +246,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                           drawersRow(context, Icons.logout, 'Logout', () async {
                             final SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
-                            await Future.wait([
-                              prefs.remove('token'),
-                              prefs.remove('user_id'),
-                              prefs.remove('name'),
-                            ]).then((value) {
+                            await prefs.clear().then((value) {
                               print("prefrence cleared  : $value");
                               if (value == true) {
                                 Get.offAll(() => LoginPage());

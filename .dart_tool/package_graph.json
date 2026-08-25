@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "naked_syrups",
-      "version": "1.7.0+57",
+      "version": "1.7.0+59",
       "dependencies": [
         "cached_network_image",
         "carousel_slider",
@@ -1047,7 +1047,7 @@
     },
     {
       "name": "archive",
-      "version": "4.1.0",
+      "version": "4.2.0",
       "dependencies": [
         "path",
         "posix"
