@@ -91,16 +91,16 @@ class LoginFlowController extends GetxController {
       return;
     }
 
-    if (!GetUtils.isEmail(email)) {
-      Get.snackbar(
-        'Invalid email',
-        'Please enter a valid email address.',
-        backgroundColor: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
-      return;
-    }
+    // if (!GetUtils.isEmail(email)) {
+    //   Get.snackbar(
+    //     'Invalid email',
+    //     'Please enter a valid email address.',
+    //     backgroundColor: Colors.white,
+    //     snackPosition: SnackPosition.BOTTOM,
+    //   );
+    //
+    //   return;
+    // }
 
     if (password.isEmpty) {
       Get.snackbar(

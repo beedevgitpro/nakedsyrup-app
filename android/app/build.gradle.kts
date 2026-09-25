@@ -1,6 +1,6 @@
-import java.util.Properties
 import java.io.FileInputStream
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -9,20 +9,22 @@ plugins {
 
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
+
 if (localPropertiesFile.exists()) {
     localPropertiesFile.reader(Charsets.UTF_8).use {
         localProperties.load(it)
     }
 }
 
-val flutterRoot = localProperties.getProperty("flutter.sdk")
-    ?: throw GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+val flutterVersionCode =
+    localProperties.getProperty("flutter.versionCode")?.toInt() ?: 1
 
-val flutterVersionCode = localProperties.getProperty("flutter.versionCode")?.toInt() ?: 1
-val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+val flutterVersionName =
+    localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
+
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
@@ -35,6 +37,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+    kotlinOptions {
+        jvmTarget = "21"
     }
 
     defaultConfig {
@@ -49,7 +54,9 @@ android {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String?
             keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+            storeFile = keystoreProperties["storeFile"]?.let {
+                file(it as String)
+            }
             storePassword = keystoreProperties["storePassword"] as String?
         }
     }
@@ -60,6 +67,14 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(
+            org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+        )
     }
 }
 

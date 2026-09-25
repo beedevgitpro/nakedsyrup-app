@@ -272,6 +272,51 @@ class LoginPage extends StatelessWidget {
                                           text: TextSpan(
                                             children: [
                                               TextSpan(
+                                                text: "Lost your password?",
+                                                style: TextStyle(
+                                                  color: AppColors.nakedSyrup,
+                                                  fontFamily: "Montserrat",
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: getFontSize(
+                                                    context,
+                                                    -3,
+                                                  ),
+                                                ),
+                                                recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Get.to(
+                                                      WebViewApp(
+                                                        name: 'Lost your password?',
+                                                        url: AppStrings.lostPassword,
+                                                      ),
+                                                    );
+                                                  },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 0,
+                                        left: 5,
+                                        right: 0,
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {},
+                                        child: RichText(
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.end,
+                                          softWrap: true,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
                                                 text: "Login as a ",
                                                 style: TextStyle(
                                                   color: Colors.black87,
