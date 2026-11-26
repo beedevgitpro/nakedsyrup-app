@@ -96,8 +96,9 @@ class _ProductPageState extends State<ProductPage> {
       }
     } else {
       price =
-          widget.products.showGst == true ? "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)} + GST" :"\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
+          "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
     }
+    price += widget.products.gstPriceSuffix;
     super.initState();
   }
 
@@ -553,8 +554,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                         .selectedVariations
                                                                         .value
                                                                         .price
-                                                                ?widget.products.showGst ==true ? "  \$${dashboardController.selectedVariations.value.price} + GST" : "  \$${dashboardController.selectedVariations.value.price}"
-                                                                : widget.products.showGst ==true ? "  \$${dashboardController.selectedVariations.value.salePrice} + GST": "  \$${dashboardController.selectedVariations.value.salePrice}",
+                                                                ? "  \$${dashboardController.selectedVariations.value.price}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}"
+                                                                : "  \$${dashboardController.selectedVariations.value.salePrice}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}",
                                                         style: TextStyle(
                                                           color:
                                                               AppColors
@@ -1315,7 +1316,7 @@ class _ProductPageState extends State<ProductPage> {
                                                                 .regularPrice
                                                         ? TextSpan(
                                                           text:
-                                                       "\$${dashboardController.selectedVariations.value.regularPrice}",
+                                                              "\$${dashboardController.selectedVariations.value.regularPrice}",
                                                           style: TextStyle(
                                                             decoration:
                                                                 TextDecoration
@@ -1348,8 +1349,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                       .selectedVariations
                                                                       .value
                                                                       .price
-                                                              ? widget.products.showGst == true ? "\$${dashboardController.selectedVariations.value.price} + GST": "  \$${dashboardController.selectedVariations.value.price}"
-                                                              :widget.products.showGst == true ? "  \$${dashboardController.selectedVariations.value.salePrice} + GST":  "  \$${dashboardController.selectedVariations.value.salePrice}",
+                                                              ? "  \$${dashboardController.selectedVariations.value.price}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}"
+                                                              : "  \$${dashboardController.selectedVariations.value.salePrice}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors

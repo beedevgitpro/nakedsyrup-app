@@ -401,8 +401,7 @@ Future<dynamic> dioPostApiCall(String apiurl, dynamic body) async {
           ? '${AppStrings.extraFeesUrl}$apiurl'
           : '${AppStrings.baseUrl}$apiurl';
   _logAuth('dioPostApiCall $apiurl (login=$isLogin hasToken=${_hasValidSessionToken(token)})');
-print("body : $body : "
-    "token : $token");
+
   try {
     final response = await dio.post(
       url,
