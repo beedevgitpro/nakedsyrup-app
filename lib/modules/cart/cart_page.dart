@@ -194,30 +194,37 @@ class _CartPageState extends State<CartPage> {
                                                     // textAlign: TextAlign.center,
                                                   ),
                                                 ),
-                                                Text(
-                                                  dashboardController
-                                                              .cartModel
-                                                              .value
-                                                              .cartItems?[j]
-                                                              .currentPrice !=
-                                                          null
-                                                      ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)}"
-                                                      : "0.0",
-                                                  style: TextStyle(
-                                                    color: AppColors.nakedSyrup,
-                                                    fontFamily:
-                                                        'Euclid Circular B',
-                                                    fontSize:
-                                                        Get.width >= 600
-                                                            ? getFontSize(
-                                                              context,
-                                                              2,
-                                                            )
-                                                            : getFontSize(
-                                                              context,
-                                                              -1,
-                                                            ),
-                                                    fontWeight: FontWeight.w800,
+                                                Flexible(
+                                                  child: Text(
+                                                    dashboardController
+                                                                .cartModel
+                                                                .value
+                                                                .cartItems?[j]
+                                                                .currentPrice !=
+                                                            null
+                                                        ? (dashboardController.cartModel.value.cartItems?[j].showGst==true) ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)} + GST" :  "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                        : "0.0",
+                                                    softWrap: true,
+                                                    overflow:
+                                                    TextOverflow.visible,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                      color: AppColors.nakedSyrup,
+
+                                                      fontFamily:
+                                                          'Euclid Circular B',
+                                                      fontSize:
+                                                          Get.width >= 600
+                                                              ? getFontSize(
+                                                                context,
+                                                                2,
+                                                              )
+                                                              : getFontSize(
+                                                                context,
+                                                                -1,
+                                                              ),
+                                                      fontWeight: FontWeight.w800,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

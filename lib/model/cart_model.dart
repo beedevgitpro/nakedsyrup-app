@@ -182,6 +182,8 @@ class CartItems {
     dynamic quantity,
     dynamic regularPrice,
     dynamic salePrice,
+    String? taxStatus,
+    bool? showGst,
     dynamic currentPrice,
     dynamic currentPriceFormatted,
     dynamic lineSubtotal,
@@ -195,6 +197,8 @@ class CartItems {
     _quantity = quantity;
     _regularPrice = regularPrice;
     _salePrice = salePrice;
+    _taxStatus   = taxStatus;
+    _showGst = showGst;
     _currentPrice = currentPrice;
     _currentPriceFormatted = currentPriceFormatted;
     _lineSubtotal = lineSubtotal;
@@ -209,6 +213,8 @@ class CartItems {
     _productName = json['product_name'];
     _quantity = json['quantity'];
     _regularPrice = json['regular_price'];
+    _taxStatus = json['tax_status'];
+    _showGst = json['show_gst'];
     _salePrice = json['sale_price'];
     _currentPrice = json['current_price'];
     _currentPriceFormatted = json['current_price_formatted'];
@@ -223,6 +229,8 @@ class CartItems {
   dynamic _quantity;
   dynamic _regularPrice;
   dynamic _salePrice;
+  String? _taxStatus;
+  bool? _showGst;
   dynamic _currentPrice;
   dynamic _currentPriceFormatted;
   dynamic _lineSubtotal;
@@ -237,6 +245,8 @@ class CartItems {
     dynamic regularPrice,
     dynamic salePrice,
     dynamic currentPrice,
+    bool? showGst,
+    String? taxStatus,
     dynamic currentPriceFormatted,
     dynamic lineSubtotal,
     dynamic lineSubtotalFormatted,
@@ -249,6 +259,8 @@ class CartItems {
     quantity: quantity ?? _quantity,
     regularPrice: regularPrice ?? _regularPrice,
     salePrice: salePrice ?? _salePrice,
+    taxStatus: taxStatus ?? _taxStatus,
+    showGst: showGst ?? _showGst,
     currentPrice: currentPrice ?? _currentPrice,
     currentPriceFormatted: currentPriceFormatted ?? _currentPriceFormatted,
     lineSubtotal: lineSubtotal ?? _lineSubtotal,
@@ -259,6 +271,8 @@ class CartItems {
   dynamic get productId => _productId;
   dynamic get variationId => _variationId;
   dynamic get productName => _productName;
+  String? get taxStatus => _taxStatus;
+  bool? get showGst => _showGst;
   dynamic get quantity => _quantity;
   dynamic get regularPrice => _regularPrice;
   dynamic get salePrice => _salePrice;
@@ -275,6 +289,8 @@ class CartItems {
     map['variation_id'] = _variationId;
     map['product_name'] = _productName;
     map['quantity'] = _quantity;
+    map['tax_status'] = _taxStatus;
+    map['show_gst'] = _showGst;
     map['regular_price'] = _regularPrice;
     map['sale_price'] = _salePrice;
     map['current_price'] = _currentPrice;

@@ -44,6 +44,8 @@ class Products {
     String? price,
     String? regularPrice,
     String? salePrice,
+    String? taxStatus,
+    bool? showGst,
     String? stockStatus,
     String? image,
     List<String>? gallery,
@@ -58,7 +60,9 @@ class Products {
     _name = name;
     _price = price;
     _regularPrice = regularPrice;
+    _taxStatus   = taxStatus;
     _salePrice = salePrice;
+    _showGst = showGst;
     _stockStatus = stockStatus;
     _image = image;
     _gallery = gallery;
@@ -77,6 +81,8 @@ class Products {
     _salePrice = json['sale_price'];
     _stockStatus = json['stock_status'];
     _image = json['image'];
+    _taxStatus = json['tax_status'];
+    _showGst = json['show_gst'];
     _gallery = json['gallery'] != null ? json['gallery'].cast<String>() : [];
     _shortDescription = json['short_description'];
     _recipes = json['recipes'];
@@ -94,6 +100,8 @@ class Products {
   String? _name;
   String? _price;
   String? _regularPrice;
+  String? _taxStatus;
+  bool? _showGst;
   String? _salePrice;
   String? _stockStatus;
   String? _image;
@@ -110,6 +118,8 @@ class Products {
     String? regularPrice,
     String? salePrice,
     String? stockStatus,
+    String? taxStatus,
+    bool? showGst,
     String? image,
     List<String>? gallery,
     String? shortDescription,
@@ -125,6 +135,8 @@ class Products {
     salePrice: salePrice ?? _salePrice,
     stockStatus: stockStatus ?? _stockStatus,
     image: image ?? _image,
+    taxStatus: taxStatus ?? _taxStatus,
+    showGst: showGst ?? _showGst,
     gallery: gallery ?? _gallery,
     shortDescription: shortDescription ?? _shortDescription,
     recipes: recipes ?? _recipes,
@@ -140,6 +152,8 @@ class Products {
   String? get salePrice => _salePrice;
   String? get stockStatus => _stockStatus;
   String? get image => _image;
+  String? get taxStatus => _taxStatus;
+  bool? get showGst => _showGst;
   List<String>? get gallery => _gallery;
   String? get shortDescription => _shortDescription;
   String? get recipes => _recipes;
@@ -156,6 +170,8 @@ class Products {
     map['sale_price'] = _salePrice;
     map['stock_status'] = _stockStatus;
     map['image'] = _image;
+    map['tax_status'] = _taxStatus;
+    map['show_gst'] = _showGst;
     map['gallery'] = _gallery;
     map['short_description'] = _shortDescription;
     map['recipes'] = _recipes;

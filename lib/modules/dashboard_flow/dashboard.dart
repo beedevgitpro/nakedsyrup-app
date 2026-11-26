@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:new_version_plus/new_version_plus.dart';
-
 import '../../NkedSyrps.dart';
 import '../../Resources/AppColors.dart';
 import '../../model/order_history_model.dart';
@@ -205,7 +204,6 @@ class _DashboardPageState extends State<DashboardPage>
                                   childAspectRatio: 0.95,
                                 ),
                             physics: ScrollPhysics(),
-
                             itemBuilder: (context, j) {
                               return InkWell(
                                 onTap: () {
@@ -387,7 +385,6 @@ class _DashboardPageState extends State<DashboardPage>
                                           .orders
                                           ?.length ??
                                       0,
-
                                   physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, j) {
                                     String date =
@@ -1053,25 +1050,6 @@ class _DashboardPageState extends State<DashboardPage>
                         );
                       } else {
                         return const SizedBox();
-                        //   Center(
-                        //   child: Card(
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.symmetric(
-                        //         vertical: 8,
-                        //         horizontal: 15,
-                        //       ),
-                        //       child: Text(
-                        //         "No recent viewed products",
-                        //         style: TextStyle(
-                        //           fontSize: getFontSize(context, 3),
-                        //           fontFamily: 'Montserrat',
-                        //           fontWeight: FontWeight.bold,
-                        //           color: AppColors.lightColor,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // );
                       }
                     }
                   }),

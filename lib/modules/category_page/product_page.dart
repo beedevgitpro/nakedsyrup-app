@@ -96,7 +96,7 @@ class _ProductPageState extends State<ProductPage> {
       }
     } else {
       price =
-          "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
+          widget.products.showGst == true ? "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)} + GST" :"\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
     }
     super.initState();
   }
@@ -553,8 +553,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                         .selectedVariations
                                                                         .value
                                                                         .price
-                                                                ? "  \$${dashboardController.selectedVariations.value.price}"
-                                                                : "  \$${dashboardController.selectedVariations.value.salePrice}",
+                                                                ?widget.products.showGst ==true ? "  \$${dashboardController.selectedVariations.value.price} + GST" : "  \$${dashboardController.selectedVariations.value.price}"
+                                                                : widget.products.showGst ==true ? "  \$${dashboardController.selectedVariations.value.salePrice} + GST": "  \$${dashboardController.selectedVariations.value.salePrice}",
                                                         style: TextStyle(
                                                           color:
                                                               AppColors
@@ -1315,7 +1315,7 @@ class _ProductPageState extends State<ProductPage> {
                                                                 .regularPrice
                                                         ? TextSpan(
                                                           text:
-                                                              "\$${dashboardController.selectedVariations.value.regularPrice}",
+                                                       "\$${dashboardController.selectedVariations.value.regularPrice}",
                                                           style: TextStyle(
                                                             decoration:
                                                                 TextDecoration
@@ -1348,8 +1348,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                       .selectedVariations
                                                                       .value
                                                                       .price
-                                                              ? "  \$${dashboardController.selectedVariations.value.price}"
-                                                              : "  \$${dashboardController.selectedVariations.value.salePrice}",
+                                                              ? widget.products.showGst == true ? "\$${dashboardController.selectedVariations.value.price} + GST": "  \$${dashboardController.selectedVariations.value.price}"
+                                                              :widget.products.showGst == true ? "  \$${dashboardController.selectedVariations.value.salePrice} + GST":  "  \$${dashboardController.selectedVariations.value.salePrice}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors

@@ -1508,14 +1508,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       context,
                                                       fee,
                                                     ) {
+                                                      final feeItem = dashboardController.priceModel.value.fees?[fee];
+                                                      final isTaxedShipping =
+                                                          feeItem?.name.toString() == 'Shipping' &&
+                                                              dashboardController.priceModel.value.hasTaxableProducts == true;
                                                       return Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .end,
                                                         children: [
                                                           Text(
-                                                            "${dashboardController.priceModel.value.fees?[fee].name} : ",
-                                                            style: TextStyle(
+                                                            isTaxedShipping
+                                                                ? "${feeItem?.name} (+GST) : "
+                                                                : "${feeItem?.name} : ",                                                            style: TextStyle(
                                                               color:
                                                                   Colors.black,
                                                               fontFamily:
@@ -3130,13 +3135,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       ?.length ??
                                                   0,
                                               itemBuilder: (context, fee) {
+                                                final feeItem = dashboardController.priceModel.value.fees?[fee];
+                                                final isTaxedShipping =
+                                                    feeItem?.name.toString() == 'Shipping' &&
+                                                        dashboardController.priceModel.value.hasTaxableProducts == true;
+
                                                 return Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.end,
                                                   children: [
                                                     Text(
-                                                      "${dashboardController.priceModel.value.fees?[fee].name} : ",
-                                                      style: TextStyle(
+                                                      isTaxedShipping
+                                                          ? "${feeItem?.name} (+GST) : "
+                                                          : "${feeItem?.name} : ",                                                      style: TextStyle(
                                                         color: Colors.black,
                                                         fontFamily:
                                                             'Euclid Circular B',
