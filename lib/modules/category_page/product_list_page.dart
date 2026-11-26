@@ -181,7 +181,9 @@ class _ProductListPageState extends State<ProductListPage> {
                           price =
                               "\$${double.parse(dashboardController.productModel.value.products?[j].price ?? "0").toStringAsFixed(2)}";
                         }
-                        price += dashboardController.productModel.value.products?[j].gstPriceSuffix ?? '';
+                        if (dashboardController.productModel.value.products?[j].showGst == true) {
+                          price += ' + GST';
+                        }
                         return InkWell(
                           onTap: () {
                             Get.to(

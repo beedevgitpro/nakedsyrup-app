@@ -98,7 +98,9 @@ class _ProductPageState extends State<ProductPage> {
       price =
           "\$${double.parse(widget.products.price ?? "0").toStringAsFixed(2)}";
     }
-    price += widget.products.gstPriceSuffix;
+    if (widget.products.showGst == true) {
+      price += ' + GST';
+    }
     super.initState();
   }
 
@@ -554,8 +556,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                         .selectedVariations
                                                                         .value
                                                                         .price
-                                                                ? "  \$${dashboardController.selectedVariations.value.price}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}"
-                                                                : "  \$${dashboardController.selectedVariations.value.salePrice}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}",
+                                                                ? "  \$${dashboardController.selectedVariations.value.price}${widget.products.showGst == true ? ' + GST' : ''}"
+                                                                : "  \$${dashboardController.selectedVariations.value.salePrice}${widget.products.showGst == true ? ' + GST' : ''}",
                                                         style: TextStyle(
                                                           color:
                                                               AppColors
@@ -1349,8 +1351,8 @@ class _ProductPageState extends State<ProductPage> {
                                                                       .selectedVariations
                                                                       .value
                                                                       .price
-                                                              ? "  \$${dashboardController.selectedVariations.value.price}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}"
-                                                              : "  \$${dashboardController.selectedVariations.value.salePrice}${(dashboardController.selectedVariations.value.showGst ?? widget.products.showGst) == true ? ' + GST' : ''}",
+                                                              ? "  \$${dashboardController.selectedVariations.value.price}${widget.products.showGst == true ? ' + GST' : ''}"
+                                                              : "  \$${dashboardController.selectedVariations.value.salePrice}${widget.products.showGst == true ? ' + GST' : ''}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors

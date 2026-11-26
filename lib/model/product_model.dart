@@ -154,18 +154,6 @@ class Products {
   String? get image => _image;
   String? get taxStatus => _taxStatus;
   bool? get showGst => _showGst;
-
-  // A range can carry + GST only when every variation is GST-exclusive.
-  String get gstPriceSuffix {
-    final variants = _variations;
-    if (variants == null || variants.isEmpty) {
-      return _showGst == true ? ' + GST' : '';
-    }
-    final flags = variants.map((v) => v.showGst ?? _showGst).toList();
-    if (flags.every((flag) => flag == true)) return ' + GST';
-    if (flags.any((flag) => flag == true)) return ' (GST varies)';
-    return '';
-  }
   List<String>? get gallery => _gallery;
   String? get shortDescription => _shortDescription;
   String? get recipes => _recipes;
@@ -203,7 +191,6 @@ class Variations {
     String? regularPrice,
     String? salePrice,
     String? stockStatus,
-    bool? showGst,
     Attributes? attributes,
     String? image,
   }) {
@@ -213,7 +200,6 @@ class Variations {
     _regularPrice = regularPrice;
     _salePrice = salePrice;
     _stockStatus = stockStatus;
-    _showGst = showGst;
     _attributes = attributes;
     _image = image;
   }
@@ -224,7 +210,6 @@ class Variations {
   String? _regularPrice;
   String? _salePrice;
   String? _stockStatus;
-  bool? _showGst;
   Attributes? _attributes;
   String? _image;
 
@@ -236,7 +221,6 @@ class Variations {
     _regularPrice = json['regular_price'];
     _salePrice = json['sale_price'];
     _stockStatus = json['stock_status'];
-    _showGst = json['show_gst'] is bool ? json['show_gst'] as bool : null;
 
     final attr = json['attributes'];
     if (attr is Map<String, dynamic>) {
@@ -258,7 +242,6 @@ class Variations {
     String? regularPrice,
     String? salePrice,
     String? stockStatus,
-    bool? showGst,
     Attributes? attributes,
     String? image,
   }) => Variations(
@@ -268,7 +251,6 @@ class Variations {
     regularPrice: regularPrice ?? _regularPrice,
     salePrice: salePrice ?? _salePrice,
     stockStatus: stockStatus ?? _stockStatus,
-    showGst: showGst ?? _showGst,
     attributes: attributes ?? _attributes,
     image: image ?? _image,
   );
@@ -279,7 +261,6 @@ class Variations {
   String? get regularPrice => _regularPrice;
   String? get salePrice => _salePrice;
   String? get stockStatus => _stockStatus;
-  bool? get showGst => _showGst;
   Attributes? get attributes => _attributes;
   String? get image => _image;
 
@@ -291,7 +272,6 @@ class Variations {
     map['regular_price'] = _regularPrice;
     map['sale_price'] = _salePrice;
     map['stock_status'] = _stockStatus;
-    map['show_gst'] = _showGst;
 
     if (_attributes != null) {
       map['attributes'] = _attributes?.toJson();

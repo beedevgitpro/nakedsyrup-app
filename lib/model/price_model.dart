@@ -182,41 +182,35 @@ class PriceModel {
 }
 
 class Fees {
-  Fees({String? name, String? amount, String? shippingModel, bool? showGst}) {
+  Fees({String? name, String? amount, String? shippingModel}) {
     _name = name;
     _amount = amount;
     _shippingModel = shippingModel;
-    _showGst = showGst;
   }
 
   Fees.fromJson(dynamic json) {
     _name = json['name'];
     _amount = json['amount'];
     _shippingModel = json['shipping_amount'];
-    _showGst = json['show_gst'] is bool ? json['show_gst'] as bool : null;
   }
   String? _name;
   String? _amount;
   String? _shippingModel;
-  bool? _showGst;
 
-  Fees copyWith({String? name, String? amount, String? shippingModel, bool? showGst}) => Fees(
+  Fees copyWith({String? name, String? amount, String? shippingModel}) => Fees(
     name: name ?? _name,
     amount: amount ?? _amount,
     shippingModel: shippingModel ?? _shippingModel,
-    showGst: showGst ?? _showGst,
   );
   String? get name => _name;
   String? get amount => _amount;
   String? get shippingModel => _shippingModel;
-  bool? get showGst => _showGst;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['name'] = _name;
     map['amount'] = _amount;
     map['shipping_amount'] = _shippingModel;
-    map['show_gst'] = _showGst;
     return map;
   }
 }

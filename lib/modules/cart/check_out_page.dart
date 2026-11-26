@@ -1514,7 +1514,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                 .end,
                                                         children: [
                                                           Text(
-                                                            "${dashboardController.priceModel.value.fees?[fee].name}${dashboardController.priceModel.value.fees?[fee].showGst == true ? " (+ GST)" : ""} : ",
+                                                            "${dashboardController.priceModel.value.fees?[fee].name}${dashboardController.priceModel.value.fees?[fee].name == "Shipping" && dashboardController.priceModel.value.hasTaxableProducts == true ? " (+GST)" : ""} : ",
                                                             style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -3135,7 +3135,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       MainAxisAlignment.end,
                                                   children: [
                                                     Text(
-                                                      "${dashboardController.priceModel.value.fees?[fee].name}${dashboardController.priceModel.value.fees?[fee].showGst == true ? " (+ GST)" : ""} : ",
+                                                      "${dashboardController.priceModel.value.fees?[fee].name}${dashboardController.priceModel.value.fees?[fee].name == "Shipping" && dashboardController.priceModel.value.hasTaxableProducts == true ? " (+GST)" : ""} : ",
                                                       style: TextStyle(
                                                         color: Colors.black,
                                                         fontFamily:
