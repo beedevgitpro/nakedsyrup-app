@@ -1,24 +1,24 @@
 class PriceModel {
   PriceModel({
-    dynamic success,
+    bool? success,
     List<CartItems>? cartItems,
     dynamic cartCount,
     dynamic subtotal,
     dynamic discountTotal,
-    dynamic subtotalFormatted,
+    String? subtotalFormatted,
     List<Fees>? fees,
-    dynamic totalFeesFormatted,
+    String? totalFeesFormatted,
+    bool? hasTaxableProducts,
+    String? taxStatus,
+    bool? showGst,
     dynamic gstTotal,
-    dynamic gstTotalFormatted,
+    String? gstTotalFormatted,
     dynamic grandTotal,
-    dynamic grandTotalFormatted,
-    dynamic shippingMethodId,
-    dynamic hasTaxableProducts,
-    dynamic taxStatus,
-    dynamic showGst,
-    dynamic shippingMethodTitle,
+    String? grandTotalFormatted,
+    String? shippingMethodId,
+    String? shippingMethodTitle,
     dynamic shippingTotal,
-    dynamic shippingTotalFormatted,
+    String? shippingTotalFormatted,
   }) {
     _success = success;
     _cartItems = cartItems;
@@ -27,10 +27,10 @@ class PriceModel {
     _discountTotal = discountTotal;
     _subtotalFormatted = subtotalFormatted;
     _fees = fees;
+    _totalFeesFormatted = totalFeesFormatted;
     _hasTaxableProducts = hasTaxableProducts;
     _taxStatus = taxStatus;
     _showGst = showGst;
-    _totalFeesFormatted = totalFeesFormatted;
     _gstTotal = gstTotal;
     _gstTotalFormatted = gstTotalFormatted;
     _grandTotal = grandTotal;
@@ -52,9 +52,6 @@ class PriceModel {
     _cartCount = json['cart_count'];
     _discountTotal = json['discount_total'];
     _subtotal = json['subtotal'];
-    _hasTaxableProducts = json['has_taxable_products'];
-    _taxStatus = json['tax_status'];
-    _showGst = json['show_gst'];
     _subtotalFormatted = json['subtotal_formatted'];
     if (json['fees'] != null) {
       _fees = [];
@@ -63,6 +60,9 @@ class PriceModel {
       });
     }
     _totalFeesFormatted = json['total_fees_formatted'];
+    _hasTaxableProducts = json['has_taxable_products'] is bool ? json['has_taxable_products'] as bool : null;
+    _taxStatus = json['tax_status'] is String ? json['tax_status'] as String : null;
+    _showGst = json['show_gst'] is bool ? json['show_gst'] as bool : null;
     _gstTotal = json['gst_total'];
     _gstTotalFormatted = json['gst_total_formatted'];
     _grandTotal = json['grand_total'];
@@ -72,45 +72,45 @@ class PriceModel {
     _shippingTotal = json['shipping_total'];
     _shippingTotalFormatted = json['shipping_total_formatted'];
   }
-  dynamic _success;
+  bool? _success;
   List<CartItems>? _cartItems;
   dynamic _cartCount;
   dynamic _discountTotal;
   dynamic _subtotal;
-  dynamic _subtotalFormatted;
+  String? _subtotalFormatted;
   List<Fees>? _fees;
-  dynamic _totalFeesFormatted;
-  dynamic _hasTaxableProducts;
-      dynamic _taxStatus;
-  dynamic _showGst;
+  String? _totalFeesFormatted;
+  bool? _hasTaxableProducts;
+  String? _taxStatus;
+  bool? _showGst;
   dynamic _gstTotal;
-  dynamic _gstTotalFormatted;
+  String? _gstTotalFormatted;
   dynamic _grandTotal;
-  dynamic _grandTotalFormatted;
-  dynamic _shippingMethodId;
-  dynamic _shippingMethodTitle;
+  String? _grandTotalFormatted;
+  String? _shippingMethodId;
+  String? _shippingMethodTitle;
   dynamic _shippingTotal;
-  dynamic _shippingTotalFormatted;
+  String? _shippingTotalFormatted;
   PriceModel copyWith({
-    dynamic success,
+    bool? success,
     List<CartItems>? cartItems,
     dynamic cartCount,
     dynamic subtotal,
     dynamic discountTotal,
-    dynamic subtotalFormatted,
+    String? subtotalFormatted,
     List<Fees>? fees,
-    dynamic totalFeesFormatted,
-    dynamic hasTaxableProducts,
-    dynamic taxStatus,
-    dynamic showGst,
+    String? totalFeesFormatted,
+    bool? hasTaxableProducts,
+    String? taxStatus,
+    bool? showGst,
     dynamic gstTotal,
-    dynamic gstTotalFormatted,
+    String? gstTotalFormatted,
     dynamic grandTotal,
-    dynamic grandTotalFormatted,
-    dynamic shippingMethodId,
-    dynamic shippingMethodTitle,
+    String? grandTotalFormatted,
+    String? shippingMethodId,
+    String? shippingMethodTitle,
     dynamic shippingTotal,
-    dynamic shippingTotalFormatted,
+    String? shippingTotalFormatted,
   }) => PriceModel(
     success: success ?? _success,
     cartItems: cartItems ?? _cartItems,
@@ -120,10 +120,10 @@ class PriceModel {
     subtotalFormatted: subtotalFormatted ?? _subtotalFormatted,
     fees: fees ?? _fees,
     totalFeesFormatted: totalFeesFormatted ?? _totalFeesFormatted,
-    gstTotal: gstTotal ?? _gstTotal,
     hasTaxableProducts: hasTaxableProducts ?? _hasTaxableProducts,
     taxStatus: taxStatus ?? _taxStatus,
     showGst: showGst ?? _showGst,
+    gstTotal: gstTotal ?? _gstTotal,
     gstTotalFormatted: gstTotalFormatted ?? _gstTotalFormatted,
     grandTotal: grandTotal ?? _grandTotal,
     grandTotalFormatted: grandTotalFormatted ?? _grandTotalFormatted,
@@ -132,25 +132,25 @@ class PriceModel {
     shippingTotal: shippingTotal ?? _shippingTotal,
     shippingTotalFormatted: shippingTotalFormatted ?? _shippingTotalFormatted,
   );
-  dynamic get success => _success;
+  bool? get success => _success;
   List<CartItems>? get cartItems => _cartItems;
   dynamic get cartCount => _cartCount;
   dynamic get discountTotal => _discountTotal;
   dynamic get subtotal => _subtotal;
-  dynamic get subtotalFormatted => _subtotalFormatted;
+  String? get subtotalFormatted => _subtotalFormatted;
   List<Fees>? get fees => _fees;
-  dynamic get totalFeesFormatted => _totalFeesFormatted;
+  String? get totalFeesFormatted => _totalFeesFormatted;
+  bool? get hasTaxableProducts => _hasTaxableProducts;
+  String? get taxStatus => _taxStatus;
+  bool? get showGst => _showGst;
   dynamic get gstTotal => _gstTotal;
-  dynamic get gstTotalFormatted => _gstTotalFormatted;
+  String? get gstTotalFormatted => _gstTotalFormatted;
   dynamic get grandTotal => _grandTotal;
-  dynamic get hasTaxableProducts => _hasTaxableProducts;
-  dynamic get taxStatus => _taxStatus;
-  dynamic get showGst => _showGst;
-  dynamic get grandTotalFormatted => _grandTotalFormatted;
-  dynamic get shippingMethodId => _shippingMethodId;
-  dynamic get shippingMethodTitle => _shippingMethodTitle;
+  String? get grandTotalFormatted => _grandTotalFormatted;
+  String? get shippingMethodId => _shippingMethodId;
+  String? get shippingMethodTitle => _shippingMethodTitle;
   dynamic get shippingTotal => _shippingTotal;
-  dynamic get shippingTotalFormatted => _shippingTotalFormatted;
+  String? get shippingTotalFormatted => _shippingTotalFormatted;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -165,10 +165,10 @@ class PriceModel {
       map['fees'] = _fees?.map((v) => v.toJson()).toList();
     }
     map['total_fees_formatted'] = _totalFeesFormatted;
-    map['gst_total'] = _gstTotal;
     map['has_taxable_products'] = _hasTaxableProducts;
     map['tax_status'] = _taxStatus;
     map['show_gst'] = _showGst;
+    map['gst_total'] = _gstTotal;
     map['discount_total'] = _discountTotal;
     map['gst_total_formatted'] = _gstTotalFormatted;
     map['grand_total'] = _grandTotal;
@@ -182,7 +182,7 @@ class PriceModel {
 }
 
 class Fees {
-  Fees({dynamic name, dynamic amount, dynamic shippingModel}) {
+  Fees({String? name, String? amount, String? shippingModel}) {
     _name = name;
     _amount = amount;
     _shippingModel = shippingModel;
@@ -193,18 +193,18 @@ class Fees {
     _amount = json['amount'];
     _shippingModel = json['shipping_amount'];
   }
-  dynamic _name;
-  dynamic _amount;
-  dynamic _shippingModel;
+  String? _name;
+  String? _amount;
+  String? _shippingModel;
 
-  Fees copyWith({dynamic name, dynamic amount, dynamic shippingModel}) => Fees(
+  Fees copyWith({String? name, String? amount, String? shippingModel}) => Fees(
     name: name ?? _name,
     amount: amount ?? _amount,
     shippingModel: shippingModel ?? _shippingModel,
   );
-  dynamic get name => _name;
-  dynamic get amount => _amount;
-  dynamic get shippingModel => _shippingModel;
+  String? get name => _name;
+  String? get amount => _amount;
+  String? get shippingModel => _shippingModel;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -220,10 +220,10 @@ class CartItems {
     dynamic productId,
     dynamic variationId,
     dynamic quantity,
-    dynamic productName,
-    dynamic currentPrice,
+    String? productName,
+    String? currentPrice,
     dynamic lineSubtotal,
-    dynamic productImage,
+    String? productImage,
   }) {
     _productId = productId;
     _variationId = variationId;
@@ -246,18 +246,18 @@ class CartItems {
   dynamic _productId;
   dynamic _variationId;
   dynamic _quantity;
-  dynamic _productName;
-  dynamic _currentPrice;
+  String? _productName;
+  String? _currentPrice;
   dynamic _lineSubtotal;
-  dynamic _productImage;
+  String? _productImage;
   CartItems copyWith({
     dynamic productId,
     dynamic variationId,
     dynamic quantity,
-    dynamic productName,
-    dynamic currentPrice,
+    String? productName,
+    String? currentPrice,
     dynamic lineSubtotal,
-    dynamic productImage,
+    String? productImage,
   }) => CartItems(
     productId: productId ?? _productId,
     variationId: variationId ?? _variationId,
@@ -270,10 +270,10 @@ class CartItems {
   dynamic get productId => _productId;
   dynamic get variationId => _variationId;
   dynamic get quantity => _quantity;
-  dynamic get productName => _productName;
-  dynamic get currentPrice => _currentPrice;
+  String? get productName => _productName;
+  String? get currentPrice => _currentPrice;
   dynamic get lineSubtotal => _lineSubtotal;
-  dynamic get productImage => _productImage;
+  String? get productImage => _productImage;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

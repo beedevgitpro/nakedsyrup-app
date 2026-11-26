@@ -282,6 +282,25 @@ class DashboardController extends GetxController {
     }
   }
 
+  double calculateShipping() {
+    double totalShipping = 0.0;
+
+    final fees = priceModel.value.fees ?? [];
+
+    for (var fee in fees) {
+      double value = 0.0;
+
+      if (fee.amount != null) {
+        value = double.tryParse(fee.amount.toString()) ?? 0.0;
+      } else if (fee.shippingModel != null) {
+        value = double.tryParse(fee.shippingModel.toString()) ?? 0.0;
+      }
+
+      totalShipping += value;
+    }
+
+    return totalShipping;
+  }
 
   List<Map<String, dynamic>> getPaypalItems() {
     final cartItems = cartModel.value.cartItems ?? [];
