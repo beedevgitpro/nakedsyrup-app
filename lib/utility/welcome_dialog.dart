@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:material_ui/material_ui.dart';
+
+// ignore: must_be_immutable
 class DialogShow extends StatelessWidget {
   DialogShow({
     super.key,

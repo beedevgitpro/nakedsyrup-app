@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-Widget AppTextFormField({
+Widget appTextFormField({
   required TextEditingController controller,
   required String lable,
   Widget suffix = const SizedBox(),
@@ -12,8 +12,8 @@ Widget AppTextFormField({
   int? maxLength,
   int? maxLines = 1,
   void Function()? onTap,
-  onChanged,
-  function,
+  void Function(String)? onChanged,
+  String? Function(String?)? function,
 }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -33,10 +33,7 @@ Widget AppTextFormField({
           borderRadius: BorderRadius.circular(6),
           borderSide: const BorderSide(color: Colors.red),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 6,
-          horizontal: 20,
-        ), // 👈 Add vertical padding explicitly
+        contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
         suffixIcon: suffix,
       ),
       textCapitalization: textCapitalization ?? TextCapitalization.none,

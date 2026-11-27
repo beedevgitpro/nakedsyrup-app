@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/login_flow/register_page.dart';
 
-import '../../Resources/AppColors.dart';
-import '../../Resources/AppStrings.dart';
+import '../../Resources/app_colors.dart';
+import '../../Resources/app_strings.dart';
 import '../../utility/responsive_text.dart';
 import '../../web_view_app.dart';
 import '../../widgets/mandtory_text_lables.dart';
@@ -12,6 +12,7 @@ import '../../widgets/text_form_fields.dart';
 import '../dashboard_flow/dashboard.dart';
 import 'loginflow_controller.dart';
 
+// ignore: must_be_immutable
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   LoginFlowController loginFlowController = Get.put(LoginFlowController());
@@ -28,7 +29,7 @@ class LoginPage extends StatelessWidget {
               image: AssetImage("assets/images/login-background.jpg"),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.5), // <-- Adjust opacity here
+                Colors.black.withValues(alpha: 0.5), // <-- Adjust opacity here
                 BlendMode.darken, // <-- Darken effect
               ),
             ),
@@ -109,18 +110,20 @@ class LoginPage extends StatelessWidget {
                                       true,
                                     ),
                                   ),
-                                  AppTextFormField(
+                                  appTextFormField(
                                     controller:
                                         loginFlowController.emailController,
                                     lable: 'Email (Username)',
-                                    function: (value) {},
+                                    function: (value) {
+                                      return null;
+                                    },
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 10),
                                     child: textLabel('Password', context, true),
                                   ),
                                   Obx(
-                                    () => AppTextFormField(
+                                    () => appTextFormField(
                                       obscureText:
                                           !loginFlowController
                                               .isPasswordVisible
@@ -129,7 +132,9 @@ class LoginPage extends StatelessWidget {
                                           loginFlowController
                                               .passwordController,
                                       lable: 'Password',
-                                      function: (value) {},
+                                      function: (value) {
+                                        return null;
+                                      },
                                       suffix: InkWell(
                                         onTap: () {
                                           loginFlowController
@@ -283,15 +288,18 @@ class LoginPage extends StatelessWidget {
                                                   ),
                                                 ),
                                                 recognizer:
-                                                TapGestureRecognizer()
-                                                  ..onTap = () {
-                                                    Get.to(
-                                                      WebViewApp(
-                                                        name: 'Lost your password?',
-                                                        url: AppStrings.lostPassword,
-                                                      ),
-                                                    );
-                                                  },
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        Get.to(
+                                                          WebViewApp(
+                                                            name:
+                                                                'Lost your password?',
+                                                            url:
+                                                                AppStrings
+                                                                    .lostPassword,
+                                                          ),
+                                                        );
+                                                      },
                                               ),
                                             ],
                                           ),
@@ -422,7 +430,6 @@ class LoginPage extends StatelessWidget {
               ),
             ],
           ),
-
         ),
       ),
     );

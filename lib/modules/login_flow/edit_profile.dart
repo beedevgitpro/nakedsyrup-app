@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/drop_down_field.dart';
@@ -21,7 +21,6 @@ class _CheckOutPageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     dashboardController.getCountryList();
 
     dashboardController.fillProfileData();
@@ -31,7 +30,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Edit Profile',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -83,7 +82,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           true,
                                         ),
                                       ),
-                                      AppTextFormField(
+                                      appTextFormField(
                                         controller:
                                             dashboardController
                                                 .firstNormalController,
@@ -104,7 +103,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           true,
                                         ),
                                       ),
-                                      AppTextFormField(
+                                      appTextFormField(
                                         controller:
                                             dashboardController
                                                 .lastNormalController,
@@ -125,7 +124,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           true,
                                         ),
                                       ),
-                                      AppTextFormField(
+                                      appTextFormField(
                                         controller:
                                             dashboardController
                                                 .userNameController,
@@ -147,7 +146,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                           true,
                                         ),
                                       ),
-                                      AppTextFormField(
+                                      appTextFormField(
                                         controller:
                                             dashboardController
                                                 .emailNormalController,
@@ -195,7 +194,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .firstNameController,
@@ -218,7 +217,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .lastNameController,
@@ -241,12 +240,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   false,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .companyNameController,
                                                 lable: 'Company Name',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -258,7 +259,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppDropDownField(
+                                              appDropDownField(
                                                 lable: 'Country / Region',
                                                 value:
                                                     dashboardController
@@ -272,7 +273,6 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 itemList:
                                                     dashboardController
                                                         .countryMap
-                                                        .value
                                                         .entries
                                                         .map((entry) {
                                                           return DropdownMenuItem<
@@ -328,7 +328,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .streetAddressController,
@@ -341,12 +341,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   return null; // <-- must return null if valid
                                                 },
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .streetAddress2Controller,
                                                 lable: 'Street address',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -358,7 +360,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .townController,
@@ -397,13 +399,12 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                             ),
                                                           ),
                                                         )
-                                                        : AppDropDownField(
+                                                        : appDropDownField(
                                                           lable:
                                                               'State / County',
                                                           value:
                                                               dashboardController
                                                                       .stateMap
-                                                                      .value
                                                                       .containsKey(
                                                                         dashboardController
                                                                             .selectedState
@@ -416,7 +417,6 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                           itemList:
                                                               dashboardController
                                                                   .stateMap
-                                                                  .value
                                                                   .entries
                                                                   .map((entry) {
                                                                     return DropdownMenuItem<
@@ -455,7 +455,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .postCodeController,
@@ -480,7 +480,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .phoneController,
@@ -505,7 +505,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .emailController,
@@ -568,7 +568,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .firstNameDiffController,
@@ -592,7 +592,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .lastNameDiffController,
@@ -616,12 +616,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     false,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .companyNameDiffController,
                                                   lable: 'Company Name',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -634,7 +636,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppDropDownField(
+                                                appDropDownField(
                                                   lable: 'Country / Region',
                                                   value:
                                                       dashboardController
@@ -646,7 +648,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                               .value
                                                           : null,
                                                   itemList:
-                                                      dashboardController.countryMap.value.entries.map((
+                                                      dashboardController.countryMap.entries.map((
                                                         entry,
                                                       ) {
                                                         return DropdownMenuItem<
@@ -704,7 +706,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddressDiffController,
@@ -717,12 +719,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   //   return null; // <-- must return null if valid
                                                   // },
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddress2DiffController,
                                                   lable: 'Street address',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -736,7 +740,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .townDiffController,
@@ -779,13 +783,12 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                               ),
                                                             ),
                                                           )
-                                                          : AppDropDownField(
+                                                          : appDropDownField(
                                                             lable:
                                                                 'State / County',
                                                             value:
                                                                 dashboardController
                                                                         .stateMapDiff
-                                                                        .value
                                                                         .containsKey(
                                                                           dashboardController
                                                                               .selectedStateDiff
@@ -796,7 +799,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                                         .value
                                                                     : null,
                                                             itemList:
-                                                                dashboardController.stateMapDiff.value.entries.map((
+                                                                dashboardController.stateMapDiff.entries.map((
                                                                   entry,
                                                                 ) {
                                                                   return DropdownMenuItem<
@@ -843,7 +846,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .postCodeDiffController,
@@ -982,7 +985,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                         true,
                                       ),
                                     ),
-                                    AppTextFormField(
+                                    appTextFormField(
                                       controller:
                                           dashboardController
                                               .firstNormalController,
@@ -1003,7 +1006,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                         true,
                                       ),
                                     ),
-                                    AppTextFormField(
+                                    appTextFormField(
                                       controller:
                                           dashboardController
                                               .lastNormalController,
@@ -1024,7 +1027,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                         true,
                                       ),
                                     ),
-                                    AppTextFormField(
+                                    appTextFormField(
                                       controller:
                                           dashboardController
                                               .userNameController,
@@ -1046,7 +1049,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                         true,
                                       ),
                                     ),
-                                    AppTextFormField(
+                                    appTextFormField(
                                       controller:
                                           dashboardController
                                               .emailNormalController,
@@ -1093,7 +1096,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .firstNameController,
@@ -1116,7 +1119,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .lastNameController,
@@ -1139,12 +1142,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 false,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .companyNameController,
                                               lable: 'Company Name',
-                                              function: (value) {},
+                                              function: (value) {
+                                                return null;
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1156,7 +1161,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppDropDownField(
+                                            appDropDownField(
                                               lable: 'Country / Region',
                                               value:
                                                   dashboardController
@@ -1170,7 +1175,6 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                               itemList:
                                                   dashboardController
                                                       .countryMap
-                                                      .value
                                                       .entries
                                                       .map((entry) {
                                                         return DropdownMenuItem<
@@ -1226,7 +1230,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .streetAddressController,
@@ -1239,12 +1243,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 return null; // <-- must return null if valid
                                               },
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .streetAddress2Controller,
                                               lable: 'Street address',
-                                              function: (value) {},
+                                              function: (value) {
+                                                return null;
+                                              },
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -1256,7 +1262,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .townController,
@@ -1295,12 +1301,11 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                           ),
                                                         ),
                                                       )
-                                                      : AppDropDownField(
+                                                      : appDropDownField(
                                                         lable: 'State / County',
                                                         value:
                                                             dashboardController
                                                                     .stateMap
-                                                                    .value
                                                                     .containsKey(
                                                                       dashboardController
                                                                           .selectedState
@@ -1313,7 +1318,6 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                         itemList:
                                                             dashboardController
                                                                 .stateMap
-                                                                .value
                                                                 .entries
                                                                 .map((entry) {
                                                                   return DropdownMenuItem<
@@ -1352,7 +1356,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .postCodeController,
@@ -1377,7 +1381,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .phoneController,
@@ -1402,7 +1406,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                 true,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .emailController,
@@ -1458,7 +1462,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .firstNameDiffController,
@@ -1482,7 +1486,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .lastNameDiffController,
@@ -1506,12 +1510,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     false,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .companyNameDiffController,
                                                   lable: 'Company Name',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -1524,7 +1530,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppDropDownField(
+                                                appDropDownField(
                                                   lable: 'Country / Region',
                                                   value:
                                                       dashboardController
@@ -1536,7 +1542,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                               .value
                                                           : null,
                                                   itemList:
-                                                      dashboardController.countryMap.value.entries.map((
+                                                      dashboardController.countryMap.entries.map((
                                                         entry,
                                                       ) {
                                                         return DropdownMenuItem<
@@ -1594,7 +1600,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddressDiffController,
@@ -1607,12 +1613,14 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   //   return null; // <-- must return null if valid
                                                   // },
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddress2DiffController,
                                                   lable: 'Street address',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -1626,7 +1634,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .townDiffController,
@@ -1669,13 +1677,12 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                               ),
                                                             ),
                                                           )
-                                                          : AppDropDownField(
+                                                          : appDropDownField(
                                                             lable:
                                                                 'State / County',
                                                             value:
                                                                 dashboardController
                                                                         .stateMapDiff
-                                                                        .value
                                                                         .containsKey(
                                                                           dashboardController
                                                                               .selectedStateDiff
@@ -1686,7 +1693,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                                         .value
                                                                     : null,
                                                             itemList:
-                                                                dashboardController.stateMapDiff.value.entries.map((
+                                                                dashboardController.stateMapDiff.entries.map((
                                                                   entry,
                                                                 ) {
                                                                   return DropdownMenuItem<
@@ -1733,7 +1740,7 @@ class _CheckOutPageState extends State<EditProfilePage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .postCodeDiffController,

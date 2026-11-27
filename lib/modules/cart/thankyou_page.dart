@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../dashboard_flow/dashboard.dart';
-
 
 class ThankYouPage extends StatelessWidget {
   const ThankYouPage({super.key});
@@ -24,7 +23,7 @@ class ThankYouPage extends StatelessWidget {
                 width: 110,
                 height: 110,
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.12),
+                  color: Colors.green.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -62,8 +61,8 @@ class ThankYouPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   'Your PayPal payment has been completed and your '
-                      'order has been successfully placed. We\u2019ll notify '
-                      'you once it\u2019s on the way.',
+                  'order has been successfully placed. We\u2019ll notify '
+                  'you once it\u2019s on the way.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black54,

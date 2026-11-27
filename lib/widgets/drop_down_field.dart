@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-Widget AppDropDownField({
+Widget appDropDownField({
   required String lable,
   var value,
   required List<DropdownMenuItem> itemList,
@@ -39,11 +39,9 @@ Widget AppDropDownField({
             borderRadius: BorderRadius.all(Radius.circular(6)),
           ),
           contentPadding: const EdgeInsets.only(left: 20, top: 12, right: 20),
-
-          // hintText: lable,
         ),
         validator: function,
-        value: value,
+        initialValue: value,
         items: itemList,
         onChanged: (value) {},
       ),

@@ -1,18 +1,19 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/model/product_model.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/category_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import 'product_page.dart';
 
+// ignore: must_be_immutable
 class ProductListPage extends StatefulWidget {
   ProductListPage({super.key, this.categories});
   Categories? categories;
@@ -24,10 +25,8 @@ class _ProductListPageState extends State<ProductListPage> {
   DashboardController dashboardController = Get.put(DashboardController());
   @override
   void initState() {
-    // TODO: implement initState
     dashboardController.selectedd.value = -1;
     dashboardController.fetchDataForTab(widget.categories?.slug);
-    // dashboardController.findCart();
 
     super.initState();
   }
@@ -76,7 +75,7 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         '${widget.categories?.name}',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -181,7 +180,12 @@ class _ProductListPageState extends State<ProductListPage> {
                           price =
                               "\$${double.parse(dashboardController.productModel.value.products?[j].price ?? "0").toStringAsFixed(2)}";
                         }
-                        if (dashboardController.productModel.value.products?[j].showGst == true) {
+                        if (dashboardController
+                                .productModel
+                                .value
+                                .products?[j]
+                                .showGst ==
+                            true) {
                           price += ' + GST';
                         }
                         return InkWell(
@@ -202,7 +206,9 @@ class _ProductListPageState extends State<ProductListPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(
-                                color: AppColors.nakedSyrup.withOpacity(0.3),
+                                color: AppColors.nakedSyrup.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                             ),
                             child: Padding(

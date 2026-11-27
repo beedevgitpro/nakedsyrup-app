@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:carousel_slider/carousel_controller.dart';
-import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/model/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/category_model.dart';
 import '../../model/dashboard_list.dart';
 import '../../model/notification_model.dart';
@@ -138,20 +139,16 @@ class DashboardController extends GetxController {
   TextEditingController userNameController = TextEditingController();
   TextEditingController pOController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  Future<void> handleRefresh() async  {
-
- await    getName();
+  Future<void> handleRefresh() async {
+    await getName();
     getPayByAcc();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       orderHistory();
     });
-
   }
 
-  Future<void> historyRefresh()async  {
-
-   await  orderHistory();
-
+  Future<void> historyRefresh() async {
+    await orderHistory();
   }
 
   Future<void> dashBoardRefresh() async {
@@ -161,10 +158,9 @@ class DashboardController extends GetxController {
       holidayNotification().catchError((_) {}),
     ]);
   }
+
   Future<void> cartRefresh() async {
-
-   await findCart();
-
+    await findCart();
   }
 
   cartQuantityUpdate(productId, qty, variationId) async {
@@ -201,14 +197,11 @@ class DashboardController extends GetxController {
     getShipping.value = true;
 
     try {
-      final prefs =
-      await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
-      final guestToken =
-          prefs.getString('guest_token')?.trim() ?? '';
+      final guestToken = prefs.getString('guest_token')?.trim() ?? '';
 
-      final bool isGuest =
-          guestToken.isNotEmpty;
+      final bool isGuest = guestToken.isNotEmpty;
 
       late final String country;
       late final String state;
@@ -223,8 +216,7 @@ class DashboardController extends GetxController {
       } else if (differentAddress.value) {
         country = selectedCountryDiff.value;
         state = selectedStateDiff.value;
-        postcode =
-            postCodeDiffController.text.trim();
+        postcode = postCodeDiffController.text.trim();
         town = townDiffController.text.trim();
       } else {
         country = selectedCountry.value;
@@ -248,8 +240,7 @@ class DashboardController extends GetxController {
         return;
       }
 
-      final response =
-      await ApiClass().shippingMethods(
+      final response = await ApiClass().shippingMethods(
         country,
         state,
         postcode,
@@ -261,10 +252,7 @@ class DashboardController extends GetxController {
       }
 
       if (response['success'] == true) {
-        shippingMethodsModel.value =
-            ShippingMethodsModel.fromJson(
-              response,
-            );
+        shippingMethodsModel.value = ShippingMethodsModel.fromJson(response);
 
         return;
       }
@@ -332,7 +320,6 @@ class DashboardController extends GetxController {
     return total;
   }
 
-
   placeOrderApi() async {
     if (placeOrder.value) {
       return;
@@ -391,27 +378,27 @@ class DashboardController extends GetxController {
           differentAddress.value
               ? (shippingAddressFormKey.currentState?.validate() ?? false)
               : true;
-if(differentAddress.value && token.value.isNotEmpty) {
-  if (!billingValid || !shippingValid) {
-    Get.snackbar(
-      'Checkout Error',
-      'Please complete all required checkout fields.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    placeOrder.value= false;
-    return;
-  }
-}else {
-  if (!billingValid) {
-    Get.snackbar(
-      'Checkout Error',
-      'Please complete all required checkout fields.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    placeOrder.value= false;
-    return;
-  }
-}
+      if (differentAddress.value && token.value.isNotEmpty) {
+        if (!billingValid || !shippingValid) {
+          Get.snackbar(
+            'Checkout Error',
+            'Please complete all required checkout fields.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          placeOrder.value = false;
+          return;
+        }
+      } else {
+        if (!billingValid) {
+          Get.snackbar(
+            'Checkout Error',
+            'Please complete all required checkout fields.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          placeOrder.value = false;
+          return;
+        }
+      }
 
       mapp = {
         "billing": {
@@ -520,12 +507,8 @@ if(differentAddress.value && token.value.isNotEmpty) {
       return;
     }
 
-    if (
-    selectedPaymentMethods.value ==
-        'ppcp'
-    ) {
-      final int? wooCommerceOrderId =
-      int.tryParse(
+    if (selectedPaymentMethods.value == 'ppcp') {
+      final int? wooCommerceOrderId = int.tryParse(
         shipping['order_id'].toString(),
       );
 
@@ -542,8 +525,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
 
         return;
       }
-      final Map<String, dynamic>? paypal =
-      await ApiClass().createPaypalOrder(
+      final Map<String, dynamic>? paypal = await ApiClass().createPaypalOrder(
         wooCommerceOrderId,
       );
 
@@ -566,8 +548,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
 
         Get.snackbar(
           'PayPal Error',
-          paypal['message']?.toString() ??
-              'PayPal order creation failed.',
+          paypal['message']?.toString() ?? 'PayPal order creation failed.',
           colorText: Colors.red,
           backgroundColor: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
@@ -576,22 +557,11 @@ if(differentAddress.value && token.value.isNotEmpty) {
         return;
       }
 
-      final String approvalUrl =
-          paypal['approveUrl']
-              ?.toString()
-              .trim() ??
-              '';
+      final String approvalUrl = paypal['approveUrl']?.toString().trim() ?? '';
 
-      final String paypalOrderId =
-          paypal['orderID']
-              ?.toString()
-              .trim() ??
-              '';
+      final String paypalOrderId = paypal['orderID']?.toString().trim() ?? '';
 
-      if (
-      approvalUrl.isEmpty ||
-          paypalOrderId.isEmpty
-      ) {
+      if (approvalUrl.isEmpty || paypalOrderId.isEmpty) {
         placeOrder.value = false;
 
         Get.snackbar(
@@ -605,26 +575,18 @@ if(differentAddress.value && token.value.isNotEmpty) {
         return;
       }
 
-      final dynamic result =
-      await Navigator.of(
-        Get.context!,
-      ).push(
+      final dynamic result = await Navigator.of(Get.context!).push(
         MaterialPageRoute(
-          builder: (_) => PaypalWebView(
-            approvalUrl: approvalUrl,
-            paypalOrderId: paypalOrderId,
-            wooCommerceOrderId:
-            wooCommerceOrderId,
-          ),
+          builder:
+              (_) => PaypalWebView(
+                approvalUrl: approvalUrl,
+                paypalOrderId: paypalOrderId,
+                wooCommerceOrderId: wooCommerceOrderId,
+              ),
         ),
       );
-      debugPrint(
-        'PayPal screen result: $result',
-      );
-      if (
-      result is Map &&
-          result['status'] == 'success'
-      ) {
+      debugPrint('PayPal screen result: $result');
+      if (result is Map && result['status'] == 'success') {
         cartCount.value = 0;
         cartModel.value = CartModel();
 
@@ -638,31 +600,22 @@ if(differentAddress.value && token.value.isNotEmpty) {
         Get.to(ThankYouPage());
         return;
       }
-      if (
-      result is Map &&
-          result['status'] ==
-              'review_required'
-      ) {
+      if (result is Map && result['status'] == 'review_required') {
         placeOrder.value = false;
         Get.defaultDialog(
           title: 'Payment received',
           middleText:
-          result['message']?.toString() ??
+              result['message']?.toString() ??
               'Your PayPal payment was received and the order is being reviewed. Please do not submit another payment.',
           textConfirm: 'OK',
           barrierDismissible: false,
           onConfirm: () {
-            Get.offAll(
-              const DashboardPage(),
-            );
+            Get.offAll(const DashboardPage());
           },
         );
         return;
       }
-      if (
-      result is Map &&
-          result['status'] == 'cancelled'
-      ) {
+      if (result is Map && result['status'] == 'cancelled') {
         placeOrder.value = false;
         Get.snackbar(
           'Payment cancelled',
@@ -674,33 +627,26 @@ if(differentAddress.value && token.value.isNotEmpty) {
         return;
       }
 
-      if (
-      result is Map &&
-          result['status'] ==
-              'confirmation_unknown'
-      ) {
+      if (result is Map && result['status'] == 'confirmation_unknown') {
         placeOrder.value = false;
         Get.defaultDialog(
-          title:
-          'Payment confirmation pending',
+          title: 'Payment confirmation pending',
           middleText:
-          'The PayPal response could not be confirmed. Please check your order history before trying to pay again.',
+              'The PayPal response could not be confirmed. Please check your order history before trying to pay again.',
           textConfirm: 'OK',
           barrierDismissible: false,
           onConfirm: () {
-            Get.offAll(
-              const DashboardPage(),
-            );
+            Get.offAll(const DashboardPage());
           },
         );
         return;
       }
 
       final String failureMessage =
-      result is Map
-          ? result['message']?.toString() ??
-          'Payment could not be confirmed.'
-          : 'Payment could not be confirmed.';
+          result is Map
+              ? result['message']?.toString() ??
+                  'Payment could not be confirmed.'
+              : 'Payment could not be confirmed.';
 
       Get.snackbar(
         'PayPal payment not completed',
@@ -711,9 +657,8 @@ if(differentAddress.value && token.value.isNotEmpty) {
       );
 
       return;
-    }else {
-      if(shipping['success'] == true){
-
+    } else {
+      if (shipping['success'] == true) {
         cartCount.value = 0;
         cartModel.value = CartModel();
 
@@ -1187,18 +1132,18 @@ if(differentAddress.value && token.value.isNotEmpty) {
 
   getPayByAcc() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    getData.value= true;
+    getData.value = true;
     var profile = await ApiClass().getProfileDetails();
     if (profile != null) {
       if (profile['success'] == true) {
         isPayByAcc.value = profile['data']['pay_by_account'];
-        getData.value= false;
+        getData.value = false;
         await prefs.setString(
           "pay_by_account",
           profile['data']['pay_by_account'],
         );
       } else {
-        getData.value= false;
+        getData.value = false;
         Get.snackbar(
           profile['message'],
           '',
@@ -1207,7 +1152,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
         );
       }
     } else {
-      getData.value= false;
+      getData.value = false;
       Get.snackbar(
         "Profile data cannot fetch",
         '',
@@ -1305,8 +1250,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
       Map<String, dynamic> jsonResponse = respose;
       Map<String, String> parsedCountries = {};
       if (jsonResponse['states'] == false) {
-        getCheckOut.value= false;
-
+        getCheckOut.value = false;
       } else {
         if (jsonResponse['states'].isNotEmpty) {
           parsedCountries = (jsonResponse['states'] as Map<String, dynamic>)
@@ -1326,7 +1270,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
           stateMap.addAll(parsedCountries);
           stateMapDiff.addAll(parsedCountries);
         }
-        getCheckOut.value= false;
+        getCheckOut.value = false;
       }
     } else {
       getCheckOut.value = false;
@@ -1378,7 +1322,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
   orderHistory() async {
     getHistory.value = true;
     getName();
-    if(token.isNotEmpty) {
+    if (token.isNotEmpty) {
       var history = await ApiClass().getOrderHistory();
       if (history != null) {
         orderHistoryModel.value = OrderHistoryModel.fromJson(history);
@@ -1504,7 +1448,7 @@ if(differentAddress.value && token.value.isNotEmpty) {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             decoration: BoxDecoration(
-              color: AppColors.yellowColor.withOpacity(0.25),
+              color: AppColors.yellowColor.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: AppColors.nakedSyrup, width: 2),
             ),
@@ -1539,8 +1483,6 @@ if(differentAddress.value && token.value.isNotEmpty) {
 
   @override
   void onInit() {
-    // TODO: implement onInit
-
     getName();
     String token = "";
 

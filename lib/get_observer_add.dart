@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
-import 'package:naked_syrups/service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'Resources/AppColors.dart';
-import 'modules/login_flow/login_page.dart';
 
 class GlobalRouteObserver extends GetObserver {
   bool _isChecking = false; // prevents multiple API calls

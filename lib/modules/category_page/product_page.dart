@@ -1,18 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:html/dom.dart' as dom;
+// ignore: library_prefixes
 import 'package:html/parser.dart' as htmlParser;
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/product_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/view_photo.dart';
 
+// ignore: must_be_immutable
 class ProductPage extends StatefulWidget {
   ProductPage({super.key, required this.products, required this.index});
   Products products = Products();
@@ -65,10 +67,8 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     dashboardController.selectedVariance.value = "";
     dashboardController.selectedVariations.value = Variations();
-    // dashboardController.findCart();
     dashboardController.currentIndex = 0;
     allImages.add(widget.products.image ?? "");
     if (widget.products.gallery?.isNotEmpty == true) {
@@ -90,9 +90,9 @@ class _ProductPageState extends State<ProductPage> {
               .toStringAsFixed(2)
               .toString();
       if (highPrice == lowPrice) {
-        price = "\$${lowPrice}";
+        price = "\$$lowPrice";
       } else {
-        price = "\$${lowPrice} - \$${highPrice}";
+        price = "\$$lowPrice - \$$highPrice";
       }
     } else {
       price =
@@ -135,7 +135,7 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         widget.products.name ?? "",
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -184,7 +184,9 @@ class _ProductPageState extends State<ProductPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(
-                                color: AppColors.yellowColor.withOpacity(0.5),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                             child: ClipRRect(
@@ -257,10 +259,10 @@ class _ProductPageState extends State<ProductPage> {
                       padding: const EdgeInsets.only(top: 10),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppColors.yellowColor.withOpacity(0.25),
+                          color: AppColors.yellowColor.withValues(alpha: 0.25),
                           borderRadius: BorderRadius.circular(15),
                           border: Border.all(
-                            color: AppColors.nakedSyrup.withOpacity(0.5),
+                            color: AppColors.nakedSyrup.withValues(alpha: 0.5),
                           ),
                         ),
                         padding: EdgeInsets.all(getFontSize(context, -2)),
@@ -450,7 +452,7 @@ class _ProductPageState extends State<ProductPage> {
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
                                                   color: AppColors.nakedSyrup
-                                                      .withOpacity(0.8),
+                                                      .withValues(alpha: 0.8),
                                                   width: 1.5,
                                                 ),
                                               ),
@@ -488,7 +490,7 @@ class _ProductPageState extends State<ProductPage> {
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
                                                   color: AppColors.nakedSyrup
-                                                      .withOpacity(0.8),
+                                                      .withValues(alpha: 0.8),
                                                   width: 1.5,
                                                 ),
                                               ),
@@ -1045,7 +1047,7 @@ class _ProductPageState extends State<ProductPage> {
                                                         entry.key
                                                     ? AppColors.nakedSyrup
                                                     : AppColors.nakedSyrup
-                                                        .withOpacity(0.4),
+                                                        .withValues(alpha: 0.4),
                                           ),
                                         ),
                               );
@@ -1057,10 +1059,10 @@ class _ProductPageState extends State<ProductPage> {
                     padding: const EdgeInsets.only(top: 10),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.yellowColor.withOpacity(0.25),
+                        color: AppColors.yellowColor.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
-                          color: AppColors.nakedSyrup.withOpacity(0.5),
+                          color: AppColors.nakedSyrup.withValues(alpha: 0.5),
                         ),
                       ),
                       padding: EdgeInsets.all(getFontSize(context, -6)),
@@ -1246,7 +1248,7 @@ class _ProductPageState extends State<ProductPage> {
                                               shape: BoxShape.circle,
                                               border: Border.all(
                                                 color: AppColors.nakedSyrup
-                                                    .withOpacity(0.8),
+                                                    .withValues(alpha: 0.8),
                                                 width: 1.5,
                                               ),
                                             ),
@@ -1283,7 +1285,7 @@ class _ProductPageState extends State<ProductPage> {
                                               shape: BoxShape.circle,
                                               border: Border.all(
                                                 color: AppColors.nakedSyrup
-                                                    .withOpacity(0.8),
+                                                    .withValues(alpha: 0.8),
                                                 width: 1.5,
                                               ),
                                             ),

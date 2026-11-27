@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:naked_syrups/utility/responsive_UI.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:naked_syrups/utility/responsive_ui.dart';
 
 const double kLargeFont = 19;
 const double kMediumFont = 18;

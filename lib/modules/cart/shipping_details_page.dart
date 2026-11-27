@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 
@@ -19,7 +19,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Shipping Details',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -71,12 +71,13 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                         .value
                                         .shippingMethods?[j]
                                         .id,
-                                groupValue:
-                                    dashboardController.shippingMethods.value,
-                                onChanged: (value) {
-                                  dashboardController.shippingMethods.value =
-                                      value!;
-                                },
+
+                                // groupValue:
+                                //     dashboardController.shippingMethods.value,
+                                // onChanged: (value) {
+                                //   dashboardController.shippingMethods.value =
+                                //       value!;
+                                // },
                                 title: Text(
                                   dashboardController
                                           .shippingMethodsModel

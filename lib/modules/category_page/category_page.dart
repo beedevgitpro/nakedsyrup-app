@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/product_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
@@ -22,7 +22,6 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dashboardController.findCategory();
@@ -32,7 +31,7 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Most Viewed Product',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),

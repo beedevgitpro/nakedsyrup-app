@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+// ignore: depend_on_referenced_packages
+import 'package:material_ui/material_ui.dart';
 import 'package:naked_syrups/modules/cart/check_out_page.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../service.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
@@ -14,8 +15,7 @@ import '../../widgets/mandtory_text_lables.dart';
 import '../../widgets/text_form_fields.dart';
 
 class CartPage extends StatefulWidget {
-  // CartPage({super.key, this.categories});
-  // Categories? categories;
+  const CartPage({super.key});
   @override
   State<CartPage> createState() => _CartPageState();
 }
@@ -25,7 +25,6 @@ class _CartPageState extends State<CartPage> {
   String token = "";
   @override
   void initState() {
-    // TODO: implement initState
     SchedulerBinding.instance.addPostFrameCallback((_) {
       dashboardController.findCart();
       dashboardController.getCountryList();
@@ -43,14 +42,13 @@ class _CartPageState extends State<CartPage> {
     } else {
       dashboardController.promoCodeFiled.value = false;
     }
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Your Cart',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -119,13 +117,13 @@ class _CartPageState extends State<CartPage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: AppColors.yellowColor.withOpacity(
-                                      0.25,
+                                    color: AppColors.yellowColor.withValues(
+                                      alpha: 0.25,
                                     ),
                                     borderRadius: BorderRadius.circular(15),
                                     border: Border.all(
-                                      color: AppColors.nakedSyrup.withOpacity(
-                                        0.5,
+                                      color: AppColors.nakedSyrup.withValues(
+                                        alpha: 0.5,
                                       ),
                                     ),
                                   ),
@@ -202,14 +200,22 @@ class _CartPageState extends State<CartPage> {
                                                                 .cartItems?[j]
                                                                 .currentPrice !=
                                                             null
-                                                        ? (dashboardController.cartModel.value.cartItems?[j].showGst==true) ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)} + GST" :  "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                        ? (dashboardController
+                                                                    .cartModel
+                                                                    .value
+                                                                    .cartItems?[j]
+                                                                    .showGst ==
+                                                                true)
+                                                            ? "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)} + GST"
+                                                            : "\$${double.parse(dashboardController.cartModel.value.cartItems?[j].currentPrice.toString() ?? "0.0").toStringAsFixed(2)}"
                                                         : "0.0",
                                                     softWrap: true,
                                                     overflow:
-                                                    TextOverflow.visible,
+                                                        TextOverflow.visible,
                                                     textAlign: TextAlign.right,
                                                     style: TextStyle(
-                                                      color: AppColors.nakedSyrup,
+                                                      color:
+                                                          AppColors.nakedSyrup,
 
                                                       fontFamily:
                                                           'Euclid Circular B',
@@ -223,7 +229,8 @@ class _CartPageState extends State<CartPage> {
                                                                 context,
                                                                 -1,
                                                               ),
-                                                      fontWeight: FontWeight.w800,
+                                                      fontWeight:
+                                                          FontWeight.w800,
                                                     ),
                                                   ),
                                                 ),
@@ -256,7 +263,9 @@ class _CartPageState extends State<CartPage> {
                                                       border: Border.all(
                                                         color: AppColors
                                                             .nakedSyrup
-                                                            .withOpacity(0.8),
+                                                            .withValues(
+                                                              alpha: 0.8,
+                                                            ),
                                                         width: 1.5,
                                                       ),
                                                     ),
@@ -269,7 +278,7 @@ class _CartPageState extends State<CartPage> {
 
                                                 SizedBox(width: 10),
                                                 Text(
-                                                  quntity.toString() ?? "",
+                                                  quntity.toString(),
                                                   style: TextStyle(
                                                     fontFamily:
                                                         'Euclid Circular B',
@@ -305,7 +314,9 @@ class _CartPageState extends State<CartPage> {
                                                       border: Border.all(
                                                         color: AppColors
                                                             .nakedSyrup
-                                                            .withOpacity(0.8),
+                                                            .withValues(
+                                                              alpha: 0.8,
+                                                            ),
                                                         width: 1.5,
                                                       ),
                                                     ),
@@ -352,7 +363,7 @@ class _CartPageState extends State<CartPage> {
                               padding: const EdgeInsets.only(top: 10),
                               child: textLabel('Promo code', context, false),
                             ),
-                            AppTextFormField(
+                            appTextFormField(
                               textCapitalization: TextCapitalization.words,
                               controller:
                                   dashboardController.promoCodeController,
@@ -366,7 +377,9 @@ class _CartPageState extends State<CartPage> {
                                 }
                               },
                               lable: 'Enter Promo code',
-                              function: (value) {},
+                              function: (value) {
+                                return null;
+                              },
                             ),
                             Obx(
                               () =>
@@ -603,7 +616,7 @@ class _CartPageState extends State<CartPage> {
                           Text(
                             dashboardController.cartModel.value.cartTotal !=
                                     null
-                                ? "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                ? "\$${double.parse(dashboardController.cartModel.value.cartTotal.toString()).toStringAsFixed(2)}"
                                 : "0.0",
                             style: TextStyle(
                               color: AppColors.nakedSyrup,
@@ -629,7 +642,7 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                               Text(
-                                "\$${double.parse(dashboardController.cartModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                "\$${double.parse(dashboardController.cartModel.value.gstTotal.toString()).toStringAsFixed(2)}",
                                 style: TextStyle(
                                   color: AppColors.nakedSyrup,
                                   fontFamily: 'Euclid Circular B',
@@ -672,7 +685,7 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                               Text(
-                                "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                "- \$${double.parse(dashboardController.cartModel.value.discountTotal.toString()).toStringAsFixed(2)}",
                                 style: TextStyle(
                                   color: AppColors.nakedSyrup,
                                   fontFamily: 'Euclid Circular B',
@@ -698,7 +711,7 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
                               Text(
-                                "\$${double.parse(dashboardController.cartModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                "\$${double.parse(dashboardController.cartModel.value.grandTotal.toString()).toStringAsFixed(2)}",
                                 style: TextStyle(
                                   color: AppColors.nakedSyrup,
                                   fontFamily: 'Euclid Circular B',

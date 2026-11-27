@@ -197,7 +197,7 @@ class CartItems {
     _quantity = quantity;
     _regularPrice = regularPrice;
     _salePrice = salePrice;
-    _taxStatus   = taxStatus;
+    _taxStatus = taxStatus;
     _showGst = showGst;
     _currentPrice = currentPrice;
     _currentPriceFormatted = currentPriceFormatted;

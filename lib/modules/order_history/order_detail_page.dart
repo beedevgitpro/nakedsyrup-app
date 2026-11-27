@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/order_history_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 
+// ignore: must_be_immutable
 class OrderDetailPage extends StatefulWidget {
   OrderDetailPage({super.key, required this.orders});
 
@@ -22,19 +23,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   void initState() {
-    // dashboardController.findCart();
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String date = widget.orders.orderDate.toString() ?? "";
+    String date = widget.orders.orderDate.toString();
     String convertedDate = DateFormat(
       "dd/MM/yyyy",
     ).format(DateTime.parse(date));
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Order #${widget.orders.orderNumber}',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -52,10 +51,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             padding: EdgeInsets.all(getFontSize(context, 2)),
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.yellowColor.withOpacity(0.25),
+                color: AppColors.yellowColor.withValues(alpha: 0.25),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: AppColors.nakedSyrup.withOpacity(0.2),
+                  color: AppColors.nakedSyrup.withValues(alpha: 0.2),
                 ),
               ),
               child: Padding(
@@ -125,11 +124,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 color:
                                     widget.orders.status.toString() ==
                                             "cancelled"
-                                        ? AppColors.redColor.withOpacity(0.15)
+                                        ? AppColors.redColor.withValues(
+                                          alpha: 0.15,
+                                        )
                                         : widget.orders.status.toString() ==
                                             "completed"
-                                        ? Color(0XFF3FD75A).withOpacity(0.2)
-                                        : Color(0XFFFFAE00).withOpacity(0.2),
+                                        ? Color(
+                                          0XFF3FD75A,
+                                        ).withValues(alpha: 0.2)
+                                        : Color(
+                                          0XFFFFAE00,
+                                        ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Center(
@@ -141,10 +146,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     bottom: 10,
                                   ),
                                   child: Text(
-                                    (widget.orders.status
-                                                .toString()
-                                                .toString() ??
-                                            "")
+                                    (widget.orders.status.toString().toString())
                                         .toUpperCase(),
                                     style: TextStyle(
                                       color:
@@ -229,11 +231,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 color:
                                     widget.orders.status.toString() ==
                                             "cancelled"
-                                        ? AppColors.redColor.withOpacity(0.15)
+                                        ? AppColors.redColor.withValues(
+                                          alpha: 0.15,
+                                        )
                                         : widget.orders.status.toString() ==
                                             "completed"
-                                        ? Color(0XFF3FD75A).withOpacity(0.2)
-                                        : Color(0XFFFFAE00).withOpacity(0.2),
+                                        ? Color(
+                                          0XFF3FD75A,
+                                        ).withValues(alpha: 0.2)
+                                        : Color(
+                                          0XFFFFAE00,
+                                        ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Center(
@@ -245,10 +253,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     bottom: 8,
                                   ),
                                   child: Text(
-                                    (widget.orders.status
-                                                .toString()
-                                                .toString() ??
-                                            "")
+                                    (widget.orders.status.toString().toString())
                                         .toUpperCase(),
                                     style: TextStyle(
                                       color:
@@ -276,7 +281,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         vertical: getFontSize(context, 0),
                       ),
                       child: Divider(
-                        color: AppColors.nakedSyrup.withOpacity(0.2),
+                        color: AppColors.nakedSyrup.withValues(alpha: 0.2),
                         thickness: 1.5,
                       ),
                     ),
@@ -317,13 +322,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                   : (getFontSize(context, -2) *
                                                       5),
                                           decoration: BoxDecoration(
-                                            // color: AppColors.yellowColor.withOpacity(0.02),
+                                            // color: AppColors.yellowColor.withValues(alpha: 0.02),
                                             borderRadius: BorderRadius.circular(
                                               15,
                                             ),
                                             border: Border.all(
                                               color: AppColors.yellowColor
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                             ),
                                           ),
                                           child: ClipRRect(
@@ -414,7 +419,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 : getFontSize(context, -4),
                       ),
                       child: Divider(
-                        color: AppColors.nakedSyrup.withOpacity(0.2),
+                        color: AppColors.nakedSyrup.withValues(alpha: 0.2),
                         thickness: 1.5,
                       ),
                     ),
@@ -633,10 +638,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               width: (Get.width / 2) - 55,
                               height: 405,
                               decoration: BoxDecoration(
-                                color: AppColors.yellowColor.withOpacity(0.25),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.25,
+                                ),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: AppColors.nakedSyrup.withOpacity(0.2),
+                                  color: AppColors.nakedSyrup.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               child: Padding(
@@ -664,8 +673,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         vertical: getFontSize(context, 0),
                                       ),
                                       child: Divider(
-                                        color: AppColors.nakedSyrup.withOpacity(
-                                          0.2,
+                                        color: AppColors.nakedSyrup.withValues(
+                                          alpha: 0.2,
                                         ),
                                         thickness: 1.5,
                                       ),
@@ -873,10 +882,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               width: (Get.width / 2) - 55,
                               height: 405,
                               decoration: BoxDecoration(
-                                color: AppColors.yellowColor.withOpacity(0.25),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.25,
+                                ),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: AppColors.nakedSyrup.withOpacity(0.2),
+                                  color: AppColors.nakedSyrup.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               child: Padding(
@@ -904,8 +917,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         vertical: getFontSize(context, 0),
                                       ),
                                       child: Divider(
-                                        color: AppColors.nakedSyrup.withOpacity(
-                                          0.2,
+                                        color: AppColors.nakedSyrup.withValues(
+                                          alpha: 0.2,
                                         ),
                                         thickness: 1.5,
                                       ),
@@ -993,10 +1006,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: AppColors.yellowColor.withOpacity(0.25),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.25,
+                                ),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: AppColors.nakedSyrup.withOpacity(0.2),
+                                  color: AppColors.nakedSyrup.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               child: Padding(
@@ -1021,8 +1038,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         vertical: getFontSize(context, -6),
                                       ),
                                       child: Divider(
-                                        color: AppColors.nakedSyrup.withOpacity(
-                                          0.2,
+                                        color: AppColors.nakedSyrup.withValues(
+                                          alpha: 0.2,
                                         ),
                                         thickness: 1.5,
                                       ),
@@ -1210,10 +1227,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             SizedBox(height: getFontSize(context, -2)),
                             Container(
                               decoration: BoxDecoration(
-                                color: AppColors.yellowColor.withOpacity(0.25),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.25,
+                                ),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: AppColors.nakedSyrup.withOpacity(0.2),
+                                  color: AppColors.nakedSyrup.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               child: Padding(
@@ -1238,8 +1259,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         vertical: getFontSize(context, -6),
                                       ),
                                       child: Divider(
-                                        color: AppColors.nakedSyrup.withOpacity(
-                                          0.2,
+                                        color: AppColors.nakedSyrup.withValues(
+                                          alpha: 0.2,
                                         ),
                                         thickness: 1.5,
                                       ),

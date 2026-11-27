@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../service.dart';
@@ -43,7 +43,6 @@ class LoginFlowController extends GetxController {
       );
     }
     var data = await ApiClass().resetPass(emailController.text);
-    print("data : $data :: ${data is String}");
     isReset.value = false;
     if (data != null) {
       if (data['success'] == true) {
@@ -53,7 +52,6 @@ class LoginFlowController extends GetxController {
         Get.offAll(LoginPage());
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       } else {
-        print("forgotPass response : $data");
         Get.snackbar("${data['message']}", "", backgroundColor: Colors.white);
       }
     }
@@ -64,7 +62,7 @@ class LoginFlowController extends GetxController {
     certificateList.clear();
     var category = await ApiClass().getCertificate();
     if (category != null) {
-      certificateList.value.addAll(category);
+      certificateList.addAll(category);
     }
     isCerti.value = false;
   }
@@ -74,11 +72,9 @@ class LoginFlowController extends GetxController {
       return;
     }
 
-    final email =
-    emailController.text.trim();
+    final email = emailController.text.trim();
 
-    final password =
-        passwordController.text;
+    final password = passwordController.text;
 
     if (email.isEmpty) {
       Get.snackbar(
@@ -116,16 +112,11 @@ class LoginFlowController extends GetxController {
     callLoginApi.value = true;
 
     try {
-      final prefs =
-      await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
       prefs.clear();
 
-      final response =
-      await ApiClass().loginApi(
-        email,
-        password,
-      );
+      final response = await ApiClass().loginApi(email, password);
 
       if (response == null) {
         return;
@@ -161,19 +152,9 @@ class LoginFlowController extends GetxController {
 
       await initAuthSessionFromPrefs();
 
-      Get.offAll(
-            () => const DashboardPage(),
-      );
+      Get.offAll(() => const DashboardPage());
     } finally {
       callLoginApi.value = false;
     }
   }
-
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-  }
-
-
 }

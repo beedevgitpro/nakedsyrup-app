@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 
-import '../../NkedSyrps.dart';
-import '../../Resources/AppColors.dart';
+import '../../nked_syrps.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/order_history_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
@@ -87,7 +87,7 @@ class _DashboardPageState extends State<DashboardPage>
         versionStatus: status,
         dialogTitle: 'Update Available',
         dialogText:
-            'You can update this app from ${localVersion} to ${storeVersion}',
+            'You can update this app from $localVersion to $storeVersion',
         launchModeVersion: LaunchModeVersion.external,
         allowDismissal: true,
       );
@@ -97,17 +97,12 @@ class _DashboardPageState extends State<DashboardPage>
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       child: Scaffold(
         key: dashboardController.scaffolKey,
-        appBar: AppBarWidget(
+        appBar: appBarWidget(
           'Dashboard',
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.black),
@@ -401,9 +396,6 @@ class _DashboardPageState extends State<DashboardPage>
                                     String convertedDate = DateFormat(
                                       "dd MMM yyyy, hh:mm a",
                                     ).format(DateTime.parse(date));
-                                    List<String> parts = convertedDate.split(
-                                      RegExp(r'[\s,:]+'),
-                                    );
 
                                     if (j < 5) {
                                       return InkWell(
@@ -422,13 +414,13 @@ class _DashboardPageState extends State<DashboardPage>
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: AppColors.yellowColor
-                                                .withOpacity(0.25),
+                                                .withValues(alpha: 0.25),
                                             borderRadius: BorderRadius.circular(
                                               15,
                                             ),
                                             border: Border.all(
                                               color: AppColors.yellowColor
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                             ),
                                           ),
                                           child: Padding(
@@ -455,7 +447,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                     .isNotEmpty
                                                                 ? Container(
                                                                   decoration: BoxDecoration(
-                                                                    // color: AppColors.yellowColor.withOpacity(0.02),
+                                                                    // color: AppColors.yellowColor.withValues(alpha: 0.02),
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                           15,
@@ -463,8 +455,9 @@ class _DashboardPageState extends State<DashboardPage>
                                                                     border: Border.all(
                                                                       color: AppColors
                                                                           .yellowColor
-                                                                          .withOpacity(
-                                                                            0.5,
+                                                                          .withValues(
+                                                                            alpha:
+                                                                                0.5,
                                                                           ),
                                                                     ),
                                                                   ),
@@ -604,7 +597,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              " ${convertedDate} ",
+                                                                              " $convertedDate ",
                                                                           style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.normal,
@@ -664,8 +657,9 @@ class _DashboardPageState extends State<DashboardPage>
                                                                         "cancelled"
                                                                     ? AppColors
                                                                         .redColor
-                                                                        .withOpacity(
-                                                                          0.15,
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.15,
                                                                         )
                                                                     : dashboardController
                                                                             .orderHistoryModel
@@ -676,13 +670,15 @@ class _DashboardPageState extends State<DashboardPage>
                                                                         "completed"
                                                                     ? Color(
                                                                       0XFF3FD75A,
-                                                                    ).withOpacity(
-                                                                      0.2,
+                                                                    ).withValues(
+                                                                      alpha:
+                                                                          0.2,
                                                                     )
                                                                     : Color(
                                                                       0XFFFFAE00,
-                                                                    ).withOpacity(
-                                                                      0.2,
+                                                                    ).withValues(
+                                                                      alpha:
+                                                                          0.2,
                                                                     ),
                                                             borderRadius:
                                                                 BorderRadius.circular(
@@ -757,7 +753,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                     .isNotEmpty
                                                                 ? Container(
                                                                   decoration: BoxDecoration(
-                                                                    // color: AppColors.yellowColor.withOpacity(0.02),
+                                                                    // color: AppColors.yellowColor.withValues(alpha: 0.02),
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                           15,
@@ -765,8 +761,9 @@ class _DashboardPageState extends State<DashboardPage>
                                                                     border: Border.all(
                                                                       color: AppColors
                                                                           .yellowColor
-                                                                          .withOpacity(
-                                                                            0.5,
+                                                                          .withValues(
+                                                                            alpha:
+                                                                                0.5,
                                                                           ),
                                                                     ),
                                                                   ),
@@ -907,7 +904,7 @@ class _DashboardPageState extends State<DashboardPage>
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              " ${convertedDate} ",
+                                                                              " $convertedDate ",
                                                                           style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.normal,
@@ -964,8 +961,9 @@ class _DashboardPageState extends State<DashboardPage>
                                                                         "cancelled"
                                                                     ? AppColors
                                                                         .redColor
-                                                                        .withOpacity(
-                                                                          0.15,
+                                                                        .withValues(
+                                                                          alpha:
+                                                                              0.15,
                                                                         )
                                                                     : dashboardController
                                                                             .orderHistoryModel
@@ -976,13 +974,15 @@ class _DashboardPageState extends State<DashboardPage>
                                                                         "completed"
                                                                     ? Color(
                                                                       0XFF3FD75A,
-                                                                    ).withOpacity(
-                                                                      0.2,
+                                                                    ).withValues(
+                                                                      alpha:
+                                                                          0.2,
                                                                     )
                                                                     : Color(
                                                                       0XFFFFAE00,
-                                                                    ).withOpacity(
-                                                                      0.2,
+                                                                    ).withValues(
+                                                                      alpha:
+                                                                          0.2,
                                                                     ),
                                                             borderRadius:
                                                                 BorderRadius.circular(

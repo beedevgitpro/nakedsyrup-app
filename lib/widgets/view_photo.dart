@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
-import '../Resources/AppColors.dart';
+import '../Resources/app_colors.dart';
 import 'appbar_widget.dart';
 
+// ignore: must_be_immutable
 class PhotoViewInApp extends StatefulWidget {
   List? galleryItems;
   int? currentIndex;
@@ -25,7 +26,7 @@ class _PhotoViewInAppState extends State<PhotoViewInApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         "Images",
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppColors {
   AppColors._();
@@ -6,7 +6,7 @@ class AppColors {
   static Color nakedSyrup = const Color(0XFFD18901);
   static Color lightColor = const Color(0XFFb5b5c3);
   static Color redColor = const Color(0xffD73F3F);
-  static Color lightGreenColor = const Color(0xffcfe8ffd1);
+  static Color lightGreenColor = const Color(0xcfe8ffd1);
   static Color darkColor = const Color(0XFF4c4949);
   static Color orangeColor = const Color(0XFFf77001);
   static Color textColor = const Color(0XFF4c4949);

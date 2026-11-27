@@ -60,7 +60,7 @@ class Products {
     _name = name;
     _price = price;
     _regularPrice = regularPrice;
-    _taxStatus   = taxStatus;
+    _taxStatus = taxStatus;
     _salePrice = salePrice;
     _showGst = showGst;
     _stockStatus = stockStatus;

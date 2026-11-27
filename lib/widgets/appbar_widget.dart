@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../utility/responsive_text.dart';
 
-PreferredSizeWidget AppBarWidget(
+PreferredSizeWidget appBarWidget(
   String text,
   Widget leading,
   BuildContext context, {

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -34,14 +34,12 @@ class NetworkHelper {
   static void init() {
     _subscription?.cancel();
 
-    _subscription =
-        _connectivity.onConnectivityChanged.listen((results) async {
-          if (results.isEmpty ||
-              results.contains(ConnectivityResult.none)) {
-            showNoInternetDialog();
-            return;
-          }
-        });
+    _subscription = _connectivity.onConnectivityChanged.listen((results) async {
+      if (results.isEmpty || results.contains(ConnectivityResult.none)) {
+        showNoInternetDialog();
+        return;
+      }
+    });
   }
 
   static void showNoInternetDialog() {
@@ -80,12 +78,7 @@ class NetworkHelper {
           content: const Text(
             'Please check your internet connection and try again.',
           ),
-          actions: [
-            TextButton(
-              onPressed: Get.back,
-              child: const Text('OK'),
-            ),
-          ],
+          actions: [TextButton(onPressed: Get.back, child: const Text('OK'))],
         ),
         barrierDismissible: true,
       );

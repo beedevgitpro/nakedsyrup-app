@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
-import 'package:naked_syrups/Resources/AppColors.dart';
+import 'package:naked_syrups/Resources/app_colors.dart';
 
 import 'splash_controller.dart';
 
+// ignore: must_be_immutable
 class SplashScreen extends StatelessWidget {
   SplashScreen({super.key});
 
@@ -20,7 +21,7 @@ class SplashScreen extends StatelessWidget {
             image: AssetImage("assets/images/pink.jpg"),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5), // <-- Adjust opacity here
+              Colors.black.withValues(alpha: 0.5), // <-- Adjust opacity here
               BlendMode.darken, // <-- Darken effect
             ),
           ),

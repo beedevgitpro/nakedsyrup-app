@@ -19,9 +19,7 @@ class SplashController extends GetxController {
 
     // Keep a very short splash delay for branding,
     // not the current forced three-second delay.
-    await Future.delayed(
-      const Duration(milliseconds: 700),
-    );
+    await Future.delayed(const Duration(milliseconds: 700));
 
     if (token.isNotEmpty && userId != null) {
       Get.offAll(() => const DashboardPage());

@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter/material.dart' as flutter;
+import 'package:material_ui/material_ui.dart'
+    hide ThemeData, Colors, ColorScheme, Color, WidgetsFlutterBinding;
 import 'package:get/get.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -8,8 +11,7 @@ import 'network_helper.dart';
 import 'service.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
+  flutter.WidgetsFlutterBinding.ensureInitialized();
   await initAuthSessionFromPrefs();
 
   setupDio();
@@ -17,7 +19,6 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,6 +29,13 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Naked Syrups',
+
+      localizationsDelegates: const [
+        DefaultMaterialLocalizations.delegate,
+        flutter.DefaultWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('en', 'US')],
+
       navigatorObservers: [GlobalRouteObserver()],
       builder: (context, child) {
         child = ResponsiveBreakpoints.builder(
@@ -41,21 +49,16 @@ class MyApp extends StatelessWidget {
         );
         return child;
       },
-      theme: ThemeData(
+      theme: flutter.ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF542E91),
+        scaffoldBackgroundColor: flutter.Colors.white,
+        colorScheme: flutter.ColorScheme.fromSeed(
+          seedColor: const flutter.Color(0xFF542E91),
         ),
         fontFamily: 'Euclid Circular B',
       ),
       initialRoute: '/splash',
-      getPages: [
-        GetPage(
-          name: '/splash',
-          page: () => SplashScreen(),
-        ),
-      ],
+      getPages: [GetPage(name: '/splash', page: () => SplashScreen())],
     );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/login_flow/login_page.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/drop_down_field.dart';
@@ -22,34 +22,15 @@ class _RegisterPageState extends State<RegisterPage> {
   DashboardController dashboardController = Get.put(DashboardController());
   @override
   void initState() {
-    // TODO: implement initState
     dashboardController.getCountryList();
     dashboardController.enableRegistration.value = true;
-    // controler =
-    //     WebViewControllerPlus()
-    //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    //       ..addJavaScriptChannel(
-    //         'Captcha',
-    //         onMessageReceived: (message) async {
-    //           final token = message.message;
-    //           var verify = await ApiClass().verifyCaptchaToken(token);
-    //           if (verify != null) {
-    //             if (verify['success'] == true) {
-    //               dashboardController.enableRegistration.value = true;
-    //             }
-    //           }
-    //         },
-    //       )
-    //       ..loadRequest(
-    //         Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
-    //       );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget('Register', const SizedBox(), context),
+      appBar: appBarWidget('Register', const SizedBox(), context),
       body: Obx(
         () =>
             dashboardController.getCheckOut.value
@@ -79,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel('First Name', context, true),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.firstNameController,
                                 lable: 'First Name',
@@ -94,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel('Last Name', context, true),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.lastNameController,
                                 lable: 'Last Name',
@@ -109,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel('Phone', context, false),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller: dashboardController.phoneController,
                                 keyboardType: TextInputType.number,
                                 maxLength: 10,
@@ -129,11 +110,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                   false,
                                 ),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.companyNameController,
                                 lable: 'Company Name',
-                                function: (value) {},
+                                function: (value) {
+                                  return null;
+                                },
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: 10),
@@ -143,7 +126,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   false,
                                 ),
                               ),
-                              AppDropDownField(
+                              appDropDownField(
                                 lable: 'Country / Region',
                                 value:
                                     dashboardController
@@ -155,26 +138,26 @@ class _RegisterPageState extends State<RegisterPage> {
                                             .value
                                         : null, // 👈 ADD THIS LINE
                                 itemList:
-                                    dashboardController.countryMap.value.entries
-                                        .map((entry) {
-                                          return DropdownMenuItem<String>(
-                                            onTap: () {
-                                              dashboardController
-                                                  .selectedCountry
-                                                  .value = entry.key;
-                                              dashboardController
-                                                  .selectedState
-                                                  .value = "";
-                                              dashboardController.getStateList(
-                                                entry.key,
-                                                false,
-                                              );
-                                            },
-                                            value: entry.key,
-                                            child: Text(entry.value),
+                                    dashboardController.countryMap.entries.map((
+                                      entry,
+                                    ) {
+                                      return DropdownMenuItem<String>(
+                                        onTap: () {
+                                          dashboardController
+                                              .selectedCountry
+                                              .value = entry.key;
+                                          dashboardController
+                                              .selectedState
+                                              .value = "";
+                                          dashboardController.getStateList(
+                                            entry.key,
+                                            false,
                                           );
-                                        })
-                                        .toList(),
+                                        },
+                                        value: entry.key,
+                                        child: Text(entry.value),
+                                      );
+                                    }).toList(),
                                 // function: (value) {
                                 //   if (value != null ||
                                 //       value.trim().isNotEmpty) {
@@ -201,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   false,
                                 ),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.streetAddressController,
                                 lable: 'Street address',
@@ -212,26 +195,22 @@ class _RegisterPageState extends State<RegisterPage> {
                                 //   return null; // <-- must return null if valid
                                 // },
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController
                                         .streetAddress2Controller,
                                 lable: 'Street address',
-                                function: (value) {},
+                                function: (value) {
+                                  return null;
+                                },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel('Town / City', context, false),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller: dashboardController.townController,
                                 lable: 'Town / City',
-                                // function: (value) {
-                                //   if (value == null || value.trim().isEmpty) {
-                                //     return "Add town or city name!";
-                                //   }
-                                //   return null; // <-- must return null if valid
-                                // },
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
@@ -253,12 +232,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                             ),
                                           ),
                                         )
-                                        : AppDropDownField(
+                                        : appDropDownField(
                                           lable: 'State / County',
                                           itemList:
                                               dashboardController
                                                   .stateMap
-                                                  .value
                                                   .entries
                                                   .map((entry) {
                                                     return DropdownMenuItem<
@@ -291,7 +269,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   false,
                                 ),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.postCodeController,
                                 keyboardType: TextInputType.number,
@@ -307,7 +285,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 padding: const EdgeInsets.only(top: 10),
                                 child: textLabel('User Name', context, true),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller:
                                     dashboardController.userNameController,
 
@@ -327,7 +305,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   true,
                                 ),
                               ),
-                              AppTextFormField(
+                              appTextFormField(
                                 controller: dashboardController.emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 lable: 'Email address',
@@ -343,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 child: textLabel('Password', context, true),
                               ),
                               Obx(
-                                () => AppTextFormField(
+                                () => appTextFormField(
                                   obscureText:
                                       !dashboardController
                                           .isPasswordVisible

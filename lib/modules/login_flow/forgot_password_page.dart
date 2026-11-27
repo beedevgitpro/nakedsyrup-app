@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 
 import '../../utility/responsive_text.dart';
@@ -6,6 +6,7 @@ import '../../widgets/mandtory_text_lables.dart';
 import '../../widgets/text_form_fields.dart';
 import 'loginflow_controller.dart';
 
+// ignore: must_be_immutable
 class ForgotPasswordPage extends StatelessWidget {
   ForgotPasswordPage({super.key});
   LoginFlowController loginFlowController = Get.put(LoginFlowController());
@@ -58,20 +59,13 @@ class ForgotPasswordPage extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 25),
                         child: textLabel('Email', context, true),
                       ),
-                      AppTextFormField(
+                      appTextFormField(
                         controller: loginFlowController.emailController,
                         lable: 'Email',
-                        function: (value) {},
+                        function: (value) {
+                          return null;
+                        },
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 10),
-                      //   child: textLabel('Password', context, true),
-                      // ),
-                      // AppTextFormField(
-                      //   controller: loginFlowController.passwordController,
-                      //   lable: 'Password',
-                      //   function: (value) {},
-                      // ),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: 250,

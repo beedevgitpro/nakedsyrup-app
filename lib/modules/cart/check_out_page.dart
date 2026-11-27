@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/drop_down_field.dart';
@@ -22,58 +24,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
   late WebViewControllerPlus controler;
   @override
   void initState() {
-    // TODO: implement initState
     dashboardController.differentAddress.value = false;
     dashboardController.enableCheckOut.value = false;
     dashboardController.getPayByAcc();
     if (dashboardController.token.value.isEmpty == true) {
       dashboardController.differentAddress.value = true;
     }
-    // controler =
-    //     WebViewControllerPlus()
-    //       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    //       ..addJavaScriptChannel(
-    //         'Captcha',
-    //         onMessageReceived: (message) async {
-    //           final token = message.message;
-    //           print('reCAPTCHA token received: $token');
-    //           var verify = await ApiClass().verifyCaptchaToken(token);
-    //           if (verify != null) {
-    //             if (verify['success'] == true) {
-    //               dashboardController.enableCheckOut.value = true;
-    //               // dashboardController.recaptchaHeight.value = 100;
-    //             }
-    //           }
-    //         },
-    //       )
-    //       ..addJavaScriptChannel(
-    //         'Resize',
-    //         onMessageReceived: (message) {
-    //           print("is collapse :::: ${message.message}");
-    //           if (message.message == "expand") {
-    //             // dashboardController.recaptchaHeight.value = 500;
-    //           } else if (message.message == "collapse") {
-    //             // dashboardController.recaptchaHeight.value = 100;
-    //           }
-    //         },
-    //       )
-    //       ..loadRequest(
-    //         Uri.parse('https://www.nakedsyrups.com.au/captcha.html'),
-    //       )
-    //       ..setNavigationDelegate(
-    //         NavigationDelegate(
-    //           onPageFinished: (_) {
-    //             controler.runJavaScript('initResizeObserver()');
-    //           },
-    //         ),
-    //       );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Checkout',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -151,7 +114,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .firstNameController,
@@ -174,7 +137,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .lastNameController,
@@ -197,12 +160,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   false,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .companyNameController,
                                                 lable: 'Company Name',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -214,7 +179,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppDropDownField(
+                                              appDropDownField(
                                                 lable: 'Country / Region',
                                                 value:
                                                     dashboardController
@@ -228,7 +193,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 itemList:
                                                     dashboardController
                                                         .countryMap
-                                                        .value
                                                         .entries
                                                         .map((entry) {
                                                           return DropdownMenuItem<
@@ -284,7 +248,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .streetAddressController,
@@ -297,12 +261,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   return null; // <-- must return null if valid
                                                 },
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .streetAddress2Controller,
                                                 lable: 'Street address',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -314,7 +280,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .townController,
@@ -353,13 +319,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             ),
                                                           ),
                                                         )
-                                                        : AppDropDownField(
+                                                        : appDropDownField(
                                                           lable:
                                                               'State / County',
                                                           value:
                                                               dashboardController
                                                                       .stateMap
-                                                                      .value
                                                                       .containsKey(
                                                                         dashboardController
                                                                             .selectedState
@@ -370,7 +335,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                       .value
                                                                   : null,
                                                           itemList:
-                                                              dashboardController.stateMap.value.entries.map((
+                                                              dashboardController.stateMap.entries.map((
                                                                 entry,
                                                               ) {
                                                                 return DropdownMenuItem<
@@ -411,7 +376,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 ),
                                               ),
                                               Focus(
-                                                child: AppTextFormField(
+                                                child: appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .postCodeController,
@@ -428,7 +393,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 ),
                                                 onFocusChange: (hasFocus) {
                                                   if (hasFocus) {
-                                                    print('Name GAINED focus');
+                                                    if (kDebugMode) {
+                                                      print(
+                                                        'Name GAINED focus',
+                                                      );
+                                                    }
                                                   } else {
                                                     dashboardController
                                                         .getShippingMethods();
@@ -445,7 +414,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   true,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .phoneController,
@@ -471,7 +440,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 ),
                                               ),
                                               Focus(
-                                                child: AppTextFormField(
+                                                child: appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .emailController,
@@ -487,7 +456,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 ),
                                                 onFocusChange: (hasFocus) {
                                                   if (hasFocus) {
-                                                    print('Name GAINED focus');
+                                                    if (kDebugMode) {
+                                                      print(
+                                                        'Name GAINED focus',
+                                                      );
+                                                    }
                                                   } else {
                                                     dashboardController
                                                         .getShippingMethods();
@@ -504,13 +477,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   false,
                                                 ),
                                               ),
-                                              AppTextFormField(
+                                              appTextFormField(
                                                 controller:
                                                     dashboardController
                                                         .pOController,
 
                                                 lable: 'PO Number',
-                                                function: (value) {},
+                                                function: (value) {
+                                                  return null;
+                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -522,7 +497,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   false,
                                                 ),
                                               ),
-                                              AppDropDownField(
+                                              appDropDownField(
                                                 lable: 'State / County',
                                                 value:
                                                     dashboardController
@@ -552,24 +527,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         .toList(),
                                                 function: (value) {},
                                               ),
-
-                                              // Padding(
-                                              //   padding: const EdgeInsets.only(
-                                              //     top: 10,
-                                              //   ),
-                                              //   child: textLabel(
-                                              //     'Company Name (optional)',
-                                              //     context,
-                                              //     false,
-                                              //   ),
-                                              // ),
-                                              // AppTextFormField(
-                                              //   controller:
-                                              //       dashboardController
-                                              //           .companyName2Controller,
-                                              //   lable: 'Company Name',
-                                              //   function: (value) {},
-                                              // ),
                                             ],
                                           ),
                                         ),
@@ -651,7 +608,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           true,
                                                         ),
                                                       ),
-                                                      AppTextFormField(
+                                                      appTextFormField(
                                                         controller:
                                                             dashboardController
                                                                 .firstNameDiffController,
@@ -677,7 +634,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           true,
                                                         ),
                                                       ),
-                                                      AppTextFormField(
+                                                      appTextFormField(
                                                         controller:
                                                             dashboardController
                                                                 .lastNameDiffController,
@@ -703,12 +660,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           false,
                                                         ),
                                                       ),
-                                                      AppTextFormField(
+                                                      appTextFormField(
                                                         controller:
                                                             dashboardController
                                                                 .companyNameDiffController,
                                                         lable: 'Company Name',
-                                                        function: (value) {},
+                                                        function: (value) {
+                                                          return null;
+                                                        },
                                                       ),
                                                       Padding(
                                                         padding:
@@ -721,7 +680,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           true,
                                                         ),
                                                       ),
-                                                      AppDropDownField(
+                                                      appDropDownField(
                                                         lable:
                                                             'Country / Region',
                                                         value:
@@ -734,7 +693,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                     .value
                                                                 : null,
                                                         itemList:
-                                                            dashboardController.countryMap.value.entries.map((
+                                                            dashboardController.countryMap.entries.map((
                                                               entry,
                                                             ) {
                                                               return DropdownMenuItem<
@@ -757,10 +716,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                 },
                                                                 value:
                                                                     entry.key,
-                                                                // country code (e.g., "IN")
                                                                 child: Text(
                                                                   entry.value,
-                                                                ), // country name (e.g., "India")
+                                                                ),
                                                               );
                                                             }).toList(),
                                                         function: (value) {
@@ -793,7 +751,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           true,
                                                         ),
                                                       ),
-                                                      AppTextFormField(
+                                                      appTextFormField(
                                                         controller:
                                                             dashboardController
                                                                 .streetAddressDiffController,
@@ -808,12 +766,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           return null; // <-- must return null if valid
                                                         },
                                                       ),
-                                                      AppTextFormField(
+                                                      appTextFormField(
                                                         controller:
                                                             dashboardController
                                                                 .streetAddress2DiffController,
                                                         lable: 'Street address',
-                                                        function: (value) {},
+                                                        function: (value) {
+                                                          return null;
+                                                        },
                                                       ),
                                                       Padding(
                                                         padding:
@@ -827,7 +787,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         ),
                                                       ),
                                                       Focus(
-                                                        child: AppTextFormField(
+                                                        child: appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .townDiffController,
@@ -846,9 +806,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           hasFocus,
                                                         ) {
                                                           if (hasFocus) {
-                                                            print(
-                                                              'Name GAINED focus',
-                                                            );
                                                           } else {
                                                             dashboardController
                                                                 .getShippingMethods();
@@ -882,22 +839,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                     ),
                                                                   ),
                                                                 )
-                                                                : AppDropDownField(
+                                                                : appDropDownField(
                                                                   lable:
                                                                       'State / County',
                                                                   value:
-                                                                      dashboardController
-                                                                              .stateMapDiff
-                                                                              .value
-                                                                              .containsKey(
-                                                                                dashboardController.selectedStateDiff.value,
-                                                                              )
+                                                                      dashboardController.stateMapDiff.containsKey(
+                                                                            dashboardController.selectedStateDiff.value,
+                                                                          )
                                                                           ? dashboardController
                                                                               .selectedStateDiff
                                                                               .value
                                                                           : null,
                                                                   itemList:
-                                                                      dashboardController.stateMapDiff.value.entries.map((
+                                                                      dashboardController.stateMapDiff.entries.map((
                                                                         entry,
                                                                       ) {
                                                                         return DropdownMenuItem<
@@ -941,7 +895,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         ),
                                                       ),
                                                       Focus(
-                                                        child: AppTextFormField(
+                                                        child: appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .postCodeDiffController,
@@ -964,9 +918,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           hasFocus,
                                                         ) {
                                                           if (hasFocus) {
-                                                            print(
-                                                              'Name GAINED focus',
-                                                            );
                                                           } else {
                                                             dashboardController
                                                                 .getShippingMethods();
@@ -1019,7 +970,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             true,
                                                           ),
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .firstNameController,
@@ -1047,7 +998,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           ),
                                                         ),
                                                         Obx(
-                                                          () => AppTextFormField(
+                                                          () => appTextFormField(
                                                             obscureText:
                                                                 !dashboardController
                                                                     .isPasswordVisible
@@ -1056,8 +1007,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                 dashboardController
                                                                     .passwordController,
                                                             lable: 'Password',
-                                                            function:
-                                                                (value) {},
+                                                            function: (value) {
+                                                              return null;
+                                                            },
                                                             suffix: InkWell(
                                                               onTap: () {
                                                                 dashboardController
@@ -1114,12 +1066,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                               false,
                                             ),
                                           ),
-                                          AppTextFormField(
+                                          appTextFormField(
                                             controller:
                                                 dashboardController
                                                     .orderNotesController,
                                             lable: 'Order notes',
-                                            function: (value) {},
+                                            function: (value) {
+                                              return null;
+                                            },
                                           ),
                                         ],
                                       ),
@@ -1226,8 +1180,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                         final cost =
                                                             double.tryParse(
                                                               method.costRaw
-                                                                      .toString() ??
-                                                                  "0.0",
+                                                                  .toString(),
                                                             ) ??
                                                             0.0;
 
@@ -1311,7 +1264,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 children: [
                                                   if (dashboardController
                                                           .isPayByAcc
-                                                          .value.toLowerCase() ==
+                                                          .value
+                                                          .toLowerCase() ==
                                                       'yes')
                                                     RadioListTile<String>(
                                                       value: 'cod',
@@ -1410,7 +1364,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                     .value
                                                                     .subtotal !=
                                                                 null
-                                                            ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                            ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString()).toStringAsFixed(2)}"
                                                             : "0.0",
                                                         style: TextStyle(
                                                           color:
@@ -1457,7 +1411,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString()).toStringAsFixed(2)}",
                                                             style: TextStyle(
                                                               color:
                                                                   AppColors
@@ -1600,7 +1554,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            "- \$${double.parse(dashboardController.priceModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            "- \$${double.parse(dashboardController.priceModel.value.discountTotal.toString()).toStringAsFixed(2)}",
                                                             style: TextStyle(
                                                               color:
                                                                   AppColors
@@ -1650,7 +1604,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                            "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString()).toStringAsFixed(2)}",
                                                             style: TextStyle(
                                                               color:
                                                                   AppColors
@@ -1788,7 +1742,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .firstNameController,
@@ -1812,7 +1766,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .lastNameController,
@@ -1836,12 +1790,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     false,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .companyNameController,
                                                   lable: 'Company Name',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -1854,7 +1810,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppDropDownField(
+                                                appDropDownField(
                                                   lable: 'Country / Region',
                                                   value:
                                                       dashboardController
@@ -1866,7 +1822,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                               .value
                                                           : null,
                                                   itemList:
-                                                      dashboardController.countryMap.value.entries.map((
+                                                      dashboardController.countryMap.entries.map((
                                                         entry,
                                                       ) {
                                                         return DropdownMenuItem<
@@ -1924,7 +1880,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddressController,
@@ -1937,12 +1893,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     return null; // <-- must return null if valid
                                                   },
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .streetAddress2Controller,
                                                   lable: 'Street address',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -1955,7 +1913,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .townController,
@@ -1995,13 +1953,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                               ),
                                                             ),
                                                           )
-                                                          : AppDropDownField(
+                                                          : appDropDownField(
                                                             lable:
                                                                 'State / County',
                                                             value:
                                                                 dashboardController
                                                                         .stateMap
-                                                                        .value
                                                                         .containsKey(
                                                                           dashboardController
                                                                               .selectedState
@@ -2012,7 +1969,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                         .value
                                                                     : null,
                                                             itemList:
-                                                                dashboardController.stateMap.value.entries.map((
+                                                                dashboardController.stateMap.entries.map((
                                                                   entry,
                                                                 ) {
                                                                   return DropdownMenuItem<
@@ -2057,7 +2014,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .postCodeController,
@@ -2076,9 +2033,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   ),
                                                   onFocusChange: (hasFocus) {
                                                     if (hasFocus) {
-                                                      print(
-                                                        'Name GAINED focus',
-                                                      );
                                                     } else {
                                                       dashboardController
                                                           .getShippingMethods();
@@ -2096,7 +2050,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     true,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .phoneController,
@@ -2123,7 +2077,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   ),
                                                 ),
                                                 Focus(
-                                                  child: AppTextFormField(
+                                                  child: appTextFormField(
                                                     controller:
                                                         dashboardController
                                                             .emailController,
@@ -2141,9 +2095,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   ),
                                                   onFocusChange: (hasFocus) {
                                                     if (hasFocus) {
-                                                      print(
-                                                        'Name GAINED focus',
-                                                      );
                                                     } else {
                                                       dashboardController
                                                           .getShippingMethods();
@@ -2161,13 +2112,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     false,
                                                   ),
                                                 ),
-                                                AppTextFormField(
+                                                appTextFormField(
                                                   controller:
                                                       dashboardController
                                                           .pOController,
 
                                                   lable: 'PO Number',
-                                                  function: (value) {},
+                                                  function: (value) {
+                                                    return null;
+                                                  },
                                                 ),
                                                 Padding(
                                                   padding:
@@ -2180,7 +2133,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                     false,
                                                   ),
                                                 ),
-                                                AppDropDownField(
+                                                appDropDownField(
                                                   lable: 'State / County',
                                                   value:
                                                       dashboardController
@@ -2209,24 +2162,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       }).toList(),
                                                   function: (value) {},
                                                 ),
-
-                                                // Padding(
-                                                //   padding: const EdgeInsets.only(
-                                                //     top: 10,
-                                                //   ),
-                                                //   child: textLabel(
-                                                //     'Company Name (optional)',
-                                                //     context,
-                                                //     false,
-                                                //   ),
-                                                // ),
-                                                // AppTextFormField(
-                                                //   controller:
-                                                //       dashboardController
-                                                //           .companyName2Controller,
-                                                //   lable: 'Company Name',
-                                                //   function: (value) {},
-                                                // ),
                                               ],
                                             ),
                                           ),
@@ -2303,7 +2238,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             true,
                                                           ),
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .firstNameDiffController,
@@ -2329,7 +2264,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             true,
                                                           ),
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .lastNameDiffController,
@@ -2355,12 +2290,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             false,
                                                           ),
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .companyNameDiffController,
                                                           lable: 'Company Name',
-                                                          function: (value) {},
+                                                          function: (value) {
+                                                            return null;
+                                                          },
                                                         ),
                                                         Padding(
                                                           padding:
@@ -2373,7 +2310,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             true,
                                                           ),
                                                         ),
-                                                        AppDropDownField(
+                                                        appDropDownField(
                                                           lable:
                                                               'Country / Region',
                                                           value:
@@ -2386,7 +2323,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                       .value
                                                                   : null,
                                                           itemList:
-                                                              dashboardController.countryMap.value.entries.map((
+                                                              dashboardController.countryMap.entries.map((
                                                                 entry,
                                                               ) {
                                                                 return DropdownMenuItem<
@@ -2445,7 +2382,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             true,
                                                           ),
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .streetAddressDiffController,
@@ -2461,13 +2398,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             return null; // <-- must return null if valid
                                                           },
                                                         ),
-                                                        AppTextFormField(
+                                                        appTextFormField(
                                                           controller:
                                                               dashboardController
                                                                   .streetAddress2DiffController,
                                                           lable:
                                                               'Street address',
-                                                          function: (value) {},
+                                                          function: (value) {
+                                                            return null;
+                                                          },
                                                         ),
                                                         Padding(
                                                           padding:
@@ -2481,7 +2420,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           ),
                                                         ),
                                                         Focus(
-                                                          child: AppTextFormField(
+                                                          child: appTextFormField(
                                                             controller:
                                                                 dashboardController
                                                                     .townDiffController,
@@ -2502,9 +2441,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             hasFocus,
                                                           ) {
                                                             if (hasFocus) {
-                                                              print(
-                                                                'Name GAINED focus',
-                                                              );
                                                             } else {
                                                               dashboardController
                                                                   .getShippingMethods();
@@ -2538,17 +2474,17 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                       ),
                                                                     ),
                                                                   )
-                                                                  : AppDropDownField(
+                                                                  : appDropDownField(
                                                                     lable:
                                                                         'State / County',
                                                                     value:
-                                                                        dashboardController.stateMapDiff.value.containsKey(
+                                                                        dashboardController.stateMapDiff.containsKey(
                                                                               dashboardController.selectedStateDiff.value,
                                                                             )
                                                                             ? dashboardController.selectedStateDiff.value
                                                                             : null,
                                                                     itemList:
-                                                                        dashboardController.stateMapDiff.value.entries.map((
+                                                                        dashboardController.stateMapDiff.entries.map((
                                                                           entry,
                                                                         ) {
                                                                           return DropdownMenuItem<
@@ -2591,7 +2527,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                           ),
                                                         ),
                                                         Focus(
-                                                          child: AppTextFormField(
+                                                          child: appTextFormField(
                                                             controller:
                                                                 dashboardController
                                                                     .postCodeDiffController,
@@ -2615,9 +2551,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             hasFocus,
                                                           ) {
                                                             if (hasFocus) {
-                                                              print(
-                                                                'Name GAINED focus',
-                                                              );
                                                             } else {
                                                               dashboardController
                                                                   .getShippingMethods();
@@ -2670,7 +2603,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                               true,
                                                             ),
                                                           ),
-                                                          AppTextFormField(
+                                                          appTextFormField(
                                                             controller:
                                                                 dashboardController
                                                                     .firstNameController,
@@ -2699,7 +2632,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                             ),
                                                           ),
                                                           Obx(
-                                                            () => AppTextFormField(
+                                                            () => appTextFormField(
                                                               obscureText:
                                                                   !dashboardController
                                                                       .isPasswordVisible
@@ -2708,8 +2641,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                                   dashboardController
                                                                       .passwordController,
                                                               lable: 'Password',
-                                                              function:
-                                                                  (value) {},
+                                                              function: (
+                                                                value,
+                                                              ) {
+                                                                return null;
+                                                              },
                                                               suffix: InkWell(
                                                                 onTap: () {
                                                                   dashboardController
@@ -2767,12 +2703,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                 false,
                                               ),
                                             ),
-                                            AppTextFormField(
+                                            appTextFormField(
                                               controller:
                                                   dashboardController
                                                       .orderNotesController,
                                               lable: 'Order notes',
-                                              function: (value) {},
+                                              function: (value) {
+                                                return null;
+                                              },
                                             ),
                                           ],
                                         ),
@@ -2876,8 +2814,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                   final cost =
                                                       double.tryParse(
                                                         method.costRaw
-                                                                .toString() ??
-                                                            "0.0",
+                                                            .toString(),
                                                       ) ??
                                                       0.0;
 
@@ -2952,7 +2889,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                           children: [
                                             if (dashboardController
                                                     .isPayByAcc
-                                                    .value.toLowerCase() ==
+                                                    .value
+                                                    .toLowerCase() ==
                                                 'yes')
                                               RadioListTile<String>(
                                                 value: 'cod',
@@ -3044,7 +2982,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                               .value
                                                               .subtotal !=
                                                           null
-                                                      ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString() ?? "0.0").toStringAsFixed(2)}"
+                                                      ? "\$${double.parse(dashboardController.priceModel.value.subtotal.toString()).toStringAsFixed(2)}"
                                                       : "0.0",
                                                   style: TextStyle(
                                                     color: AppColors.nakedSyrup,
@@ -3084,7 +3022,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      "\$${double.parse(dashboardController.priceModel.value.gstTotal.toString()).toStringAsFixed(2)}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors
@@ -3207,7 +3145,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "- \$${double.parse(dashboardController.priceModel.value.discountTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      "- \$${double.parse(dashboardController.priceModel.value.discountTotal.toString()).toStringAsFixed(2)}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors
@@ -3251,7 +3189,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString() ?? "0.0").toStringAsFixed(2)}",
+                                                      "\$${double.parse(dashboardController.priceModel.value.grandTotal.toString()).toStringAsFixed(2)}",
                                                       style: TextStyle(
                                                         color:
                                                             AppColors

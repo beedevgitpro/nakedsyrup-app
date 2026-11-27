@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:naked_syrups/modules/dashboard_flow/dashboard_controller.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../model/order_history_model.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/appbar_widget.dart';
@@ -13,6 +13,8 @@ import '../dashboard_flow/dashboard.dart';
 import 'order_detail_page.dart';
 
 class OrderHistoryPage extends StatefulWidget {
+  const OrderHistoryPage({super.key});
+
   @override
   State<OrderHistoryPage> createState() => _OrderHistoryPageState();
 }
@@ -21,10 +23,8 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   DashboardController dashboardController = Get.put(DashboardController());
   @override
   void initState() {
-    // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       dashboardController.orderHistory();
-      // dashboardController.findCart();
     });
     super.initState();
   }
@@ -32,7 +32,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         'Order History',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -116,10 +116,14 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: AppColors.yellowColor.withOpacity(0.25),
+                              color: AppColors.yellowColor.withValues(
+                                alpha: 0.25,
+                              ),
                               borderRadius: BorderRadius.circular(15),
                               border: Border.all(
-                                color: AppColors.yellowColor.withOpacity(0.5),
+                                color: AppColors.yellowColor.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                             child: Padding(
@@ -142,7 +146,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                       .isNotEmpty
                                                   ? Container(
                                                     decoration: BoxDecoration(
-                                                      // color: AppColors.yellowColor.withOpacity(0.02),
+                                                      // color: AppColors.yellowColor.withValues(alpha: 0.02),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             15,
@@ -150,7 +154,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                       border: Border.all(
                                                         color: AppColors
                                                             .yellowColor
-                                                            .withOpacity(0.5),
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
                                                       ),
                                                     ),
                                                     height:
@@ -294,7 +300,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                " ${convertedDate} ",
+                                                                " $convertedDate ",
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -355,7 +361,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                               .toString() ==
                                                           "cancelled"
                                                       ? AppColors.redColor
-                                                          .withOpacity(0.15)
+                                                          .withValues(
+                                                            alpha: 0.15,
+                                                          )
                                                       : dashboardController
                                                               .orderHistoryModel
                                                               .value
@@ -365,10 +373,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                           "completed"
                                                       ? Color(
                                                         0XFF3FD75A,
-                                                      ).withOpacity(0.2)
+                                                      ).withValues(alpha: 0.2)
                                                       : Color(
                                                         0XFFFFAE00,
-                                                      ).withOpacity(0.2),
+                                                      ).withValues(alpha: 0.2),
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),
@@ -438,7 +446,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                       .isNotEmpty
                                                   ? Container(
                                                     decoration: BoxDecoration(
-                                                      // color: AppColors.yellowColor.withOpacity(0.02),
+                                                      // color: AppColors.yellowColor.withValues(alpha: 0.02),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             15,
@@ -446,7 +454,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                       border: Border.all(
                                                         color: AppColors
                                                             .yellowColor
-                                                            .withOpacity(0.5),
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
                                                       ),
                                                     ),
                                                     height:
@@ -589,7 +599,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                         children: [
                                                           TextSpan(
                                                             text:
-                                                                " ${convertedDate} ",
+                                                                " $convertedDate ",
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -648,7 +658,9 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                               .toString() ==
                                                           "cancelled"
                                                       ? AppColors.redColor
-                                                          .withOpacity(0.15)
+                                                          .withValues(
+                                                            alpha: 0.15,
+                                                          )
                                                       : dashboardController
                                                               .orderHistoryModel
                                                               .value
@@ -658,10 +670,10 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                                           "completed"
                                                       ? Color(
                                                         0XFF3FD75A,
-                                                      ).withOpacity(0.2)
+                                                      ).withValues(alpha: 0.2)
                                                       : Color(
                                                         0XFFFFAE00,
-                                                      ).withOpacity(0.2),
+                                                      ).withValues(alpha: 0.2),
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                             ),

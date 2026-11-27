@@ -1,13 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/widgets/appbar_widget.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
-import 'Resources/AppColors.dart';
+import 'Resources/app_colors.dart';
 import 'modules/dashboard_flow/dashboard_controller.dart';
 
+// ignore: must_be_immutable
 class WebViewApp extends StatefulWidget {
   WebViewApp({super.key, this.name, this.url});
   String? name;
@@ -48,7 +49,7 @@ class _WebViewAppState extends State<WebViewApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: appBarWidget(
         '${widget.name}',
         IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),

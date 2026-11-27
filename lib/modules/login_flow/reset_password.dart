@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 
-import '../../Resources/AppColors.dart';
+import '../../Resources/app_colors.dart';
 import '../../utility/responsive_text.dart';
 import '../../widgets/mandtory_text_lables.dart';
 import '../../widgets/text_form_fields.dart';
 import 'loginflow_controller.dart';
 
+// ignore: must_be_immutable
 class ResetPassword extends StatelessWidget {
   ResetPassword({super.key});
 
@@ -51,65 +52,13 @@ class ResetPassword extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 30),
                       child: textLabel('Email Address', context, true),
                     ),
-                    AppTextFormField(
+                    appTextFormField(
                       controller: loginFlowController.emailController,
                       lable: 'Email',
-                      function: (value) {},
+                      function: (value) {
+                        return null;
+                      },
                     ),
-                    // const SizedBox(height: 20),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(left: 15, top: 15),
-                    //   child: Text(
-                    //     "Confirm Password",
-                    //     style: TextStyle(
-                    //       fontSize: getFontSize(context, -2),
-                    //       fontWeight: FontWeight.w700,
-                    //       color: Colors.black,
-                    //     ),
-                    //   ),
-                    // ),
-                    // Center(
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(
-                    //       top: 7,
-                    //       left: 15,
-                    //       right: 15,
-                    //     ),
-                    //     child: Container(
-                    //       decoration: BoxDecoration(
-                    //         border: Border.all(
-                    //           width: 1,
-                    //           color: const Color(0XFFced4da),
-                    //         ),
-                    //         borderRadius: BorderRadius.circular(5),
-                    //       ),
-                    //       padding: const EdgeInsets.all(0),
-                    //       child: TextField(
-                    //         onChanged: (value) {
-                    //           // loginFlowController.confirmPassword.value = value;
-                    //         },
-                    //         obscureText: true,
-                    //         controller:
-                    //             loginFlowController.confirmPassWordController,
-                    //         style: TextStyle(
-                    //           color: Colors.black87,
-                    //           fontSize: getFontSize(context, 0),
-                    //         ),
-                    //         decoration: InputDecoration(
-                    //           border: InputBorder.none,
-                    //           hintText: 'Confirm Password',
-                    //           contentPadding: const EdgeInsets.symmetric(
-                    //             horizontal: 15,
-                    //           ),
-                    //           hintStyle: TextStyle(
-                    //             color: Colors.black38,
-                    //             fontSize: getFontSize(context, 0),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.only(

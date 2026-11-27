@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:get/get.dart';
 import 'package:naked_syrups/modules/cart/cart_page.dart';
 import 'package:naked_syrups/modules/login_flow/reset_password.dart';
@@ -6,16 +7,16 @@ import 'package:naked_syrups/modules/order_history/order_history_page.dart';
 import 'package:naked_syrups/web_view_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Resources/AppColors.dart';
+import 'Resources/app_colors.dart';
 import '../utility/responsive_text.dart';
-import 'Resources/AppStrings.dart';
+import 'Resources/app_strings.dart';
 import 'modules/dashboard_flow/dashboard.dart';
 import 'modules/login_flow/edit_profile.dart';
 import 'modules/login_flow/login_page.dart';
 import 'modules/login_flow/loginflow_controller.dart';
 
 class NakedSyrupsDrawer extends StatefulWidget {
-  NakedSyrupsDrawer({super.key});
+  const NakedSyrupsDrawer({super.key});
 
   @override
   State<NakedSyrupsDrawer> createState() => _BIADrawerState();
@@ -25,7 +26,6 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
   LoginFlowController loginFlowController = Get.put(LoginFlowController());
   @override
   void initState() {
-    // TODO: implement initState
     loginFlowController.loadToken();
     loginFlowController.getCerti();
     loginFlowController.getName();
@@ -41,7 +41,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
             height: 1,
             width: 500,
             decoration: BoxDecoration(
-              color: AppColors.lightColor.withOpacity(0.5),
+              color: AppColors.lightColor.withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -247,7 +247,9 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                             final SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             await prefs.clear().then((value) {
-                              print("prefrence cleared  : $value");
+                              if (kDebugMode) {
+                                print("prefrence cleared  : $value");
+                              }
                               if (value == true) {
                                 Get.offAll(() => LoginPage());
                               }
@@ -291,7 +293,7 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
                 height: 1,
                 width: 500,
                 decoration: BoxDecoration(
-                  color: AppColors.lightColor.withOpacity(0.5),
+                  color: AppColors.lightColor.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -300,21 +302,15 @@ class _BIADrawerState extends State<NakedSyrupsDrawer> {
           child: Material(
             color: Colors.white,
             child: ListTile(
-              leading: Icon(
-                icon,
-                color: AppColors.nakedSyrup,
-                size: 28,
-              ),
+              leading: Icon(icon, color: AppColors.nakedSyrup, size: 28),
               title: Text(
                 text,
-                style: TextStyle(
-                  fontSize: getFontSize(context, 1),
-                ),
+                style: TextStyle(fontSize: getFontSize(context, 1)),
               ),
               onTap: function,
             ),
           ),
-        )
+        ),
       ],
     );
   }

@@ -60,8 +60,12 @@ class PriceModel {
       });
     }
     _totalFeesFormatted = json['total_fees_formatted'];
-    _hasTaxableProducts = json['has_taxable_products'] is bool ? json['has_taxable_products'] as bool : null;
-    _taxStatus = json['tax_status'] is String ? json['tax_status'] as String : null;
+    _hasTaxableProducts =
+        json['has_taxable_products'] is bool
+            ? json['has_taxable_products'] as bool
+            : null;
+    _taxStatus =
+        json['tax_status'] is String ? json['tax_status'] as String : null;
     _showGst = json['show_gst'] is bool ? json['show_gst'] as bool : null;
     _gstTotal = json['gst_total'];
     _gstTotalFormatted = json['gst_total_formatted'];
